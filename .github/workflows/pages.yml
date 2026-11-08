@@ -3,7 +3,7 @@ name: pages
 on:
   push:
     branches: [main]
-    paths: ["xca/4/**", "xca/5/**", "site/**", ".github/workflows/pages.yml"]
+    paths: ["xca/4/**", "xca/5/**", "game-off/2026/game/**", "game-off/2026/scripts/**", "site/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
 
 permissions:
@@ -62,7 +62,19 @@ jobs:
       - name: Export the web build
         run: |
           GODOT="$GODOT_DIR/Godot_v${GODOT_VERSION}_linux.x86_64" bash xca/5/scripts/export.sh
+      - name: Import Hot Shift assets
+        run: |
+          "$GODOT_DIR/Godot_v${GODOT_VERSION}_linux.x86_64" --headless --path game-off/2026/game --import || true
+      # Hot Shift was developed on Godot 4.7.2 and has not run on 4.6.3 in CI yet.
+      # A failed export here must not block the other games, so the step may fail and the site step skips it.
+      - name: Export Hot Shift
+        id: hot_shift
+        continue-on-error: true
+        run: |
+          GODOT="$GODOT_DIR/Godot_v${GODOT_VERSION}_linux.x86_64" bash game-off/2026/scripts/export.sh
       - name: Assemble the site
+        env:
+          HOT_SHIFT_EXPORT: ${{ steps.hot_shift.outcome }}
         run: |
           mkdir -p _site
           cp -r site/. _site/
@@ -71,6 +83,12 @@ jobs:
           mkdir -p _site/home-by-light
           bash xca/4/scripts/package.sh
           unzip -q /tmp/home-by-light.zip -d _site/home-by-light
+          if [ "$HOT_SHIFT_EXPORT" = "success" ] && [ -f game-off/2026/game/build/web/index.html ]; then
+            mkdir -p _site/hot-shift
+            cp -r game-off/2026/game/build/web/. _site/hot-shift/
+          else
+            echo "::warning::Hot Shift export is missing, so it is not published."
+          fi
           touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
