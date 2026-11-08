@@ -20,6 +20,14 @@ static func flat_material(albedo: Color, use_vertex_color: bool = false) -> Stan
 	return material
 
 
+## Returns a per-pixel lit material that receives shadows. [param albedo] must be opaque.
+static func lit_material(albedo: Color) -> StandardMaterial3D:
+	var material: StandardMaterial3D = StandardMaterial3D.new()
+	material.albedo_color = albedo
+	material.roughness = 1.0
+	return material
+
+
 ## Returns a flat ring between [param inner] and [param outer] radius.
 static func annulus(inner: float, outer: float) -> ArrayMesh:
 	var tool: SurfaceTool = SurfaceTool.new()

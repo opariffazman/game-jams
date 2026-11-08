@@ -382,13 +382,4 @@ class ModelStage extends SubViewportContainer:
 		_pivot.rotation.y += SPIN_SPEED * delta
 
 	func _make_outline() -> ShaderMaterial:
-		var edge: ShaderMaterial = ShaderMaterial.new()
-		edge.shader = DepthVisual.OUTLINE_SHADER
-		edge.set_shader_parameter(&"outline_color", DepthVisual.OUTLINE_EDGE_COLOR)
-		edge.set_shader_parameter(&"thickness", DepthVisual.OUTLINE_EDGE_THICKNESS)
-		var team: ShaderMaterial = ShaderMaterial.new()
-		team.shader = DepthVisual.OUTLINE_SHADER
-		team.set_shader_parameter(&"outline_color", FRIEND)
-		team.set_shader_parameter(&"thickness", DepthVisual.OUTLINE_THICKNESS)
-		team.next_pass = edge
-		return team
+		return DepthVisual.outline_chain(FRIEND)[0]

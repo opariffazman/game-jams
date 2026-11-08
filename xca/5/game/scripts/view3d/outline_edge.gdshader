@@ -1,13 +1,20 @@
 shader_type spatial;
-render_mode cull_front, unshaded, depth_draw_never;
+render_mode cull_front, unshaded, depth_draw_never, skip_vertex_transform;
 
-// Dark edge outside the team ring. It never writes depth and draws before the team ring,
-// so the ring always paints over it whatever the view angle.
-uniform vec4 outline_color : source_color = vec4(0.0, 0.0, 0.0, 0.9);
-uniform float thickness = 0.06;
+// Thin dark keyline outside the team ring. The ring hull has a higher render priority, so it always paints
+// over this one. The width is in screen pixels, grown in clip space.
+uniform vec4 outline_color : source_color = vec4(0.04, 0.06, 0.1, 0.9);
+uniform float width_px = 4.2;
 
 void vertex() {
-	VERTEX += NORMAL * thickness;
+	vec4 view_position = MODELVIEW_MATRIX * vec4(VERTEX, 1.0);
+	vec3 view_normal = normalize(mat3(MODELVIEW_MATRIX) * NORMAL);
+	vec4 clip = PROJECTION_MATRIX * view_position;
+	vec2 direction = view_normal.xy;
+	float length_xy = length(direction);
+	direction = length_xy > 0.0001 ? direction / length_xy : vec2(0.0);
+	clip.xy += direction * width_px * 2.0 / VIEWPORT_SIZE * clip.w;
+	POSITION = clip;
 }
 
 void fragment() {

@@ -12,8 +12,6 @@ extends CanvasLayer
 const GROUP_HUD: StringName = &"hud"
 ## Group of the character the human steers.
 const GROUP_HUMAN: StringName = &"human_controlled"
-## Size of the icon in the middle of the stack ring, in viewport pixels.
-const RING_ICON_PX: int = 64
 ## Smallest icon size in viewport pixels, used on large screens.
 const MIN_ICON_PX: int = 40
 ## Gap in viewport pixels between the pip groups of the two teams.
@@ -34,8 +32,6 @@ const EDGE_MARGIN: float = 16.0
 const WIN_SCORE: int = 3
 ## Sandals in the stack.
 const STACK_SIZE: int = 3
-## Radius of the stack progress ring.
-const RING_RADIUS: float = 72.0
 ## Radius of the ring around the human-controlled character.
 const MARKER_RADIUS: float = 30.0
 ## Seconds between searches for missing nodes.
@@ -182,6 +178,10 @@ func _build_ui() -> void:
 	_throws_row = HBoxContainer.new()
 	_throws_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	centre.add_child(_throws_row)
+	# The stack progress sits in the top strip. Its alpha toggles so the strip never shifts.
+	_ring_icon = _make_icon_rect(icons.stack_ring, _icon_px, DIM_COLOR)
+	_ring_icon.modulate.a = 0.0
+	centre.add_child(_ring_icon)
 	bar.add_child(centre)
 
 	var right: HBoxContainer = _make_holder(BoxContainer.ALIGNMENT_END)
@@ -194,9 +194,6 @@ func _build_ui() -> void:
 	centre_box.set_anchors_preset(Control.PRESET_FULL_RECT)
 	centre_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(centre_box)
-	_ring_icon = _make_icon_rect(icons.stack_ring, RING_ICON_PX, DIM_COLOR)
-	_ring_icon.visible = false
-	centre_box.add_child(_ring_icon)
 	_center_icon = _make_icon_rect(icons.coin_flip, CENTER_ICON_PX, Color.WHITE)
 	_center_icon.pivot_offset = Vector2(CENTER_ICON_PX, CENTER_ICON_PX) * 0.5
 	_center_icon.visible = false
@@ -533,10 +530,11 @@ func _refresh_overlay() -> void:
 		if value is int:
 			placed = value
 	_overlay.ring_visible = _phase_name == "SCATTER"
-	_ring_icon.visible = _overlay.ring_visible
-	_ring_icon.modulate = DIM_COLOR.lerp(_team_color(_attacking_team()), _overlay.ring_fill)
 	_overlay.ring_fill = clampf(float(placed) / float(STACK_SIZE), 0.0, 1.0)
-	_overlay.ring_center = viewport.get_visible_rect().size * 0.5
+	_ring_icon.modulate = DIM_COLOR.lerp(_team_color(_attacking_team()), _overlay.ring_fill)
+	_ring_icon.modulate.a = 1.0 if _overlay.ring_visible else 0.0
+	_overlay.ring_center = _ring_icon.global_position + _ring_icon.size * 0.5
+	_overlay.ring_radius = _ring_icon.size.x * 0.75
 	_overlay.ring_color = _team_color(_attacking_team())
 	_overlay.marker_visible = is_instance_valid(_human)
 	if _overlay.marker_visible:
@@ -600,6 +598,8 @@ class Overlay extends Control:
 	var ring_visible: bool = false
 	## Screen position of the ring centre.
 	var ring_center: Vector2 = Vector2.ZERO
+	## Radius of the ring in pixels.
+	var ring_radius: float = 0.0
 	## Fill colour of the ring.
 	var ring_color: Color = Color.WHITE
 	## True while a human-controlled character exists.
@@ -613,9 +613,9 @@ class Overlay extends Control:
 
 	func _draw() -> void:
 		if ring_visible:
-			draw_arc(ring_center, Hud.RING_RADIUS, 0.0, TAU, 64, Hud.DIM_COLOR, 10.0, true)
+			draw_arc(ring_center, ring_radius, 0.0, TAU, 64, Hud.DIM_COLOR, 4.0, true)
 			if ring_fill > 0.0:
-				draw_arc(ring_center, Hud.RING_RADIUS, -PI * 0.5, -PI * 0.5 + TAU * ring_fill, 64, ring_color, 10.0, true)
+				draw_arc(ring_center, ring_radius, -PI * 0.5, -PI * 0.5 + TAU * ring_fill, 64, ring_color, 4.0, true)
 		if marker_visible:
 			var radius: float = Hud.MARKER_RADIUS + 4.0 * sin(pulse * TAU)
 			# The marker lies on the floor, so the tilted view shows it as a flattened ellipse.

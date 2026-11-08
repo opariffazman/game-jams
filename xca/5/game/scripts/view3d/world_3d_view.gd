@@ -18,8 +18,28 @@ const BUILD_DOLLY_TIME: float = 0.45
 ## Distance of the camera from the point it looks at, in pixels.
 const CAMERA_DISTANCE: float = 2400.0
 ## Render size limits as a multiple of the logical viewport. A phone renders at its screen size.
-const MIN_RENDER_SCALE: float = 0.5
+const MIN_RENDER_SCALE: float = 1.0
 const MAX_RENDER_SCALE: float = 2.0
+## Quality block. Lower these on a slow device.
+const MSAA_MODE: Viewport.MSAA = Viewport.MSAA_4X
+const SHADOWS_ENABLED: bool = true
+const SHADOW_ATLAS_SIZE: int = 4096
+const SHADOW_SPLITS_MODE: DirectionalLight3D.ShadowMode = DirectionalLight3D.SHADOW_ORTHOGONAL
+## Far limit of the sun shadow in pixels. The camera sits CAMERA_DISTANCE away. Above about 3300 the cascade spreads too thin and the shadows vanish.
+const SHADOW_MAX_DISTANCE: float = 3300.0
+const SHADOW_SOFT_QUALITY: RenderingServer.ShadowQuality = RenderingServer.SHADOW_QUALITY_SOFT_ULTRA
+## Share of light a shadow removes. Below 1.0 keeps the shadow soft and tinted by the ambient.
+const SHADOW_OPACITY: float = 0.85
+const SHADOW_BIAS: float = 0.3
+const SHADOW_NORMAL_BIAS: float = 2.0
+const TONEMAP_MODE: Environment.ToneMapper = Environment.TONE_MAPPER_FILMIC
+const SUN_ENERGY: float = 0.8
+const AMBIENT_ENERGY: float = 0.5
+const GLOW_ENABLED: bool = false
+const GLOW_INTENSITY: float = 0.35
+const GLOW_BLOOM: float = 0.04
+const ADJUST_CONTRAST: float = 1.08
+const ADJUST_SATURATION: float = 1.05
 ## Colour behind the arena. It matches the 2D surround.
 const BACKGROUND_COLOR: Color = Color("2a6b3d")
 ## Canvas layer of the 3D picture. It sits below the default 2D layer.
@@ -52,7 +72,10 @@ func _ready() -> void:
 	ViewProjection.build_blend = 0.0
 	_viewport = SubViewport.new()
 	_viewport.own_world_3d = true
-	_viewport.msaa_3d = Viewport.MSAA_DISABLED
+	_viewport.msaa_3d = MSAA_MODE
+	_viewport.use_hdr_2d = false
+	RenderingServer.directional_shadow_atlas_set_size(SHADOW_ATLAS_SIZE, true)
+	RenderingServer.directional_soft_shadow_filter_set_quality(SHADOW_SOFT_QUALITY)
 	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	_viewport.transparent_bg = false
 	add_child(_viewport)
@@ -81,6 +104,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	ViewProjection.aspect_fit = 1.0
 	ViewProjection.active = false
 	ViewProjection.build_blend = 0.0
 
@@ -119,16 +143,30 @@ func _build_environment() -> void:
 	environment.background_mode = Environment.BG_COLOR
 	environment.background_color = BACKGROUND_COLOR
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	environment.ambient_light_color = Color(1.0, 0.95, 0.86)
-	environment.ambient_light_energy = 0.85
+	environment.ambient_light_color = Color(0.86, 0.93, 1.0)
+	environment.ambient_light_energy = AMBIENT_ENERGY
+	environment.tonemap_mode = TONEMAP_MODE
+	environment.glow_enabled = GLOW_ENABLED
+	environment.glow_intensity = GLOW_INTENSITY
+	environment.glow_bloom = GLOW_BLOOM
+	environment.glow_hdr_threshold = 1.0
+	environment.adjustment_enabled = true
+	environment.adjustment_contrast = ADJUST_CONTRAST
+	environment.adjustment_saturation = ADJUST_SATURATION
 	var holder: WorldEnvironment = WorldEnvironment.new()
 	holder.environment = environment
 	_viewport.add_child(holder)
 	var sun: DirectionalLight3D = DirectionalLight3D.new()
-	sun.shadow_enabled = false
-	sun.light_energy = 0.75
-	sun.light_color = Color(1.0, 0.93, 0.78)
-	sun.rotation_degrees = Vector3(-55.0, -25.0, 0.0)
+	sun.shadow_enabled = SHADOWS_ENABLED
+	sun.directional_shadow_mode = SHADOW_SPLITS_MODE
+	sun.directional_shadow_max_distance = SHADOW_MAX_DISTANCE
+	sun.shadow_bias = SHADOW_BIAS
+	sun.shadow_normal_bias = SHADOW_NORMAL_BIAS
+	sun.shadow_opacity = SHADOW_OPACITY
+	sun.shadow_blur = 1.0
+	sun.light_energy = SUN_ENERGY
+	sun.light_color = Color(1.0, 0.92, 0.76)
+	sun.rotation_degrees = Vector3(-36.0, -35.0, 0.0)
 	_viewport.add_child(sun)
 
 
@@ -143,7 +181,8 @@ func _follow_main_camera() -> void:
 	var wanted: Vector2i = Vector2i((visible_size * render_scale).round())
 	if _viewport.size != wanted:
 		_viewport.size = wanted
+	ViewProjection.aspect_fit = ViewProjection.fit_for(visible_size)
 	_camera.basis = ViewProjection.camera_basis()
 	var centre: Vector2 = ViewProjection.centre(main)
 	_camera.position = ground(centre) + ViewProjection.camera_basis().z * CAMERA_DISTANCE
-	_camera.size = visible_size.y / (ViewProjection.zoom(main) * ViewProjection.fit)
+	_camera.size = visible_size.y / (ViewProjection.zoom(main) * ViewProjection.fit * ViewProjection.aspect_fit)

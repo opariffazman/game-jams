@@ -14,15 +14,21 @@ extends RefCounted
 ## Camera yaw around the vertical axis, degrees.
 const YAW_DEGREES: float = 0.0
 ## Default camera pitch below the horizon, degrees.
-const DEFAULT_PITCH_DEGREES: float = 42.0
+const DEFAULT_PITCH_DEGREES: float = 34.0
 ## Pitch limits of the camera slider, degrees.
-const MIN_PITCH_DEGREES: float = 25.0
+const MIN_PITCH_DEGREES: float = 20.0
 const MAX_PITCH_DEGREES: float = 70.0
 ## Screen pixels per ground pixel at canvas zoom 1. The field plus the village fit the viewport at this value.
 const DEFAULT_FIT: float = 1.0
 ## Zoom limits of the camera slider.
 const MIN_FIT: float = 0.6
 const MAX_FIT: float = 1.6
+## Ground width kept in view at the default zoom: the field, the fence ring and a little ground beyond it.
+const VIEW_GROUND_WIDTH: float = 1150.0
+## Most the aspect fit zooms in. A wide phone screen shows the field with room to spare, so the picture grows.
+const MAX_ASPECT_FIT: float = 1.4
+## Ground depth the camera looks beyond the field centre, in ground pixels. It frames the stands and fills the near edge.
+const CENTRE_SHIFT: float = 110.0
 ## Extra zoom while the build view is on.
 const BUILD_ZOOM: float = 1.9
 
@@ -30,6 +36,8 @@ const BUILD_ZOOM: float = 1.9
 static var pitch_degrees: float = DEFAULT_PITCH_DEGREES
 ## Live screen pixels per ground pixel at canvas zoom 1. The settings panel moves it.
 static var fit: float = DEFAULT_FIT
+## Zoom the screen shape allows, from 1.0 to [constant MAX_ASPECT_FIT]. [World3DView] updates it each frame.
+static var aspect_fit: float = 1.0
 ## True while a [World3DView] exists.
 static var active: bool = false
 ## Build view blend from 0.0 (arena) to 1.0 (close on [member build_focus]).
@@ -47,8 +55,8 @@ static func camera_basis() -> Basis:
 static func linear() -> Transform2D:
 	var basis: Basis = camera_basis()
 	return Transform2D(
-		Vector2(basis.x.x, -basis.y.x) * fit,
-		Vector2(basis.x.z, -basis.y.z) * fit,
+		Vector2(basis.x.x, -basis.y.x) * fit * aspect_fit,
+		Vector2(basis.x.z, -basis.y.z) * fit * aspect_fit,
 		Vector2.ZERO
 	)
 
@@ -64,10 +72,17 @@ static func zoom(viewport: Viewport) -> float:
 	return canvas_zoom * lerpf(1.0, BUILD_ZOOM, build_blend) if active else canvas_zoom
 
 
+## Largest zoom that keeps [constant VIEW_GROUND_WIDTH] of ground in a visible rectangle of [param visible_size].
+static func fit_for(visible_size: Vector2) -> float:
+	return clampf(visible_size.x / VIEW_GROUND_WIDTH, 1.0, MAX_ASPECT_FIT)
+
+
 ## Ground point shown at the middle of the screen.
 static func centre(viewport: Viewport) -> Vector2:
 	var canvas: Transform2D = viewport.get_canvas_transform()
 	var middle: Vector2 = canvas.affine_inverse() * (viewport.get_visible_rect().size * 0.5)
+	if active:
+		middle.y -= CENTRE_SHIFT
 	return middle.lerp(build_focus, build_blend) if active else middle
 
 

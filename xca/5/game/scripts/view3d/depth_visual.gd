@@ -32,9 +32,12 @@ const SHADOW_SIZE_FACTOR: float = 3.0
 const SHADOW_OFFSET: Vector2 = Vector2(0.25, 0.3)
 const OUTLINE_SHADER: Shader = preload("res://scripts/view3d/outline.gdshader")
 const OUTLINE_EDGE_SHADER: Shader = preload("res://scripts/view3d/outline_edge.gdshader")
-## Model-space thickness of the team outline and of the dark edge outside it.
-const OUTLINE_THICKNESS: float = 0.035
-const OUTLINE_EDGE_THICKNESS: float = 0.06
+## Screen-pixel width of the team ring and of the dark keyline outside it.
+const OUTLINE_RING_PX: float = 3.0
+const OUTLINE_EDGE_PX: float = 1.2
+## Both hulls write alpha, so they sort by distance in the transparent pass. Render priority fixes the order.
+const OUTLINE_EDGE_PRIORITY: int = 0
+const OUTLINE_RING_PRIORITY: int = 1
 const OUTLINE_EDGE_COLOR: Color = Color(0.04, 0.06, 0.1, 0.9)
 const FLASH_ALPHA: float = 0.85
 const DASH_TRANSPARENCY: float = 0.55
@@ -192,19 +195,28 @@ func _build() -> void:
 	_node.scale = Vector3.ONE * scale.x
 
 
-# Team colour shows as an outline, never as a tint, so every model keeps its own colours. A dark edge outside
-# the team ring keeps red and blue readable on a bright pitch.
+# Team colour shows as an outline, never as a tint, so every model keeps its own colours. A thin dark keyline
+# outside the team ring keeps red and blue readable on the pitch. The ring always paints over the keyline.
 func _make_outline() -> ShaderMaterial:
-	_outline = ShaderMaterial.new()
-	_outline.shader = OUTLINE_SHADER
-	_outline.set_shader_parameter(&"outline_color", team_color)
-	_outline.set_shader_parameter(&"thickness", OUTLINE_THICKNESS)
-	var edge: ShaderMaterial = ShaderMaterial.new()
-	edge.shader = OUTLINE_EDGE_SHADER
-	edge.set_shader_parameter(&"outline_color", OUTLINE_EDGE_COLOR)
-	edge.set_shader_parameter(&"thickness", OUTLINE_EDGE_THICKNESS)
-	edge.next_pass = _outline
-	return edge
+	var chain: Array[ShaderMaterial] = DepthVisual.outline_chain(team_color)
+	_outline = chain[1]
+	return chain[0]
+
+
+## Returns [keyline, ring]. Set the keyline as the mesh overlay. The ring is its next pass and takes the team colour.
+static func outline_chain(ring_color: Color) -> Array[ShaderMaterial]:
+	var ring: ShaderMaterial = ShaderMaterial.new()
+	ring.shader = OUTLINE_SHADER
+	ring.render_priority = OUTLINE_RING_PRIORITY
+	ring.set_shader_parameter(&"outline_color", ring_color)
+	ring.set_shader_parameter(&"width_px", OUTLINE_RING_PX)
+	var keyline: ShaderMaterial = ShaderMaterial.new()
+	keyline.shader = OUTLINE_EDGE_SHADER
+	keyline.render_priority = OUTLINE_EDGE_PRIORITY
+	keyline.set_shader_parameter(&"outline_color", OUTLINE_EDGE_COLOR)
+	keyline.set_shader_parameter(&"width_px", OUTLINE_RING_PX + OUTLINE_EDGE_PX)
+	keyline.next_pass = ring
+	return [keyline, ring]
 
 
 func _build_character() -> void:
@@ -218,7 +230,7 @@ func _build_character() -> void:
 	for mesh: Node in model.find_children("*", "MeshInstance3D", true, false):
 		var instance: MeshInstance3D = mesh as MeshInstance3D
 		instance.material_overlay = _tint
-		instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 		_body_meshes.append(instance)
 	_animation_player = model.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	if _animation_player != null:
@@ -274,11 +286,11 @@ func _build_sandal() -> void:
 	sole.scale = Vector3(width, 1.0, length)
 	sole.position.y = sole_height * 0.5
 	sole.material_override = MeshBuilder3D.flat_material(SOLE_COLOR)
-	sole.material_override.shading_mode = BaseMaterial3D.SHADING_MODE_PER_VERTEX
+	sole.material_override.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	sole.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_pivot.add_child(sole)
 	_strap_material = MeshBuilder3D.flat_material(STRAP_COLOR)
-	_strap_material.shading_mode = BaseMaterial3D.SHADING_MODE_PER_VERTEX
+	_strap_material.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	_add_strap(Vector3(width * 0.8, 3.0, length * 0.14), Vector3(0.0, sole_height + 1.5, length * 0.12))
 	_add_strap(Vector3(width * 0.2, 3.0, length * 0.2), Vector3(0.0, sole_height + 1.5, length * 0.36))
 	if kind == Kind.PASS_SANDAL:
@@ -335,7 +347,7 @@ func _rebuild_arena() -> void:
 	var plane: PlaneMesh = PlaneMesh.new()
 	plane.size = Vector2(_extent.x, _extent.y)
 	floor_mesh.mesh = plane
-	floor_mesh.material_override = MeshBuilder3D.flat_material(ARENA_FLOOR_COLOR)
+	floor_mesh.material_override = MeshBuilder3D.lit_material(ARENA_FLOOR_COLOR)
 	floor_mesh.scale = Vector3(1.0, 1.0, 1.0 / World3DView.GROUND_STRETCH)
 	floor_mesh.position.y = -0.5
 	_node.add_child(floor_mesh)

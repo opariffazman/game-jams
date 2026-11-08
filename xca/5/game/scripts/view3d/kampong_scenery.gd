@@ -11,8 +11,8 @@ const FOREST_TEXTURE: String = "res://assets/kenney/forest/Textures/colormap.png
 const ARENA_DIR: String = "res://assets/kenney/arena/"
 const ARENA_TEXTURE: String = "res://assets/kenney/arena/Textures/colormap.png"
 
-const GRASS_COLOR: Color = Color("2a6b3d")
-const PATCH_TINT: Color = Color(1.0, 1.0, 1.0)
+const GRASS_COLOR: Color = Color("3d8f47")
+const PATCH_TINT: Color = Color(0.55, 0.78, 0.5)
 ## Multiplier on the sand floor colour. It turns the tile into a bright lime pitch that stays clear of the darker green surround.
 const FLOOR_TINT: Color = Color(0.42, 0.85, 0.5)
 ## Multiplier on the stand blocks. It darkens the wood so the spectators stand out.
@@ -34,14 +34,14 @@ const STRAW_BAND_COLOR: Color = Color("b8862f")
 const POLE_COLOR: Color = Color("6b4a2b")
 
 ## Stand tiers: first distance from the field edge, depth and height step of each tier. Heights rise with every tier.
-const STAND_GAP: float = 40.0
-const STAND_TIER_DEPTH: float = 42.0
-const STAND_TIER_HEIGHT: float = 22.0
+const STAND_GAP: float = 14.0
+const STAND_TIER_DEPTH: float = 40.0
+const STAND_TIER_HEIGHT: float = 16.0
 const BACK_TIERS: int = 2
 const SIDE_TIERS: int = 1
 const STAND_OVERHANG: float = 40.0
-const SPECTATOR_SPACING: float = 50.0
-const SPECTATOR_SIZE: float = 46.0
+const SPECTATOR_SPACING: float = 58.0
+const SPECTATOR_SIZE: float = 56.0
 const WALL_SIZE: float = 44.0
 const CANOPY_HEIGHT: float = 62.0
 const CANOPY_RADIUS: float = 78.0
@@ -51,10 +51,30 @@ const BUNTING_FLAG_WIDTH: float = 11.0
 const BUNTING_FLAG_DROP: float = 13.0
 const BUNTING_SAG: float = 9.0
 
+## Dirt apron between the pitch edge and the stands, and the stripe tint of the mown pitch.
+const DIRT_COLOR: Color = Color("c08a55")
+const DIRT_WIDTH: float = 46.0
+const DIRT_LIFT: float = -0.4
+const MOWN_LIGHT: Color = Color("3a8240")
+const MOWN_DARK: Color = Color("2d6f38")
+## Fake ambient occlusion: darkness at the foot of stands and inside the pitch edge, and under props.
+const AO_LIFT: float = 0.7
+const AO_STAND_ALPHA: float = 0.5
+const AO_STAND_WIDTH: float = 34.0
+const AO_EDGE_ALPHA: float = 0.2
+const AO_EDGE_WIDTH: float = 46.0
+const AO_PROP_ALPHA: float = 0.42
+const PAVILION_SIZE: float = 64.0
+## Contact shadow radius under a prop, as a share of the prop size.
+const CONTACT_RADIUS: Dictionary = {
+	"tree-high.glb": 0.5, "tree.glb": 0.5, "tent.glb": 0.7, "weapon-rack.glb": 0.55, "target.glb": 0.4,
+	"column.glb": 0.45, "statue.glb": 0.5, "building-platform.glb": 0.6, "stones.glb": 0.5, "rocks-low.glb": 0.5,
+}
+
 const FENCE_UNITS: float = 1.1
 const FENCE_STEP: float = 64.0
 const FENCE_OFFSET: float = 14.0
-const GROUND_MARGIN: float = 400.0
+const GROUND_MARGIN: float = 900.0
 
 var _stretch: float
 var _forest_material: StandardMaterial3D
@@ -72,7 +92,11 @@ func _init(stretch: float) -> void:
 func build(parent: Node3D, half: Vector2) -> void:
 	layout(half)
 	_add_grass(parent, half)
+	_add_apron(parent, half)
 	for path: String in _transforms:
+		if path.ends_with("/floor.glb"):
+			_add_striped_floor(parent, path, half)
+			continue
 		var material: StandardMaterial3D = _arena_material if path.begins_with(ARENA_DIR) else _forest_material
 		var tint: Color = Color.WHITE
 		if path.ends_with("patch-grass.glb") or path.ends_with("patch-dirt.glb"):
@@ -89,6 +113,7 @@ func build(parent: Node3D, half: Vector2) -> void:
 	_add_lanterns(parent, half)
 	_add_flat_dressing(parent, half)
 	_add_crowd(parent, half)
+	_add_occlusion(parent, half)
 
 
 ## Fills and returns the placements per model path. The test reads this because headless MultiMesh keeps no transforms.
@@ -100,6 +125,8 @@ func layout(half: Vector2) -> Dictionary:
 	_add_sides(half)
 	_add_front(half)
 	_add_patches(half)
+	_add_landmarks(half)
+	_add_hedge(half)
 	return _transforms
 
 
@@ -108,7 +135,7 @@ func _add_grass(parent: Node3D, half: Vector2) -> void:
 	var plane: PlaneMesh = PlaneMesh.new()
 	plane.size = (half * 2.0) + Vector2.ONE * GROUND_MARGIN
 	ground.mesh = plane
-	ground.material_override = MeshBuilder3D.flat_material(GRASS_COLOR)
+	ground.material_override = MeshBuilder3D.lit_material(GRASS_COLOR)
 	ground.position.y = -1.0
 	ground.scale = Vector3(1.0, 1.0, 1.0 / _stretch)
 	ground.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -232,6 +259,156 @@ func dressing_spots(half: Vector2) -> Array[Vector4]:
 	for point: Vector2 in [Vector2(-380.0, -inset_y + 10.0), Vector2(330.0, -inset_y + 6.0), Vector2(-340.0, inset_y - 4.0), Vector2(inset_x - 30.0, -150.0), Vector2(-inset_x + 24.0, -60.0), Vector2(inset_x - 24.0, 170.0)]:
 		spots.append(Vector4(point.x, point.y, point.x * 0.02, 1.0))
 	return spots
+
+
+# Statues and banners on the wall behind the far stand, columns at the stand ends and the gate, stairs at the
+# stand ends, a pavilion at each far corner and a ring of trees outside. All stand outside the play field.
+func _add_landmarks(half: Vector2) -> void:
+	var wall_z: float = half.y + STAND_GAP + STAND_TIER_DEPTH * float(BACK_TIERS) + WALL_SIZE * 0.3
+	var behind: float = -(wall_z + 26.0) * _stretch
+	for x: float in [-360.0, -190.0, 190.0, 360.0]:
+		_place("statue.glb", Vector3(x, 0.0, behind), 0.0, 72.0, ARENA_DIR)
+	for x: float in [-460.0, -275.0, -100.0, 100.0, 275.0, 460.0]:
+		_place("banner.glb", Vector3(x, 12.0, behind - 10.0 * _stretch), 0.0, 80.0, ARENA_DIR)
+	for x: float in [-half.x - STAND_OVERHANG + 10.0, -60.0, 60.0, half.x + STAND_OVERHANG - 10.0]:
+		_place("column.glb", Vector3(x, 0.0, behind), 0.0, 70.0, ARENA_DIR)
+	for sign: float in [-1.0, 1.0]:
+		_place_box("stairs.glb", Vector3(sign * (half.x + STAND_OVERHANG + 14.0), 0.0, -(half.y + STAND_GAP + STAND_TIER_DEPTH * 0.5) * _stretch), Vector3(28.0, STAND_TIER_HEIGHT * 2.0, STAND_TIER_DEPTH * 0.7), sign * PI * 0.5)
+		var box: Vector3 = Vector3(sign * 480.0, 0.0, behind - 60.0 * _stretch)
+		_place("building-platform.glb", box, 0.0, 80.0)
+		_place("building-structure.glb", box + Vector3(0.0, 40.0, 0.0), 0.0, 80.0)
+		_place("building-roof.glb", box + Vector3(0.0, 120.0, 0.0), 0.0, 80.0)
+	for x: float in [-560.0, -420.0, -90.0, 0.0, 90.0, 420.0, 560.0, 640.0, -640.0]:
+		_place("tree-high.glb", Vector3(x, 0.0, behind - (130.0 + absf(x) * 0.1) * _stretch), x * 0.01, 80.0)
+	for sign: float in [-1.0, 1.0]:
+		for y: float in [-110.0, 40.0, 190.0]:
+			_place("tree.glb", Vector3(sign * (half.x + STAND_GAP + STAND_TIER_DEPTH + 90.0), 0.0, y * _stretch), y * 0.02, 74.0)
+		_place("rocks-low.glb", Vector3(sign * (half.x + 130.0), 0.0, 100.0 * _stretch), sign, 40.0)
+
+
+# Two rows of trees and bushes close the near edge so no bare ground shows below the field.
+func _add_hedge(half: Vector2) -> void:
+	var x: float = -half.x - 200.0
+	var index: int = 0
+	while x <= half.x + 200.0:
+		_place("tree.glb" if index % 3 != 0 else "tree-high.glb", Vector3(x, 0.0, (half.y + 120.0 + float(index % 2) * 30.0) * _stretch), float(index) * 0.7, 48.0)
+		_place("plant.glb", Vector3(x + 40.0, 0.0, (half.y + 75.0) * _stretch), float(index), 46.0)
+		x += 80.0
+		index += 1
+
+
+# Mown stripes: the floor tiles alternate between two tints by column.
+func _add_striped_floor(parent: Node3D, path: String, half: Vector2) -> void:
+	var even: Array[Transform3D] = []
+	var odd: Array[Transform3D] = []
+	for placed: Transform3D in _transforms[path]:
+		var column: int = roundi((placed.origin.x + half.x) / FLOOR_TILE - 0.5)
+		(even if column % 2 == 0 else odd).append(placed)
+	var mesh: Mesh = first_mesh(path)
+	if mesh == null:
+		return
+	for group: Array[Transform3D] in [even, odd]:
+		var material: StandardMaterial3D = MeshBuilder3D.lit_material(MOWN_LIGHT if group == even else MOWN_DARK)
+		_add_multi_mesh(parent, mesh, group, material)
+
+
+# Four dirt strips frame the pitch between its edge and the stands and fence.
+func _add_apron(parent: Node3D, half: Vector2) -> void:
+	var builder: SurfaceTool = SurfaceTool.new()
+	builder.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var inner: Vector2 = half
+	var outer: Vector2 = half + Vector2.ONE * DIRT_WIDTH
+	var y: float = DIRT_LIFT
+	var s: float = _stretch
+	_add_quad(builder, Vector3(-outer.x, y, -outer.y * s), Vector3(outer.x, y, -outer.y * s), Vector3(outer.x, y, -inner.y * s), Vector3(-outer.x, y, -inner.y * s), DIRT_COLOR)
+	_add_quad(builder, Vector3(-outer.x, y, inner.y * s), Vector3(outer.x, y, inner.y * s), Vector3(outer.x, y, outer.y * s), Vector3(-outer.x, y, outer.y * s), DIRT_COLOR)
+	_add_quad(builder, Vector3(-outer.x, y, -inner.y * s), Vector3(-inner.x, y, -inner.y * s), Vector3(-inner.x, y, inner.y * s), Vector3(-outer.x, y, inner.y * s), DIRT_COLOR)
+	_add_quad(builder, Vector3(inner.x, y, -inner.y * s), Vector3(outer.x, y, -inner.y * s), Vector3(outer.x, y, inner.y * s), Vector3(inner.x, y, inner.y * s), DIRT_COLOR)
+	var holder: MeshInstance3D = MeshInstance3D.new()
+	holder.mesh = builder.commit()
+	holder.material_override = MeshBuilder3D.flat_material(Color.WHITE, true)
+	holder.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	parent.add_child(holder)
+
+
+# Soft dark gradients at the foot of the stands and inside the pitch edge, and a dark blob under each tall prop.
+func _add_occlusion(parent: Node3D, half: Vector2) -> void:
+	var strips: Array[Transform3D] = []
+	var stand_edge: float = half.y + STAND_GAP
+	var side_edge: float = half.x + STAND_GAP
+	var side_from: float = -half.y - 20.0
+	var side_to: float = half.y * 0.4
+	strips.append(_strip(Vector3(0.0, AO_LIFT, -(stand_edge - AO_STAND_WIDTH * 0.5) * _stretch), 0.0, half.x * 2.0 + STAND_OVERHANG * 2.0, AO_STAND_WIDTH))
+	for sign: float in [-1.0, 1.0]:
+		strips.append(_strip(Vector3(sign * (side_edge - AO_STAND_WIDTH * 0.5), AO_LIFT, (side_from + side_to) * 0.5 * _stretch), -sign * PI * 0.5, side_to - side_from, AO_STAND_WIDTH))
+	_add_multi_mesh(parent, _unit_quad(), strips, _occlusion_material(_linear_gradient(AO_STAND_ALPHA)))
+	var edges: Array[Transform3D] = []
+	var lift: float = AO_LIFT + 0.1
+	edges.append(_strip(Vector3(0.0, lift, -(half.y - AO_EDGE_WIDTH * 0.5) * _stretch), 0.0, half.x * 2.0, AO_EDGE_WIDTH))
+	edges.append(_strip(Vector3(0.0, lift, (half.y - AO_EDGE_WIDTH * 0.5) * _stretch), PI, half.x * 2.0, AO_EDGE_WIDTH))
+	edges.append(_strip(Vector3(-(half.x - AO_EDGE_WIDTH * 0.5), lift, 0.0), PI * 0.5, half.y * 2.0, AO_EDGE_WIDTH))
+	edges.append(_strip(Vector3(half.x - AO_EDGE_WIDTH * 0.5, lift, 0.0), -PI * 0.5, half.y * 2.0, AO_EDGE_WIDTH))
+	_add_multi_mesh(parent, _unit_quad(), edges, _occlusion_material(_linear_gradient(AO_EDGE_ALPHA)))
+	var blobs: Array[Transform3D] = []
+	for path: String in _transforms:
+		var radius: float = float(CONTACT_RADIUS.get(path.get_file(), 0.0))
+		if radius <= 0.0:
+			continue
+		for placed: Transform3D in _transforms[path]:
+			var diameter: float = placed.basis.x.length() * radius * 2.0
+			blobs.append(Transform3D(Basis.from_scale(Vector3(diameter, 1.0, diameter)), Vector3(placed.origin.x, placed.origin.y + AO_LIFT + 0.2, placed.origin.z)))
+	if not blobs.is_empty():
+		_add_multi_mesh(parent, _unit_quad(), blobs, _occlusion_material(_radial_gradient(AO_PROP_ALPHA)))
+
+
+## A strip on the floor, dark at its local -z edge and clear at +z. [param yaw] turns the dark edge toward the wall.
+func _strip(centre: Vector3, yaw: float, length: float, width: float) -> Transform3D:
+	return Transform3D(Basis(Vector3.UP, yaw) * Basis.from_scale(Vector3(length, 1.0, width)), centre)
+
+
+func _unit_quad() -> PlaneMesh:
+	var quad: PlaneMesh = PlaneMesh.new()
+	quad.size = Vector2.ONE
+	return quad
+
+
+func _occlusion_material(texture: Texture2D) -> StandardMaterial3D:
+	var material: StandardMaterial3D = StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	material.albedo_texture = texture
+	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
+	return material
+
+
+func _linear_gradient(alpha: float) -> GradientTexture2D:
+	var texture: GradientTexture2D = GradientTexture2D.new()
+	texture.gradient = _fade(alpha)
+	texture.fill = GradientTexture2D.FILL_LINEAR
+	texture.fill_from = Vector2(0.0, 0.0)
+	texture.fill_to = Vector2(0.0, 1.0)
+	texture.width = 4
+	texture.height = 64
+	return texture
+
+
+func _radial_gradient(alpha: float) -> GradientTexture2D:
+	var texture: GradientTexture2D = GradientTexture2D.new()
+	texture.gradient = _fade(alpha)
+	texture.fill = GradientTexture2D.FILL_RADIAL
+	texture.fill_from = Vector2(0.5, 0.5)
+	texture.fill_to = Vector2(1.0, 0.5)
+	texture.width = 64
+	texture.height = 64
+	return texture
+
+
+func _fade(alpha: float) -> Gradient:
+	var gradient: Gradient = Gradient.new()
+	gradient.set_color(0, Color(0.05, 0.03, 0.08, alpha))
+	gradient.set_color(1, Color(0.05, 0.03, 0.08, 0.0))
+	return gradient
 
 
 func _add_lanterns(parent: Node3D, half: Vector2) -> void:
@@ -432,11 +609,11 @@ func _place(model: String, at: Vector3, yaw: float, size: float, dir: String = F
 	(_transforms[path] as Array[Transform3D]).append(Transform3D(basis, at))
 
 
-func _place_box(model: String, at: Vector3, extent: Vector3) -> void:
+func _place_box(model: String, at: Vector3, extent: Vector3, yaw: float = 0.0) -> void:
 	var path: String = ARENA_DIR + model
 	if not _transforms.has(path):
 		_transforms[path] = [] as Array[Transform3D]
-	(_transforms[path] as Array[Transform3D]).append(Transform3D(Basis.from_scale(extent), at))
+	(_transforms[path] as Array[Transform3D]).append(Transform3D(Basis(Vector3.UP, yaw) * Basis.from_scale(extent), at))
 
 
 func _add_multi(parent: Node3D, path: String, material: StandardMaterial3D) -> void:
@@ -454,7 +631,7 @@ func _add_multi_mesh(parent: Node3D, mesh: Mesh, transforms: Array[Transform3D],
 		multi.set_instance_transform(index, transforms[index])
 	var holder: MultiMeshInstance3D = MultiMeshInstance3D.new()
 	holder.multimesh = multi
-	holder.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	holder.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	holder.material_override = material
 	parent.add_child(holder)
 
@@ -463,8 +640,8 @@ func _textured(path: String, tint: Color) -> StandardMaterial3D:
 	var material: StandardMaterial3D = StandardMaterial3D.new()
 	material.albedo_texture = load(path) as Texture2D
 	material.albedo_color = tint
-	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	material.shading_mode = BaseMaterial3D.SHADING_MODE_PER_VERTEX
+	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	material.roughness = 1.0
 	return material
 

@@ -13,6 +13,7 @@ const MODELS: Array[String] = [
 ]
 const TICK_SECONDS: float = 1.0 / 15.0
 const BOB_HEIGHT: float = 4.0
+const SWAY_RADIANS: float = 0.12
 const FIRST_SPEED: float = 4.0
 const SPEED_SPREAD: float = 5.0
 
@@ -102,7 +103,8 @@ func _update_all() -> void:
 		for index: int in spots.size():
 			var spot: Spot = spots[index]
 			var hop: float = absf(sin(_elapsed * spot.speed + spot.phase)) * BOB_HEIGHT
-			var basis: Basis = Basis(Vector3.UP, spot.yaw).scaled(Vector3.ONE * spot.size)
+			var sway: float = sin(_elapsed * spot.speed * 0.5 + spot.phase) * SWAY_RADIANS
+			var basis: Basis = (Basis(Vector3.UP, spot.yaw) * Basis(Vector3.FORWARD, sway)).scaled(Vector3.ONE * spot.size)
 			var placed: Transform3D = Transform3D(basis, spot.at + Vector3(0.0, hop, 0.0))
 			for part: MultiMesh in parts:
 				part.set_instance_transform(index, placed)
