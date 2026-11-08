@@ -1,11 +1,12 @@
 # Game jams
 
-One directory per jam entry, under the jam series folder.
+One directory per jam entry, under the jam series folder (`xca/<n>`, `game-off/<year>`).
 
 | Path | Game | Engine |
 |---|---|---|
 | `xca/4` | Home by Light | Godot 4.6, web |
 | `xca/5` | Baling Selipar | Godot 4.6.3, web |
+| `game-off/2026` | Hot Shift | Godot 4.6 API, web |
 
 ## Layout for a new entry
 
@@ -15,7 +16,7 @@ One directory per jam entry, under the jam series folder.
 - `store/` holds the cover and icon for the portal.
 - `GAMEPIX.md` holds the portal checklist.
 
-Both entries use this layout. `xca/4` also keeps `tests/`, `tools/` and `web/`.
+All entries use this layout. `xca/4` also keeps `tests/`, `tools/` and `web/`. `game-off/2026` also keeps `archive/` (four retired prototypes, each its own Godot project).
 `xca/4/scripts/deploy-pages.sh` force-pushes a `gh-pages` branch. Do not use it while Pages deploys from Actions.
 
 ## Publishing
@@ -23,6 +24,7 @@ Both entries use this layout. `xca/4` also keeps `tests/`, `tools/` and `web/`.
 `.github/workflows/pages.yml` deploys one site to GitHub Pages. `site/` is the landing page and `site/games.json` lists the games.
 Each game is built into its own folder, for example `xca/5` into `baling-selipar/`.
 To add a game, add a row to `site/games.json` and a build and copy step to the workflow.
+Hot Shift (`game-off/2026`) deploys to `hot-shift/`. Its export step may fail without blocking the other games, because it has not run on Godot 4.6.3 in CI yet.
 Home by Light (`xca/4`) deploys to `home-by-light/`. Its camera and MediaPipe files live in `xca/4/camera`.
 Set Settings > Pages > Source to GitHub Actions once.
 Downloaded asset packs (`*.zip`) are not committed. Their extracted files live in `game/assets`.

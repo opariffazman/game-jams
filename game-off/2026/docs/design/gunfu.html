@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en" data-theme="black">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Game Off 2026 - SHIFT - gun-fu reel proposals</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/daisyui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/themes.css">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.2.4/dist/index.global.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :where(.grid, .flex) > * { min-width: 0; }
+  :where(p, h1, h2, h3, h4, li, dd, td, th, .badge) { overflow-wrap: anywhere; }
+  :where(svg) { max-width: 100%; height: auto; }
+  :root {
+    --bg: #08080c; --panel: #13131a; --line: #2c2c3a; --ink: #f6f6f8; --mute: #bcbccb;
+    --mag: #ff2e88; --cy: #19e3ff; --amber: #ffb020;
+  }
+  html, body { background: var(--bg); color: var(--ink); }
+  body { font-family: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; line-height: 1.55; }
+  h1, h2, h3 { font-family: "Arial Black", "Helvetica Neue", Impact, sans-serif; letter-spacing: -0.02em; text-transform: uppercase; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+  .eyebrow { color: var(--amber); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+  .chip { display: inline-block; border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; font-size: 12px; background: var(--panel); }
+  .chip.hot { border-color: var(--mag); color: var(--mag); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 22px; }
+  .muted { color: var(--mute); }
+  .mag { color: var(--mag); } .cy { color: var(--cy); } .amber { color: var(--amber); }
+  a { color: var(--cy); text-decoration: underline; text-underline-offset: 3px; }
+  .proposal { display: grid; grid-template-columns: minmax(0, 230px) minmax(0, 1fr); gap: 28px; }
+  @media (max-width: 760px) { .proposal { grid-template-columns: minmax(0, 1fr); } .phone { max-width: 220px; margin: 0 auto; } }
+  .phone { color: var(--mute); }
+  .loop { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 10px 0 14px; }
+  .loop span.step { background: #1c1c28; border: 1px solid var(--line); border-radius: 10px; padding: 4px 10px; font-size: 13px; }
+  .loop span.arrow { color: var(--mag); }
+  dl.spec { display: grid; grid-template-columns: minmax(0, 110px) minmax(0, 1fr); gap: 8px 14px; font-size: 14px; }
+  dl.spec dt { color: var(--amber); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; padding-top: 2px; }
+  dl.spec dd { margin: 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  th { color: var(--mute); font-weight: 600; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
+  .score { display: inline-flex; gap: 3px; }
+  .score i { width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--mute); display: block; }
+  .score i.on { background: var(--mag); border-color: var(--mag); }
+  .tablewrap { overflow-x: auto; }
+  fieldset.verdict { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin: 0 0 12px; }
+  fieldset.verdict legend { padding: 0 8px; font-weight: 700; }
+  .opt { display: inline-flex; align-items: center; gap: 8px; margin: 6px 18px 6px 0; min-height: 44px; cursor: pointer; }
+  .opt input { width: 22px; height: 22px; accent-color: var(--mag); }
+  textarea, select { width: 100%; background: #0d0d14; color: var(--ink); border: 1px solid var(--mute); border-radius: 10px; padding: 10px 12px; font: inherit; }
+  .go { background: var(--mag); color: #08080c; font-weight: 800; border: 0; border-radius: 12px; padding: 14px 22px; min-height: 48px; cursor: pointer; font-family: inherit; }
+  .go:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid var(--cy); outline-offset: 2px; }
+  .status { margin-left: 12px; color: var(--amber); }
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; }
+</style>
+</head>
+<body>
+
+<header class="wrap" style="padding-top:48px;padding-bottom:12px">
+  <p class="eyebrow">Game Off 2026 / theme SHIFT / round two: gun-fu</p>
+  <h1 style="font-size:clamp(34px,6vw,64px);line-height:1;margin:8px 0 14px">One tap in.<br><span class="mag">A whole ballet out.</span></h1>
+  <p class="muted" style="max-width:740px;font-size:16px">Decision: pick the gun-fu game we build. The player makes one simple choice. The game plays it out as a stylish, choreographed move, then replays it as a clip made for reels. Every proposal keeps the earlier limits: Godot 4 on itch.io, portrait, one thumb, accessible.</p>
+  <p style="margin-top:14px">
+    <span class="chip hot">Original characters, no film likeness</span>
+    <span class="chip hot">Silhouette violence, no blood</span>
+    <span class="chip">Godot 4 Compatibility</span>
+    <span class="chip">Portrait 9:16 = reel native</span>
+    <span class="chip">One thumb</span>
+    <span class="chip">Flash-safe mode</span>
+  </p>
+</header>
+
+<main class="wrap" style="display:grid;gap:36px;padding-top:24px;padding-bottom:80px">
+
+<!-- RESEARCH -->
+<section aria-labelledby="research">
+  <p class="eyebrow">01 / Research</p>
+  <h2 id="research" style="font-size:28px;margin:4px 0 16px">What makes a clip worth sharing</h2>
+  <div class="two">
+    <article class="card">
+      <h3 style="font-size:16px" class="amber">The design trick: simple input, rich output</h3>
+      <p>Superhot proves the pattern. Time moves only when you move, so one small input produces a big cinematic result. Reviewers call it more puzzle than shooter. That also makes it playable by anyone.</p>
+      <p class="muted" style="font-size:13px">Sources: <a href="https://en.wikipedia.org/wiki/Superhot">Superhot on Wikipedia</a>, <a href="https://www.giantbomb.com/profile/gamer_152/blog/time-is-on-your-side-the-gameplay-of-superhot/117329/">Giant Bomb analysis of its time mechanic</a>.</p>
+    </article>
+    <article class="card">
+      <h3 style="font-size:16px" class="mag">Reel anatomy (my judgment, not sourced)</h3>
+      <ul style="padding-left:18px;margin:0">
+        <li><b>Silhouette:</b> readable at phone size in one frame.</li>
+        <li><b>Speed ramp:</b> real speed, then a dip to slow-mo, then a snap back on the hit.</li>
+        <li><b>Money shot:</b> one clear kill moment every 5 to 8 seconds.</li>
+        <li><b>Clean frame:</b> reel mode hides all UI.</li>
+        <li><b>Loop length:</b> 15 to 30 seconds, ends where it starts.</li>
+        <li><b>Beat sync:</b> hits land on the music.</li>
+      </ul>
+    </article>
+    <article class="card">
+      <h3 style="font-size:16px" class="cy">Godot and web facts found</h3>
+      <ul style="padding-left:18px;margin:0">
+        <li>Slow-mo is <code>Engine.time_scale</code>. Audio does not follow it, so set <code>AudioServer.playback_speed_scale</code> too. Tween the ramp, never snap it.</li>
+        <li>Shaders that read <code>TIME</code> slow down with <code>Engine.time_scale</code>. Plan for that in glow and scanline shaders.</li>
+        <li><code>JavaScriptBridge.eval</code> reaches the page canvas on web builds.</li>
+        <li>Sharing a file uses the Web Share API: call <code>navigator.canShare()</code>, then <code>navigator.share()</code> inside a tap. It needs HTTPS. An iframe needs <code>allow="web-share"</code>.</li>
+      </ul>
+      <p class="muted" style="font-size:13px">Sources: <a href="https://forum.godotengine.org/t/create-a-slow-motion-effect-with-only-a-few-lines-of-code/36098">Godot forum slow-motion thread</a>, <a href="https://gogogodot.itch.io/bullet-time">Godot 4 bullet-time addon</a>, <a href="https://docs.godotengine.org/en/4.1/tutorials/export/exporting_for_web.html">Godot web export docs</a>, <a href="https://web.dev/articles/web-share">web.dev Web Share guide</a>.</p>
+    </article>
+    <article class="card" style="border-color:var(--amber)">
+      <h3 style="font-size:16px" class="amber">Unconfirmed and risky</h3>
+      <ul style="padding-left:18px;margin:0">
+        <li><b>In-game recording:</b> <code>canvas.captureStream()</code> into <code>MediaRecorder</code> is plausible. No source confirms it in a Godot web build. Test it on day one.</li>
+        <li><b>itch.io iframe:</b> unknown whether it sets <code>allow="web-share"</code>. Plan a download fallback.</li>
+        <li><b>iPhone:</b> the Godot 4.1 docs say web exports do not run on iOS. Newer versions probably fix this. Check on a real iPhone with the current Godot version before committing.</li>
+        <li><b>Fallback that always works:</b> a clean Reel Mode that players screen-record themselves.</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<!-- REEL ENGINE -->
+<section aria-labelledby="engine">
+  <p class="eyebrow">02 / Shared reel engine</p>
+  <h2 id="engine" style="font-size:28px;margin:4px 0 16px">Every proposal gets the same showcase pipeline</h2>
+  <div class="card proposal" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+    <figure style="margin:0">
+      <svg viewBox="0 0 520 190" role="img" aria-labelledby="eng-t" width="100%" style="color:var(--mute)">
+        <title id="eng-t">Pipeline: the input log feeds a deterministic simulation, a camera director adds cuts and speed ramps, then a clip is exported and shared.</title>
+        <g font-family="ui-monospace,monospace" font-size="12" fill="#f6f6f8">
+          <rect id="eng-a" x="6" y="30" width="108" height="64" rx="12" fill="#1c1c28" stroke="#ffb020" stroke-width="2"/>
+          <text x="60" y="58" text-anchor="middle">INPUT LOG</text><text x="60" y="76" text-anchor="middle" fill="#bcbccb" font-size="10">taps + seed</text>
+          <rect id="eng-b" x="142" y="30" width="108" height="64" rx="12" fill="#1c1c28" stroke="#ff2e88" stroke-width="2"/>
+          <text x="196" y="58" text-anchor="middle">REPLAY SIM</text><text x="196" y="76" text-anchor="middle" fill="#bcbccb" font-size="10">same result</text>
+          <rect id="eng-c" x="278" y="30" width="108" height="64" rx="12" fill="#1c1c28" stroke="#19e3ff" stroke-width="2"/>
+          <text x="332" y="58" text-anchor="middle">DIRECTOR</text><text x="332" y="76" text-anchor="middle" fill="#bcbccb" font-size="10">cuts + ramps</text>
+          <rect id="eng-d" x="414" y="30" width="100" height="64" rx="12" fill="#1c1c28" stroke="#f6f6f8" stroke-width="2"/>
+          <text x="464" y="58" text-anchor="middle">9:16 CLIP</text><text x="464" y="76" text-anchor="middle" fill="#bcbccb" font-size="10">share / save</text>
+        </g>
+        <g stroke="#ff2e88" stroke-width="2" fill="none"><path d="M114 62 H138"/><path d="M250 62 H274"/><path d="M386 62 H410"/></g>
+        <g fill="#ff2e88"><polygon points="138,57 146,62 138,67"/><polygon points="274,57 282,62 274,67"/><polygon points="410,57 418,62 410,67"/></g>
+        <text x="6" y="130" font-size="11" fill="#bcbccb" font-family="ui-monospace,monospace">Deterministic replay: the log is a few bytes. It doubles as a share code.</text>
+        <text x="6" y="150" font-size="11" fill="#bcbccb" font-family="ui-monospace,monospace">Fallback if recording fails: Reel Mode (no UI) for screen capture.</text>
+      </svg>
+    </figure>
+    <figure style="margin:0">
+      <svg viewBox="0 0 520 190" role="img" aria-labelledby="ramp-t" width="100%">
+        <title id="ramp-t">Speed ramp graph. Time scale holds at one hundred percent, dips to about ten percent at the hit, then returns to one hundred percent.</title>
+        <g stroke="#2c2c3a"><path d="M40 20 V150 H500"/><path d="M40 50 H500" stroke-dasharray="3 5"/></g>
+        <path id="ramp-curve" d="M40 50 H150 C190 50 200 140 240 140 H280 C310 140 320 50 360 50 H500" fill="none" stroke="#ff2e88" stroke-width="3"/>
+        <circle cx="240" cy="140" r="6" fill="#ffb020"/>
+        <g font-family="ui-monospace,monospace" font-size="11" fill="#f6f6f8">
+          <text x="46" y="44">100%</text><text x="46" y="134">10%</text>
+          <text x="240" y="168" text-anchor="middle" fill="#ffb020">HIT STOP + MONEY SHOT</text>
+          <text x="160" y="40" text-anchor="middle" fill="#bcbccb">ease in</text>
+          <text x="340" y="40" text-anchor="middle" fill="#bcbccb">snap back</text>
+          <text x="500" y="168" text-anchor="end" fill="#bcbccb">time</text>
+        </g>
+      </svg>
+    </figure>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <dl class="spec">
+      <dt>Look</dt><dd>Neon noir. Black world, flat silhouettes, one magenta rim light, one cyan rim light, amber muzzle flash. Silhouettes keep animation cheap and read well on a phone.</dd>
+      <dt>Animation</dt><dd>Pose-to-pose. Six to eight poses per move, smear arcs between them, a 60 ms hit stop on impact. Stick limbs drawn with <code>Line2D</code> avoid a full rig.</dd>
+      <dt>Juice</dt><dd><code>Camera2D</code> punch zoom, bullet trails with <code>Line2D</code>, shell casings, a chromatic aberration screen shader, and a title card at the end.</dd>
+      <dt>Flash-safe</dt><dd>Muzzle flashes cover a small area and never repeat more than three times per second. A toggle removes flashes and screen shake. Slow-mo helps readability for everyone.</dd>
+      <dt>Content</dt><dd>Original hitman character and original music. No film name, likeness, or soundtrack. Enemies drop as silhouettes with no blood, which also keeps the itch.io page easy to tag.</dd>
+    </dl>
+  </div>
+</section>
+
+<!-- PROPOSALS -->
+<section aria-labelledby="props" style="display:grid;gap:22px">
+  <div>
+    <p class="eyebrow">03 / Proposals</p>
+    <h2 id="props" style="font-size:28px;margin:4px 0 0">Five gun-fu games</h2>
+  </div>
+
+  <!-- G1 -->
+  <article class="card proposal" id="g1" aria-labelledby="g1h">
+    <figure class="phone" style="margin:0">
+      <svg viewBox="0 0 180 360" role="img" aria-labelledby="g1t" width="100%">
+        <title id="g1t">Time Thumb. A silhouette hitman mid-flip surrounded by frozen bullets. A dotted line shows the thumb drag. A gauge at the top shows time at twelve percent.</title>
+        <rect x="4" y="4" width="172" height="352" rx="26" fill="#08080c" stroke="currentColor" stroke-width="2"/>
+        <text x="20" y="32" font-size="10" fill="#bcbccb" font-family="ui-monospace,monospace">TIME</text>
+        <rect x="52" y="24" width="100" height="9" rx="4" fill="none" stroke="#bcbccb"/>
+        <rect x="52" y="24" width="14" height="9" rx="4" fill="#19e3ff"/>
+        <g id="g1-enemies" stroke="#ff2e88" stroke-width="3" stroke-linecap="round" fill="none">
+          <g transform="translate(40 80)"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-10 -2 M0 -10 L12 -12 M0 6 L-7 20 M0 6 L8 18"/></g>
+          <g transform="translate(140 96)"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-12 -12 M0 -10 L10 -2 M0 6 L-8 18 M0 6 L7 20"/></g>
+          <g transform="translate(90 70)"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-10 -4 M0 -10 L10 -4 M0 6 L-7 20 M0 6 L7 20"/></g>
+        </g>
+        <g fill="#ffb020"><circle cx="54" cy="68" r="5" opacity=".9"/><circle cx="128" cy="84" r="5" opacity=".9"/><circle cx="90" cy="56" r="5" opacity=".9"/></g>
+        <g id="g1-bullets" stroke="#19e3ff" stroke-width="2" stroke-linecap="round">
+          <path d="M58 90 L84 168"/><path d="M126 100 L100 176"/><path d="M92 78 L92 150"/><path d="M62 98 L110 190"/>
+        </g>
+        <g fill="#19e3ff"><circle cx="84" cy="168" r="3"/><circle cx="100" cy="176" r="3"/><circle cx="92" cy="150" r="3"/><circle cx="110" cy="190" r="3"/></g>
+        <g id="g1-hero" transform="translate(88 228) rotate(-35)" stroke="#f6f6f8" stroke-width="3.5" stroke-linecap="round" fill="none">
+          <circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-12 -16 M0 -10 L12 -2 M0 6 L-12 14 M0 6 L10 20"/>
+        </g>
+        <path d="M20 262 Q60 230 78 236" fill="none" stroke="#ff2e88" stroke-width="2" stroke-dasharray="2 5" opacity=".8"/>
+        <path d="M112 232 Q140 236 154 214" fill="none" stroke="#ffb020" stroke-width="2" opacity=".7"/>
+        <circle cx="90" cy="318" r="30" fill="none" stroke="#ff2e88" stroke-width="2" stroke-dasharray="4 4"/>
+        <circle cx="106" cy="304" r="12" fill="#ff2e88"/>
+        <text x="90" y="354" font-size="9" fill="#bcbccb" text-anchor="middle" font-family="ui-monospace,monospace">DRAG = TIME</text>
+      </svg>
+    </figure>
+    <div>
+      <p class="eyebrow">G1 / bullet-time dance</p>
+      <h3 id="g1h" style="font-size:30px;margin:2px 0 6px">Time Thumb</h3>
+      <p>Your thumb is the clock. Drag and time runs. Lift and the room freezes with bullets hanging in the air. Steer the hitman through the frozen storm. He auto-fires, flips, and disarms anything he passes.</p>
+      <div class="loop"><span class="step">Room freezes</span><span class="arrow">&rarr;</span><span class="step">Read bullets</span><span class="arrow">&rarr;</span><span class="step">Drag a path</span><span class="arrow">&rarr;</span><span class="step">Auto strikes</span><span class="arrow">&rarr;</span><span class="step">Room clear</span><span class="arrow">&rarr;</span><span class="step">Reel replay</span></div>
+      <dl class="spec">
+        <dt>Thumb</dt><dd>Drag anywhere in the bottom zone. Drag speed sets time speed. Lifting stops time. No second input.</dd>
+        <dt>Cool</dt><dd>Frozen bullets with glowing trails make a great still frame. The replay plays the same run at real speed, then ramps down at each kill.</dd>
+        <dt>SHIFT</dt><dd>Shift time. Slow, stop, and rewind it with your thumb.</dd>
+        <dt>Loops</dt><dd>Seconds: read and drag. Minutes: one room. Days: daily room and style-rank medals.</dd>
+        <dt>Access</dt><dd>No reflex needed. The player controls the pace, so it suits slower players. A limit on drag speed removes motion spikes.</dd>
+        <dt>Godot</dt><dd>Set <code>Engine.time_scale</code> from drag speed with a floor of zero. Bullets are simple <code>Area2D</code> nodes. Safe build.</dd>
+        <dt>Risk</dt><dd>A close cousin of Superhot. Needs its own twist. The Hot Swap proposal supplies one.</dd>
+      </dl>
+    </div>
+  </article>
+
+  <!-- G2 -->
+  <article class="card proposal" id="g2" aria-labelledby="g2h">
+    <figure class="phone" style="margin:0">
+      <svg viewBox="0 0 180 360" role="img" aria-labelledby="g2t" width="100%">
+        <title id="g2t">Hot Swap. Three armed enemies aim at the hero. Curved arrows show the hero swapping places with an enemy so another enemy's shot hits a third. A HUD shows two of three swaps left.</title>
+        <rect x="4" y="4" width="172" height="352" rx="26" fill="#08080c" stroke="currentColor" stroke-width="2"/>
+        <text x="20" y="32" font-size="10" fill="#bcbccb" font-family="ui-monospace,monospace">SWAPS</text>
+        <g fill="#ff2e88"><polygon points="62,22 69,29 62,36 55,29"/><polygon points="80,22 87,29 80,36 73,29"/></g>
+        <polygon points="98,22 105,29 98,36 91,29" fill="none" stroke="#bcbccb"/>
+        <text x="158" y="32" font-size="10" fill="#ffb020" text-anchor="end" font-family="ui-monospace,monospace">PAR 3</text>
+        <g stroke-width="3" stroke-linecap="round" fill="none">
+          <g transform="translate(46 100)" stroke="#ff2e88"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-9 -2 M0 -10 L12 -6 M0 6 L-7 20 M0 6 L8 18"/></g>
+          <g transform="translate(134 100)" stroke="#ff2e88"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-12 -6 M0 -10 L9 -2 M0 6 L-8 18 M0 6 L7 20"/></g>
+          <g transform="translate(90 176)" stroke="#ff2e88"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-10 -4 M0 -10 L10 -4 M0 6 L-7 20 M0 6 L7 20"/></g>
+          <g transform="translate(90 268)" stroke="#f6f6f8"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-10 -4 M0 -10 L12 -14 M0 6 L-7 20 M0 6 L7 20"/></g>
+        </g>
+        <g stroke="#ffb020" stroke-width="2" stroke-dasharray="5 4" fill="none">
+          <path d="M60 96 L82 168"/><path d="M122 96 L98 168"/><path d="M90 176 L90 252"/>
+        </g>
+        <path d="M70 262 C20 230 20 150 40 116" fill="none" stroke="#19e3ff" stroke-width="3"/>
+        <polygon points="34,120 42,112 47,122" fill="#19e3ff"/>
+        <path d="M110 262 C160 230 160 150 140 116" fill="none" stroke="#19e3ff" stroke-width="2" stroke-dasharray="3 4" opacity=".7"/>
+        <circle cx="46" cy="100" r="22" fill="none" stroke="#19e3ff" stroke-width="2"/>
+        <path d="M82 164 l16 16 m0 -16 l-16 16" stroke="#ff2e88" stroke-width="3" opacity=".0"/>
+        <rect x="14" y="300" width="152" height="46" rx="14" fill="#1c1c28" stroke="#19e3ff" stroke-width="2"/>
+        <text x="90" y="328" font-size="12" fill="#f6f6f8" text-anchor="middle" font-family="ui-monospace,monospace">TAP AN ENEMY TO SWAP</text>
+      </svg>
+    </figure>
+    <div>
+      <p class="eyebrow">G2 / tactical gun-fu puzzle</p>
+      <h3 id="g2h" style="font-size:30px;margin:2px 0 6px">Hot Swap</h3>
+      <p>The room freezes. Every gunman telegraphs a shot line. Tap one enemy and you swap places with that enemy. You land with a move: a disarm, a throw, a shot. Their friends are still firing, and the lines now cross the wrong body. Clear the room in the fewest swaps.</p>
+      <div class="loop"><span class="step">Frozen room</span><span class="arrow">&rarr;</span><span class="step">Read shot lines</span><span class="arrow">&rarr;</span><span class="step">Tap to swap</span><span class="arrow">&rarr;</span><span class="step">1 s slow-mo ballet</span><span class="arrow">&rarr;</span><span class="step">Freeze again</span><span class="arrow">&rarr;</span><span class="step">Reel replay</span></div>
+      <dl class="spec">
+        <dt>Thumb</dt><dd>One tap on a target. Targets are large circles in the bottom two thirds of the screen. A left or right lane layout moves the room for one-thumb reach.</dd>
+        <dt>Cool</dt><dd>Each swap triggers a hand-timed move with a speed ramp. Enemies shoot each other, so the reel shows tidy chain kills. The end replay cuts between three camera angles.</dd>
+        <dt>SHIFT</dt><dd>Shift positions. Swap charges are the resource. Fewer swaps earn more stars.</dd>
+        <dt>Loops</dt><dd>Seconds: read, tap, watch. Minutes: one room, one to two minutes. Days: daily room plus a share code made of the tap list.</dd>
+        <dt>Access</dt><dd>Turn-based with no timer. Shot lines use dash patterns and arrows, not only color. A preview ghost shows the outcome before a tap commits (optional).</dd>
+        <dt>Godot</dt><dd>Fully deterministic. The tap list is the whole replay, so the reel engine is easy. Needs enemy types: pistol, shotgun cone, shield, knife.</dd>
+        <dt>Risk</dt><dd>Level design needs care. Ten rooms is enough. A hand-timed move per enemy type costs animation time.</dd>
+      </dl>
+    </div>
+  </article>
+
+  <!-- G3 -->
+  <article class="card proposal" id="g3" aria-labelledby="g3h">
+    <figure class="phone" style="margin:0">
+      <svg viewBox="0 0 180 360" role="img" aria-labelledby="g3t" width="100%">
+        <title id="g3t">Echo Kata. Three copies of the hero in different colors perform at once in one room. A timeline at the bottom shows three tracks with a playhead.</title>
+        <rect x="4" y="4" width="172" height="352" rx="26" fill="#08080c" stroke="currentColor" stroke-width="2"/>
+        <text x="20" y="32" font-size="10" fill="#bcbccb" font-family="ui-monospace,monospace">TAKE 3 / 3</text>
+        <g stroke-width="3" stroke-linecap="round" fill="none">
+          <g transform="translate(52 100)" stroke="#ff2e88"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-9 -2 M0 -10 L12 -6 M0 6 L-7 20 M0 6 L8 18"/></g>
+          <g transform="translate(128 110)" stroke="#ff2e88"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-12 -6 M0 -10 L9 -2 M0 6 L-8 18 M0 6 L7 20"/></g>
+          <g transform="translate(90 150)" stroke="#ff2e88"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-10 -4 M0 -10 L10 -4 M0 6 L-7 20 M0 6 L7 20"/></g>
+        </g>
+        <path d="M36 250 Q50 200 80 196 T120 166" fill="none" stroke="#19e3ff" stroke-width="2" stroke-dasharray="4 4"/>
+        <path d="M144 250 Q130 210 108 206 T66 172" fill="none" stroke="#ffb020" stroke-width="2" stroke-dasharray="4 4"/>
+        <g stroke-width="3.5" stroke-linecap="round" fill="none">
+          <g transform="translate(80 196)" stroke="#19e3ff" opacity=".85"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-11 -6 M0 -10 L12 -14 M0 6 L-9 18 M0 6 L8 20"/></g>
+          <g transform="translate(108 206)" stroke="#ffb020" opacity=".85"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-12 -14 M0 -10 L10 -4 M0 6 L-8 20 M0 6 L9 18"/></g>
+          <g transform="translate(90 236)" stroke="#f6f6f8"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-10 -4 M0 -10 L12 -10 M0 6 L-7 20 M0 6 L7 20"/></g>
+        </g>
+        <g id="g3-timeline">
+          <rect x="14" y="278" width="152" height="12" rx="4" fill="#1c1c28"/><rect x="14" y="278" width="110" height="12" rx="4" fill="#19e3ff" opacity=".8"/>
+          <rect x="14" y="296" width="152" height="12" rx="4" fill="#1c1c28"/><rect x="14" y="296" width="80" height="12" rx="4" fill="#ffb020" opacity=".8"/>
+          <rect x="14" y="314" width="152" height="12" rx="4" fill="#1c1c28"/><rect x="14" y="314" width="50" height="12" rx="4" fill="#f6f6f8" opacity=".9"/>
+          <path d="M64 272 V332" stroke="#ff2e88" stroke-width="3"/>
+        </g>
+        <text x="90" y="348" font-size="9" fill="#bcbccb" text-anchor="middle" font-family="ui-monospace,monospace">STACK THREE TAKES</text>
+      </svg>
+    </figure>
+    <div>
+      <p class="eyebrow">G3 / timeline choreography</p>
+      <h3 id="g3h" style="font-size:30px;margin:2px 0 6px">Echo Kata</h3>
+      <p>Record take one. Take two plays take one as a ghost while you record a second hitman. Take three adds a third. The room is cleared by three of you in a single synchronized scene. The final replay is the shareable fight scene.</p>
+      <div class="loop"><span class="step">Record take</span><span class="arrow">&rarr;</span><span class="step">Ghosts replay</span><span class="arrow">&rarr;</span><span class="step">Add a take</span><span class="arrow">&rarr;</span><span class="step">All three sync</span><span class="arrow">&rarr;</span><span class="step">Director cut</span></div>
+      <dl class="spec">
+        <dt>Thumb</dt><dd>Drag a path and tap to strike during each take. A take is 6 seconds. Hold-to-toggle options replace any sustained hold.</dd>
+        <dt>Cool</dt><dd>The strongest reel moment of the five. Three colored hitmen crossing paths in one clean shot looks like a choreographer's cut.</dd>
+        <dt>SHIFT</dt><dd>Shift time. You shift between takes, past and present.</dd>
+        <dt>Loops</dt><dd>Seconds: one take. Minutes: one three-take scene. Days: daily room.</dd>
+        <dt>Access</dt><dd>Takes are untimed to start. Ghost colors also differ by trail pattern. Slow mode doubles take length.</dd>
+        <dt>Godot</dt><dd>Needs a fixed-step deterministic sim and an input recorder. Replays must match to the frame.</dd>
+        <dt>Risk</dt><dd>High. A timing drift breaks the whole design. Strong stretch goal, risky as the main game.</dd>
+      </dl>
+    </div>
+  </article>
+
+  <!-- G4 -->
+  <article class="card proposal" id="g4" aria-labelledby="g4h">
+    <figure class="phone" style="margin:0">
+      <svg viewBox="0 0 180 360" role="img" aria-labelledby="g4t" width="100%">
+        <title id="g4t">Kata Beat. The top half shows the hero mid-kick with amber smear arcs. The bottom half shows three lanes with falling notes and a hit line above big tap pads.</title>
+        <rect x="4" y="4" width="172" height="352" rx="26" fill="#08080c" stroke="currentColor" stroke-width="2"/>
+        <text x="20" y="32" font-size="10" fill="#ffb020" font-family="ui-monospace,monospace">COMBO x24</text>
+        <g stroke-width="3.5" stroke-linecap="round" fill="none">
+          <g transform="translate(120 98)" stroke="#ff2e88"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-12 -2 M0 -10 L8 -2 M0 6 L-8 20 M0 6 L8 18"/></g>
+          <g transform="translate(66 110) rotate(-8)" stroke="#f6f6f8"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-12 -16 M0 -10 L10 -14 M0 6 L-12 12 M0 6 L36 -8"/></g>
+        </g>
+        <path d="M66 96 Q90 60 112 96" fill="none" stroke="#ffb020" stroke-width="3" opacity=".8"/>
+        <path d="M64 120 Q90 82 118 118" fill="none" stroke="#ffb020" stroke-width="2" opacity=".5"/>
+        <g id="g4-lanes">
+          <rect x="14" y="170" width="46" height="120" rx="8" fill="#13131a" stroke="#2c2c3a"/>
+          <rect x="67" y="170" width="46" height="120" rx="8" fill="#13131a" stroke="#2c2c3a"/>
+          <rect x="120" y="170" width="46" height="120" rx="8" fill="#13131a" stroke="#2c2c3a"/>
+          <circle cx="37" cy="196" r="9" fill="#19e3ff"/><rect x="82" y="224" width="16" height="16" fill="#ff2e88"/>
+          <polygon points="143,206 152,222 134,222" fill="#ffb020"/><circle cx="37" cy="250" r="9" fill="#19e3ff"/>
+          <path d="M14 270 H166" stroke="#f6f6f8" stroke-width="2"/>
+        </g>
+        <g fill="#1c1c28" stroke="#ff2e88" stroke-width="2">
+          <rect x="14" y="298" width="46" height="46" rx="12"/><rect x="67" y="298" width="46" height="46" rx="12"/><rect x="120" y="298" width="46" height="46" rx="12"/>
+        </g>
+        <g fill="#f6f6f8" font-size="10" text-anchor="middle" font-family="ui-monospace,monospace"><text x="37" y="325">PUNCH</text><text x="90" y="325">KICK</text><text x="143" y="325">SHOOT</text></g>
+      </svg>
+    </figure>
+    <div>
+      <p class="eyebrow">G4 / rhythm gun-fu</p>
+      <h3 id="g4h" style="font-size:30px;margin:2px 0 6px">Kata Beat</h3>
+      <p>Hitting notes on the beat performs a gun-kata routine on the top half of the screen. Each lane fires a different move. A perfect streak chains moves into a long unbroken combo. A miss stumbles the hero, not the music.</p>
+      <div class="loop"><span class="step">Notes fall</span><span class="arrow">&rarr;</span><span class="step">Tap lane on beat</span><span class="arrow">&rarr;</span><span class="step">Move plays</span><span class="arrow">&rarr;</span><span class="step">Combo builds</span><span class="arrow">&rarr;</span><span class="step">Finisher</span></div>
+      <dl class="spec">
+        <dt>Thumb</dt><dd>Three large pads in the bottom zone. One thumb covers all three. A single-lane mode merges them for one-button play.</dd>
+        <dt>Cool</dt><dd>Beat-synced choreography, finishers, and a strong music hook. Easy to cut into reels because the music already sets the rhythm.</dd>
+        <dt>SHIFT</dt><dd>Shift gears. Each lane is a different move or weapon. Gear changes accelerate the tempo.</dd>
+        <dt>Loops</dt><dd>Seconds: one note. Minutes: one track. Days: new track and a score board.</dd>
+        <dt>Access</dt><dd>Weakest here. Rhythm needs timing precision. Offer wide windows, auto-play assist, and a latency offset slider. Browser audio latency varies.</dd>
+        <dt>Godot</dt><dd>Chart data as a <code>Resource</code>. Audio sync on web needs a calibration screen.</dd>
+        <dt>Risk</dt><dd>Needs original music and a chart per track. Weakest tie to SHIFT.</dd>
+      </dl>
+    </div>
+  </article>
+
+  <!-- G5 -->
+  <article class="card proposal" id="g5" aria-labelledby="g5h">
+    <figure class="phone" style="margin:0">
+      <svg viewBox="0 0 180 360" role="img" aria-labelledby="g5t" width="100%">
+        <title id="g5t">Duel Shift. A boss at the top aims a telegraphed shot cone at the hero. Three stance pads at the bottom offer lean left, duck, and lean right.</title>
+        <rect x="4" y="4" width="172" height="352" rx="26" fill="#08080c" stroke="currentColor" stroke-width="2"/>
+        <text x="20" y="32" font-size="10" fill="#bcbccb" font-family="ui-monospace,monospace">BOSS</text>
+        <rect x="52" y="24" width="100" height="9" rx="4" fill="none" stroke="#bcbccb"/><rect x="52" y="24" width="64" height="9" rx="4" fill="#ff2e88"/>
+        <g stroke-width="3.5" stroke-linecap="round" fill="none">
+          <g transform="translate(90 90)" stroke="#ff2e88"><circle cx="0" cy="-20" r="6" fill="#08080c"/><path d="M0 -14 V8 M0 -10 L-12 0 M0 -10 L14 6 M0 8 L-8 24 M0 8 L9 22"/></g>
+          <g transform="translate(90 252)" stroke="#f6f6f8"><circle cx="0" cy="-20" r="5" fill="#08080c"/><path d="M0 -14 V6 M0 -10 L-10 -4 M0 -10 L12 -16 M0 6 L-7 20 M0 6 L7 20"/></g>
+        </g>
+        <polygon points="104,100 70,236 118,236" fill="#ffb020" opacity=".22"/>
+        <path d="M104 100 L94 236" stroke="#ffb020" stroke-width="2" stroke-dasharray="6 4"/>
+        <circle cx="104" cy="100" r="9" fill="none" stroke="#ffb020" stroke-width="2"/>
+        <text x="90" y="156" font-size="10" fill="#ffb020" text-anchor="middle" font-family="ui-monospace,monospace">TELL: HIGH SHOT</text>
+        <g fill="#1c1c28" stroke="#19e3ff" stroke-width="2">
+          <rect x="14" y="298" width="46" height="46" rx="12"/><rect x="67" y="298" width="46" height="46" rx="12"/><rect x="120" y="298" width="46" height="46" rx="12"/>
+        </g>
+        <g fill="#f6f6f8" font-size="10" text-anchor="middle" font-family="ui-monospace,monospace"><text x="37" y="325">LEFT</text><text x="90" y="325">DUCK</text><text x="143" y="325">RIGHT</text></g>
+      </svg>
+    </figure>
+    <div>
+      <p class="eyebrow">G5 / boss duel</p>
+      <h3 id="g5h" style="font-size:30px;margin:2px 0 6px">Duel Shift</h3>
+      <p>A one-on-one duel in a neon hallway. The boss telegraphs a shot. Shift your stance to dodge. A clean dodge opens a counter, and the hero chains a cinematic takedown. Each boss has a new tell pattern.</p>
+      <div class="loop"><span class="step">Boss tells</span><span class="arrow">&rarr;</span><span class="step">Shift stance</span><span class="arrow">&rarr;</span><span class="step">Dodge</span><span class="arrow">&rarr;</span><span class="step">Counter strike</span><span class="arrow">&rarr;</span><span class="step">Phase change</span><span class="arrow">&rarr;</span><span class="step">Takedown</span></div>
+      <dl class="spec">
+        <dt>Thumb</dt><dd>Three stance pads, or swipe left, down, right. One tap per beat of the duel.</dd>
+        <dt>Cool</dt><dd>Boss intro cards, close-ups, and a fixed takedown for each boss. Great for a trailer, weaker as a sharable run.</dd>
+        <dt>SHIFT</dt><dd>Shift stance. Tell patterns also shift between phases.</dd>
+        <dt>Loops</dt><dd>Seconds: tell and dodge. Minutes: one boss. Days: boss rush with a daily modifier.</dd>
+        <dt>Access</dt><dd>Tells use shape, icon, and sound. A slow mode lengthens each tell. A no-fail mode replays a round instead of ending the duel.</dd>
+        <dt>Godot</dt><dd>State machine per boss. Medium animation cost, because each boss needs several unique poses.</dd>
+        <dt>Risk</dt><dd>Each new boss costs a lot. Three bosses are the floor. Low variety inside a boss.</dd>
+      </dl>
+    </div>
+  </article>
+</section>
+
+<!-- SCORECARD -->
+<section aria-labelledby="score">
+  <p class="eyebrow">04 / Scorecard</p>
+  <h2 id="score" style="font-size:28px;margin:4px 0 8px">How they compare</h2>
+  <p class="muted">Scores run from 1 to 5. Higher is better, including for build safety, where 5 means safest. Scores are my judgment, not measured.</p>
+  <div class="card tablewrap" style="padding:8px">
+    <table>
+      <thead><tr><th scope="col">Game</th><th scope="col">Reel wow</th><th scope="col">Thumb simplicity</th><th scope="col">SHIFT fit</th><th scope="col">Build safety</th><th scope="col">Share loop</th><th scope="col">Accessibility</th></tr></thead>
+      <tbody>
+        <tr><th scope="row" class="cy">G1 Time Thumb</th>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td></tr>
+        <tr><th scope="row" class="mag">G2 Hot Swap</th>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td></tr>
+        <tr><th scope="row" class="amber">G3 Echo Kata</th>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="2 of 5"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td></tr>
+        <tr><th scope="row">G4 Kata Beat</th>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td></tr>
+        <tr><th scope="row">G5 Duel Shift</th>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td>
+          <td><span class="score" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td>
+          <td><span class="score" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- RECOMMENDATION -->
+<section aria-labelledby="rec">
+  <p class="eyebrow">05 / Recommendation</p>
+  <h2 id="rec" style="font-size:28px;margin:4px 0 12px">Build Hot Swap, shown in Time Thumb style</h2>
+  <div class="card">
+    <p>Hot Swap makes the player's input one tap that picks a target. The outcome is fully deterministic. That makes the reel engine simple, because the tap list is the replay. It also needs no timer, so it is the most accessible. The world stays frozen until a tap, so the look borrows the best part of Time Thumb: bullets hang in the air while you plan.</p>
+    <ul style="padding-left:18px">
+      <li><b>Week 1:</b> One room, silhouette hero, swap move, frozen planning, slow-mo ballet. Go or no-go on feel.</li>
+      <li><b>Week 2:</b> Four enemy types, ten rooms, swap par and stars. Start the music.</li>
+      <li><b>Week 3:</b> Reel engine: deterministic replay, camera director, speed ramps, title card, share code. Test recording and Web Share on real phones.</li>
+      <li><b>Week 4:</b> Daily room, assist toggles, flash-safe mode, device testing, itch.io page, trailer reel.</li>
+    </ul>
+    <p class="muted">Echo Kata is a stretch goal. It reuses the same deterministic replay. Kata Beat and Duel Shift cost more content than they return for a solo jam.</p>
+  </div>
+</section>
+
+<!-- INPUT -->
+<section aria-labelledby="vote">
+  <p class="eyebrow">06 / Your call</p>
+  <h2 id="vote" style="font-size:28px;margin:4px 0 12px">Pick, mix, or cut</h2>
+  <form class="card" data-lavish-question="verdicts" id="verdict-form">
+    <fieldset class="verdict"><legend>G1 Time Thumb</legend>
+      <label class="opt"><input type="radio" name="g1" value="pick"> Pick</label>
+      <label class="opt"><input type="radio" name="g1" value="mix"> Mix in</label>
+      <label class="opt"><input type="radio" name="g1" value="cut"> Cut</label></fieldset>
+    <fieldset class="verdict"><legend>G2 Hot Swap</legend>
+      <label class="opt"><input type="radio" name="g2" value="pick"> Pick</label>
+      <label class="opt"><input type="radio" name="g2" value="mix"> Mix in</label>
+      <label class="opt"><input type="radio" name="g2" value="cut"> Cut</label></fieldset>
+    <fieldset class="verdict"><legend>G3 Echo Kata</legend>
+      <label class="opt"><input type="radio" name="g3" value="pick"> Pick</label>
+      <label class="opt"><input type="radio" name="g3" value="mix"> Mix in</label>
+      <label class="opt"><input type="radio" name="g3" value="cut"> Cut</label></fieldset>
+    <fieldset class="verdict"><legend>G4 Kata Beat</legend>
+      <label class="opt"><input type="radio" name="g4" value="pick"> Pick</label>
+      <label class="opt"><input type="radio" name="g4" value="mix"> Mix in</label>
+      <label class="opt"><input type="radio" name="g4" value="cut"> Cut</label></fieldset>
+    <fieldset class="verdict"><legend>G5 Duel Shift</legend>
+      <label class="opt"><input type="radio" name="g5" value="pick"> Pick</label>
+      <label class="opt"><input type="radio" name="g5" value="mix"> Mix in</label>
+      <label class="opt"><input type="radio" name="g5" value="cut"> Cut</label></fieldset>
+    <p style="margin:14px 0 6px"><label for="share"><b>Reel capture plan</b></label></p>
+    <select id="share" name="share">
+      <option value="">No preference yet</option>
+      <option>Reel Mode only (players screen-record)</option>
+      <option>Try in-game recording first, Reel Mode as fallback</option>
+      <option>Share code only (replay on any device)</option>
+    </select>
+    <p style="margin:14px 0 6px"><label for="notes"><b>Notes, constraints, twists</b></label></p>
+    <textarea id="notes" name="notes" rows="4" placeholder="Anything to add, merge, or drop"></textarea>
+    <p style="margin-top:16px">
+      <button type="submit" class="go">Queue my answer</button>
+      <span class="status" id="vote-status" role="status" aria-live="polite"></span>
+    </p>
+  </form>
+</section>
+
+</main>
+
+<script>
+  document.getElementById('verdict-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    const names = { g1: 'Time Thumb', g2: 'Hot Swap', g3: 'Echo Kata', g4: 'Kata Beat', g5: 'Duel Shift' };
+    const verdicts = {};
+    Object.keys(names).forEach(function (key) { verdicts[names[key]] = data.get(key) || 'no answer'; });
+    const capture = data.get('share') || 'no preference';
+    const notes = (data.get('notes') || '').trim();
+    const summary = Object.keys(verdicts).map(function (name) { return name + ': ' + verdicts[name]; }).join(', ');
+    const status = document.getElementById('vote-status');
+    if (window.lavish && window.lavish.queuePrompt) {
+      window.lavish.queuePrompt(
+        'Gun-fu proposal verdicts. ' + summary + '. Reel capture plan: ' + capture + '.' + (notes ? ' Notes: ' + notes : ''),
+        { tag: 'choice', text: summary, element: form, data: { verdicts: verdicts, capture: capture, notes: notes } }
+      );
+      status.textContent = 'Queued. Press Send to Agent.';
+    } else {
+      status.textContent = 'Lavish is not connected.';
+    }
+  });
+</script>
+</body>
+</html>

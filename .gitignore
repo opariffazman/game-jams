@@ -4,3 +4,7 @@ xca/5/game/tests/e2e/out/
 *.tmp
 xca/5/.certs/
 xca/*/*.zip
+game-off/2026/game/.godot/
+game-off/2026/game/build/
+game-off/2026/archive/*/.godot/
+game-off/2026/.certs/

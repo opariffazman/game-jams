@@ -1,4 +1,5 @@
 [
 	{ "path": "baling-selipar", "title": "Baling Selipar", "note": "3v3 sandal-throwing team game. Xsolla Game Jam, November." },
-	{ "path": "home-by-light", "title": "Home by Light", "note": "Post-apocalyptic lane runner with hand tracking. Xsolla Halloween Game Jam." }
+	{ "path": "home-by-light", "title": "Home by Light", "note": "Post-apocalyptic lane runner with hand tracking. Xsolla Halloween Game Jam." },
+	{ "path": "hot-shift", "title": "Hot Shift", "note": "Roguelite gun-fu puzzle. Shift places with a gunman to chain kills. Game Off 2026, theme SHIFT." }
 ]
