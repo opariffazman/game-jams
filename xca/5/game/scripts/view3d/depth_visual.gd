@@ -19,8 +19,9 @@ const STATE_ANIMATIONS: Dictionary = {
 	&"run": &"sprint",
 	&"carry": &"holding-both",
 	&"dash": &"sprint",
+	&"build": &"interact-right",
 }
-const LOOPING_ANIMATIONS: Array[StringName] = [&"idle", &"sprint", &"walk", &"holding-both"]
+const LOOPING_ANIMATIONS: Array[StringName] = [&"idle", &"sprint", &"walk", &"holding-both", &"interact-right"]
 const THROW_ANIMATION: StringName = &"attack-melee-right"
 const SOLE_COLOR: Color = Color8(144, 87, 65)
 const STRAP_COLOR: Color = Color8(230, 185, 110)
@@ -38,7 +39,7 @@ const OUTLINE_EDGE_PX: float = 1.2
 ## Both hulls write alpha, so they sort by distance in the transparent pass. Render priority fixes the order.
 const OUTLINE_EDGE_PRIORITY: int = 0
 const OUTLINE_RING_PRIORITY: int = 1
-const OUTLINE_EDGE_COLOR: Color = Color(0.04, 0.06, 0.1, 0.9)
+const OUTLINE_EDGE_COLOR: Color = Color(0.04, 0.06, 0.1, 1.0)
 const FLASH_ALPHA: float = 0.85
 const DASH_TRANSPARENCY: float = 0.55
 const GUIDE_DASH_RADIANS: float = 0.07

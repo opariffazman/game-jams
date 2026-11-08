@@ -33,6 +33,8 @@ const DODGE_HOLD: float = 0.25
 const PASS_CLEAR_RADIUS: float = 45.0
 ## Seconds a holder waits for an open lane before it passes anyway.
 const HOLD_LIMIT: float = 2.5
+## Passes a team chains while no shot exists. After this the holder walks at the nearest attacker.
+const MAX_PASS_CHAIN: int = 2
 ## Seconds between holder decisions.
 const DECISION_INTERVAL: float = 0.25
 ## Seconds between lane replans.
@@ -65,6 +67,8 @@ var reaction_delay: float = 0.5
 var dodge_chance: float = 0.5
 ## Chance to take a clear shot, derived from difficulty.
 var shot_chance: float = 0.5
+## Passes per team since the last throw. Static so every bot of a team shares the count.
+static var _pass_chain: Dictionary = {}
 
 ## Multiplier on [member Tuning.build_step_seconds] for this bot, derived from difficulty.
 var build_skill_factor: float = 1.25
@@ -170,6 +174,7 @@ func _maybe_use_power() -> void:
 
 func _enter_phase(phase: int) -> void:
 	_phase = phase
+	_pass_chain.clear()
 	_build_timer = 0.0
 	_carry_time = 0.0
 	_hold_timer = 0.0
@@ -388,11 +393,20 @@ func _holder_step(delta: float) -> void:
 	var shot: Vector2 = _find_shot()
 	if shot != Vector2.ZERO and _rng.randf() < shot_chance:
 		character.throw_sandal(shot, THROW_POWER)
+		_pass_chain[character.team] = 0
 		_hold_timer = 0.0
 		return
+	if int(_pass_chain.get(character.team, 0)) >= MAX_PASS_CHAIN:
+		# Passing never gets a still attacker in range, so the holder closes the distance itself.
+		var prey: Character = _nearest_attacker()
+		if prey != null:
+			character.move_intent = _steer_to(prey.global_position, _throw_range() * 0.6)
+			_next_decision = _clock
+			return
 	var mate: Character = _best_pass_target(_hold_timer > reaction_delay + HOLD_LIMIT)
 	if mate != null:
 		character.pass_to(mate)
+		_pass_chain[character.team] = int(_pass_chain.get(character.team, 0)) + 1
 		_hold_timer = 0.0
 
 
@@ -478,6 +492,17 @@ func _best_pass_target(accept_blocked: bool) -> Character:
 	if best_score < PASS_CLEAR_RADIUS and not accept_blocked:
 		return null
 	return best
+
+
+func _nearest_attacker() -> Character:
+	var nearest: Character = null
+	var best: float = INF
+	for attacker: Character in _alive_members(_other_team()):
+		var distance: float = character.global_position.distance_to(attacker.global_position)
+		if distance < best:
+			best = distance
+			nearest = attacker
+	return nearest
 
 
 func _find_holder() -> Character:

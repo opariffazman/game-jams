@@ -7,7 +7,7 @@ extends Node2D
 ## from [Tuning].
 
 ## Animation states a visual can play.
-const STATES: Array[StringName] = [&"idle", &"run", &"carry", &"throw", &"dash", &"die", &"hit"]
+const STATES: Array[StringName] = [&"idle", &"run", &"carry", &"throw", &"dash", &"die", &"hit", &"build"]
 
 ## Tint the logic node asked for. [constant Color.WHITE] means "use the skin default".
 var team_color: Color = Color.WHITE

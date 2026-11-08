@@ -621,6 +621,8 @@ func _update_visual_state() -> void:
 	var state: StringName = &"idle"
 	if is_invulnerable():
 		state = &"dash"
+	elif is_building():
+		state = &"build"
 	elif carried != null:
 		state = &"carry"
 	elif velocity.length_squared() > 1.0:

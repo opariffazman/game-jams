@@ -35,6 +35,7 @@ func _run_all() -> void:
 	await _test_attacker_dodge()
 	await _test_holder_pass_and_shot()
 	await _test_support_and_loose_sandals()
+	await _test_still_attacker_is_shot_not_passed_around()
 	await _test_dead_bot_and_write_boundary()
 	await _test_topple_balance()
 	await _test_full_match()
@@ -357,6 +358,32 @@ func _test_holder_pass_and_shot() -> void:
 	blocked_bot._hold_timer = 5.0
 	await _drive(blocked_bot, 4)
 	_check(blocked_shots.is_empty(), "holder does not throw through a teammate")
+
+
+func _test_still_attacker_is_shot_not_passed_around() -> void:
+	for difficulty: float in [0.0, 0.5, 1.0]:
+		_build(difficulty)
+		_manager.phase = RoundManager.SCATTER
+		var centre: Vector2 = _arena.centre_spot
+		var holder: Character = _spawn(1, Character.Role.DEFENDER, centre + Vector2(450.0, 120.0))
+		var mate_a: Character = _spawn(1, Character.Role.DEFENDER, centre + Vector2(-450.0, 160.0))
+		var mate_b: Character = _spawn(1, Character.Role.DEFENDER, centre + Vector2(420.0, -250.0))
+		_spawn(0, Character.Role.ATTACKER, centre)
+		holder.pick_up(_spawn_sandal(holder.position, true))
+		var passes: Array[int] = [0]
+		var throws: Array[int] = [0]
+		for defender: Character in [holder, mate_a, mate_b]:
+			defender.passed.connect(func(_receiver: Character) -> void: passes[0] += 1)
+			defender.threw.connect(func(_sandal: Sandal) -> void: throws[0] += 1)
+		await _frames(2)
+		for _i: int in 900:
+			for bot: BotController in [_bots[holder], _bots[mate_a], _bots[mate_b]]:
+				bot._physics_process(STEP)
+			await physics_frame
+			if throws[0] > 0:
+				break
+		_check(throws[0] >= 1, "defenders throw at a still attacker (difficulty %.1f, %d passes)" % [difficulty, passes[0]])
+		_check(passes[0] <= BotController.MAX_PASS_CHAIN, "passes stay bounded before the shot (difficulty %.1f, %d passes)" % [difficulty, passes[0]])
 
 
 func _test_support_and_loose_sandals() -> void:

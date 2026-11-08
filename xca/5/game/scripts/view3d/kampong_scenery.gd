@@ -16,7 +16,9 @@ const PATCH_TINT: Color = Color(0.55, 0.78, 0.5)
 ## Multiplier on the sand floor colour. It turns the tile into a bright lime pitch that stays clear of the darker green surround.
 const FLOOR_TINT: Color = Color(0.42, 0.85, 0.5)
 ## Multiplier on the stand blocks. It darkens the wood so the spectators stand out.
-const STAND_TINT: Color = Color(0.3, 0.33, 0.42)
+const STAND_TINT: Color = Color(0.62, 0.52, 0.42)
+## Share of seats left empty so the stands look lived in.
+const EMPTY_SEAT_SHARE: float = 0.25
 const FLOOR_TILE: float = 120.0
 const FLOOR_LIFT: float = 0.0
 const GRASS_PATCH_SIZE: float = 70.0
@@ -38,7 +40,7 @@ const STAND_GAP: float = 14.0
 const STAND_TIER_DEPTH: float = 40.0
 const STAND_TIER_HEIGHT: float = 16.0
 const BACK_TIERS: int = 2
-const SIDE_TIERS: int = 1
+const SIDE_TIERS: int = 0
 const STAND_OVERHANG: float = 40.0
 const SPECTATOR_SPACING: float = 72.0
 const SPECTATOR_SIZE: float = 92.0
@@ -577,12 +579,15 @@ func _add_crowd(parent: Node3D, half: Vector2) -> void:
 ## Spectator positions as (x, ground y, tier height, size). Rows sit on the stand tops, never on the field.
 func crowd_spots(half: Vector2) -> Array[Vector4]:
 	var spots: Array[Vector4] = []
+	var seat: int = 0
 	for tier: int in BACK_TIERS:
 		var height: float = STAND_TIER_HEIGHT * float(tier + 1)
 		var row: float = -(half.y + STAND_GAP + STAND_TIER_DEPTH * (float(tier) + 0.5))
 		var x: float = -half.x - STAND_OVERHANG + SPECTATOR_SPACING * (0.5 + 0.5 * float(tier % 2))
 		while x < half.x + STAND_OVERHANG - SPECTATOR_SPACING * 0.4:
-			spots.append(Vector4(x, row, height, SPECTATOR_SIZE))
+			seat += 1
+			if _seat_taken(seat):
+				spots.append(Vector4(x, row, height, SPECTATOR_SIZE))
 			x += SPECTATOR_SPACING
 	var side_from: float = -half.y + 10.0
 	var side_to: float = half.y * 0.4
@@ -592,9 +597,16 @@ func crowd_spots(half: Vector2) -> Array[Vector4]:
 			var row: float = sign * (half.x + STAND_GAP + STAND_TIER_DEPTH * (float(tier) + 0.5))
 			var y: float = side_from + SPECTATOR_SPACING * (0.5 + 0.5 * float(tier % 2))
 			while y < side_to:
-				spots.append(Vector4(row, y, height, SPECTATOR_SIZE))
+				seat += 1
+				if _seat_taken(seat):
+					spots.append(Vector4(row, y, height, SPECTATOR_SIZE))
 				y += SPECTATOR_SPACING
 	return spots
+
+
+# Deterministic hash of the seat counter, so the same seats stay empty on every load.
+func _seat_taken(counter: int) -> bool:
+	return fposmod(float(counter) * 0.7548776662 + float(counter * counter) * 0.5698402909, 1.0) >= EMPTY_SEAT_SHARE
 
 
 func _place_floor(model: String, at: Vector3, yaw: float, size: float) -> void:

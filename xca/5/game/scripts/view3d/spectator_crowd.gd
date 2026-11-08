@@ -83,6 +83,7 @@ func _add_group(model_name: String, spots: Array[Spot]) -> void:
 	# Baking the skinned parts needs the skeleton inside the tree.
 	add_child(root)
 	var parts: Array[MultiMesh] = []
+	_pose_idle(root, model_name)
 	for candidate: Node in root.find_children("*", "MeshInstance3D", true, false):
 		var source: MeshInstance3D = candidate as MeshInstance3D
 		var multi: MultiMesh = MultiMesh.new()
@@ -103,6 +104,19 @@ func _add_group(model_name: String, spots: Array[Spot]) -> void:
 		parts.append(multi)
 	root.queue_free()
 	_groups.append({"spots": spots, "parts": parts})
+
+
+# The rest pose of the Kenney rigs is a T-pose, so the baked pose comes from a frame of the idle clip, which has the arms down.
+func _pose_idle(root: Node, model_name: String) -> void:
+	var player: AnimationPlayer = root.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if player == null or not player.has_animation(&"idle"):
+		return
+	var clip: Animation = player.get_animation(&"idle")
+	var seed_value: int = model_name.hash()
+	var at: float = clip.length * float(seed_value % 100) / 100.0
+	player.play(&"idle")
+	player.seek(at, true)
+	player.pause()
 
 
 func _update_all() -> void:
