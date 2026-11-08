@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="HeroDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/heroes/hero_def.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/icons/power_tukang.svg" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = &"tukang"
+icon = ExtResource("2")
+power_icon = ExtResource("2")
+model_path = "res://assets/kenney/characters/character-worker.glb"
+model_scale = 1.15
+cooldown_seconds = 18.0
+stat_speed = 3
+stat_build = 5
+stat_guard = 2
+stat_throw = 2
+attack_params = {"duration": 5.0, "carry_free": true, "speed_mult": 1.15}
+defence_params = {"duration": 4.0, "pickup_mult": 2.0}

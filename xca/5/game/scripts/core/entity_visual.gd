@@ -13,6 +13,10 @@ const STATES: Array[StringName] = [&"idle", &"run", &"carry", &"throw", &"dash",
 var team_color: Color = Color.WHITE
 ## True after [method set_team_color] ran at least once.
 var has_team_color: bool = false
+## Character model this visual shows instead of its default. Set before the visual enters the tree. Empty keeps the default.
+var model_path: String = ""
+## Size against the default model height. Set together with [member model_path].
+var model_scale: float = 1.0
 
 
 ## Plays [param state]. A visual without that animation ignores the call.

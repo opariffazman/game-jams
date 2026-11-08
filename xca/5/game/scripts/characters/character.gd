@@ -18,6 +18,8 @@ signal threw(sandal: Sandal)
 signal passed(receiver: Character)
 ## Emitted when a dash starts.
 signal dashed
+## Emitted when the hero power starts.
+signal power_used
 
 ## Which side of the round this character plays.
 enum Role { ATTACKER, DEFENDER }
@@ -73,6 +75,8 @@ const TUNING_DEFAULTS: Dictionary = {
 ## Current role. Setting it after the node is ready rebuilds the visual.
 var role: Role = Role.ATTACKER:
 	set(value):
+		if role != value:
+			end_power()
 		role = value
 		if is_node_ready():
 			_rebuild_visual()
@@ -94,6 +98,14 @@ var stack: Stack
 var pickup_enabled: bool = true
 ## True while the body must stand still and cannot dash. The round manager sets it during the match start countdown.
 var frozen: bool = false
+## Hero this body plays, or null for a regular player.
+var hero: HeroDef
+## Model of a regular player. The round manager sets it so the two teams look different.
+var model_path: String = ""
+## Seconds until the hero power can start again.
+var power_cooldown_left: float = 0.0
+## Seconds left of the running hero power.
+var power_time_left: float = 0.0
 ## Live visual child.
 var visual: EntityVisual
 ## Angle the character faces, in radians.
@@ -125,6 +137,8 @@ var guard_cooldown_left: float = 0.0
 const BLOCK_NUDGE: float = 6.0
 
 var _dash_direction: Vector2 = Vector2.RIGHT
+var _power_params: Dictionary = {}
+var _power_absorb_ready: bool = false
 var _visual_state: StringName = &""
 var _flying_passes: Array[Dictionary] = []
 
@@ -182,6 +196,7 @@ func _physics_process(delta: float) -> void:
 	dash_cooldown_left = maxf(dash_cooldown_left - delta, 0.0)
 	guard_stun_left = maxf(guard_stun_left - delta, 0.0)
 	guard_cooldown_left = maxf(guard_cooldown_left - delta, 0.0)
+	_tick_power(delta)
 	if frozen or guard_stun_left > 0.0:
 		velocity = Vector2.ZERO
 	else:
@@ -214,6 +229,69 @@ func configure(new_team: int, new_role: Role, new_tuning: Tuning, new_visual_set
 ## True while the dash window is open and hits do not count.
 func is_invulnerable() -> bool:
 	return dash_time_left > 0.0
+
+
+## True when [method try_power] would start the hero power.
+func can_use_power() -> bool:
+	return hero != null and alive and not frozen and power_cooldown_left <= 0.0 and power_time_left <= 0.0
+
+
+## Share of the power cooldown still left, 0.0 (ready) to 1.0 (just used). A running power counts as just used.
+func power_cooldown_ratio() -> float:
+	if hero == null:
+		return 0.0
+	if power_time_left > 0.0:
+		return 1.0
+	return clampf(power_cooldown_left / hero.cooldown_seconds, 0.0, 1.0)
+
+
+## Starts the hero power in the form of the current role. Returns false while it cannot start.
+func try_power() -> bool:
+	if not can_use_power():
+		return false
+	_power_params = hero.params_for(role == Role.ATTACKER)
+	power_time_left = float(_power_params.get("duration", 0.0))
+	power_cooldown_left = hero.cooldown_seconds
+	_power_absorb_ready = bool(_power_params.get("absorb", false))
+	if bool(_power_params.get("dash_burst", false)):
+		dash_cooldown_left = 0.0
+	_apply_pickup_radius()
+	AudioRef.play(&"dash")
+	FxRef.burst(&"dash", global_position, _team_color())
+	power_used.emit()
+	return true
+
+
+## Stops the running hero power. The cooldown keeps counting.
+func end_power() -> void:
+	power_time_left = 0.0
+	_power_params = {}
+	_power_absorb_ready = false
+	if _pickup_shape != null and _pickup_shape.shape != null:
+		_apply_pickup_radius()
+
+
+func _tick_power(delta: float) -> void:
+	power_cooldown_left = maxf(power_cooldown_left - delta, 0.0)
+	if power_time_left <= 0.0:
+		return
+	power_time_left = maxf(power_time_left - delta, 0.0)
+	if bool(_power_params.get("dash_burst", false)) and dash_cooldown_left > 0.0 and power_time_left > 0.0:
+		dash_cooldown_left = 0.0
+	if power_time_left <= 0.0:
+		end_power()
+
+
+func _power_value(key: StringName) -> float:
+	return float(_power_params.get(String(key), 1.0)) if power_time_left > 0.0 else 1.0
+
+
+func _power_flag(key: StringName) -> bool:
+	return power_time_left > 0.0 and bool(_power_params.get(String(key), false))
+
+
+func _apply_pickup_radius() -> void:
+	(_pickup_shape.shape as CircleShape2D).radius = _tuned(&"pickup_radius") * _power_value(&"pickup_mult")
 
 
 ## True when [method dash] would start a dash.
@@ -345,6 +423,14 @@ func die() -> void:
 	if is_invulnerable():
 		_play_visual(&"hit")
 		return
+	if _power_absorb_ready:
+		_power_absorb_ready = false
+		end_power()
+		_play_visual(&"hit")
+		AudioRef.play(&"hit_block")
+		FxRef.burst(&"block", global_position)
+		return
+	end_power()
 	alive = false
 	stop_building()
 	move_intent = Vector2.ZERO
@@ -465,10 +551,20 @@ func _replace_visual(slot: StringName) -> void:
 	if visual == null:
 		var fallback: PackedScene = load(FALLBACK_VISUALS[slot]) as PackedScene
 		visual = fallback.instantiate() as EntityVisual
+	if slot == &"attacker" or slot == &"defender":
+		_apply_model(visual)
 	add_child(visual)
 	visual.set_team_color(_team_color())
 	visual.set_facing(facing_angle)
 	_visual_state = &""
+
+
+func _apply_model(target: EntityVisual) -> void:
+	if hero != null and hero.model_path != "":
+		target.model_path = hero.model_path
+		target.model_scale = hero.model_scale
+	elif model_path != "":
+		target.model_path = model_path
 
 
 func _load_active_visual_set() -> VisualSet:
@@ -486,8 +582,8 @@ func _apply_movement() -> void:
 	if is_invulnerable():
 		velocity = _dash_direction * _tuned(&"dash_speed")
 	else:
-		var speed: float = _tuned(&"move_speed")
-		if carried != null:
+		var speed: float = _tuned(&"move_speed") * _power_value(&"speed_mult")
+		if carried != null and not _power_flag(&"carry_free"):
 			speed *= _tuned(&"carry_speed_multiplier")
 		velocity = move_intent.limit_length(1.0) * speed
 	if ring_radius > 0.0:
@@ -510,8 +606,8 @@ func _ring_velocity() -> Vector2:
 		return tangent * ring_direction * ring_speed
 	if is_invulnerable():
 		return tangent * _dash_direction.dot(tangent) * _tuned(&"dash_speed")
-	var carry_factor: float = _tuned(&"carry_speed_multiplier") if carried != null else 1.0
-	return tangent * clampf(move_intent.dot(tangent), -1.0, 1.0) * ring_speed * carry_factor
+	var carry_factor: float = _tuned(&"carry_speed_multiplier") if carried != null and not _power_flag(&"carry_free") else 1.0
+	return tangent * clampf(move_intent.dot(tangent), -1.0, 1.0) * ring_speed * carry_factor * _power_value(&"speed_mult")
 
 
 func _snap_to_ring() -> void:
@@ -616,7 +712,7 @@ func _steer_passes(delta: float) -> void:
 		if speed > 1.0:
 			var heading: Vector2 = sandal.linear_velocity / speed
 			var wanted: Vector2 = (target.global_position - sandal.global_position).normalized()
-			var max_turn: float = _tuned(&"pass_turn_rate") * delta
+			var max_turn: float = _tuned(&"pass_turn_rate") * _power_value(&"pass_turn_mult") * delta
 			var turn: float = clampf(heading.angle_to(wanted), -max_turn, max_turn)
 			sandal.linear_velocity = heading.rotated(turn) * speed
 		still_flying.append(entry)

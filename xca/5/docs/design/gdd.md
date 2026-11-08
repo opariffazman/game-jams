@@ -41,7 +41,7 @@ Source of truth for every agent. A rule here overrides any other doc. Decided by
 - One extra sandal appears in a defender's hand. It is the pass sandal. It has a distinct tint.
 - Attackers run, dodge, collect the 3 sandals at the centre, and build the pyramid. See "Pyramid rebuild".
 - Defenders pass the pass sandal. A defender who holds it stands still and can only pass or throw.
-- A pass sandal in flight that touches an attacker makes that attacker mati. A rolling sandal on the ground does not.
+- A pass sandal in flight that touches an attacker makes that attacker mati. The pass sandal stops at the first kill. A rolling sandal on the ground does not.
 - Mati has no respawn. A mati attacker stays out until the round ends and shows a tombstone.
 - Attackers built the pyramid: attackers win the round. Roles swap.
 - Every attacker mati: defenders win the round. Roles swap.
@@ -112,7 +112,7 @@ Playtest feedback: scheme A had no strength control, the defender aim snapped to
 - Drag is the manual throw. The direction is where the thumb points. The power is the drag length: 0 at the slop radius and 1 at the stick edge, clamped. There is no lock, no cone and no snap to any target.
 - Release fires. Dragging back inside the slop radius and releasing cancels.
 - Power sets the range and the speed. Range is power times `max_throw_range` (340 px, longer than the 260 px throw ring, so a full-power throw at the stack passes through it). Speed is the larger of power and `min_throw_power` (0.2) times `throw_speed_max`. The sandal flies at constant speed and stops at the exact range, as `launch_ranged` does.
-- A manual throw has no homing. A sandal in flight kills any foe it touches. A manual defender throw is a normal throw, so a teammate it touches does not catch it. Only a tap pass is caught.
+- A manual throw has no homing. A sandal in flight kills any foe it touches and stops at the first kill. A manual defender throw is a normal throw, so a teammate it touches does not catch it. Only a tap pass is caught.
 - Preview, drawn in the world while the thumb is down: a line from the thrower of exactly the throw length, a landing ring at its end, and for attackers a tick on the line where the stack stands. The line stops at the first character it would touch, and a ring marks that character in its team colour. This is a precision aid and never moves the aim. A power fill on the stick shows the drag length. Icons only, no words.
 - Both bots and scheme D keep calling `throw_sandal`, `pass_to` and `hit` as today. Bots throw at full power.
 

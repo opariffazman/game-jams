@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="HeroDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/heroes/hero_def.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/icons/power_perisai.svg" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = &"perisai"
+icon = ExtResource("2")
+power_icon = ExtResource("2")
+model_path = "res://assets/kenney/characters/character-soldier.glb"
+model_scale = 1.2
+cooldown_seconds = 16.0
+stat_speed = 2
+stat_build = 2
+stat_guard = 5
+stat_throw = 3
+attack_params = {"duration": 3.0, "absorb": true}
+defence_params = {"duration": 3.0, "speed_mult": 1.3}

@@ -20,6 +20,7 @@ func _run_all() -> void:
 	await _test_lead_direction()
 	await _test_hit()
 	await _test_ring_movement()
+	await _test_hero_power()
 	_test_joystick()
 	print("character_test: %d checks, %d failures" % [_checks, _failures])
 	quit(1 if _failures > 0 else 0)
@@ -288,3 +289,35 @@ func _test_hit() -> void:
 	var first_speed: float = sandal.linear_velocity.length()
 	_check(first_speed > 100.0, "hit launches the sandal")
 	_check(not thrower.hit(thrower), "a character cannot hit itself")
+
+
+func _test_hero_power() -> void:
+	_clear()
+	var hero: HeroDef = HeroDef.new()
+	hero.cooldown_seconds = 2.0
+	hero.attack_params = {"duration": 0.5, "speed_mult": 2.0}
+	hero.defence_params = {"duration": 0.5, "absorb": true}
+	var body: Character = _spawn(0, Character.Role.ATTACKER, Vector2(300.0, 300.0))
+	_check(not body.can_use_power(), "no hero means no power")
+	body.hero = hero
+	_check(body.can_use_power(), "hero power ready at start")
+	_check(body.try_power(), "power starts")
+	_check(not body.try_power(), "power refused while running")
+	_check(is_equal_approx(body.power_cooldown_ratio(), 1.0), "running power counts as just used")
+	await _step(60)
+	_check(body.power_time_left <= 0.0, "power ends after its duration")
+	_check(not body.can_use_power(), "cooldown still running after the power ends")
+	_check(body.power_cooldown_ratio() > 0.0, "cooldown ratio above zero after use")
+	body.power_cooldown_left = 0.0
+	_check(body.try_power(), "power starts again after cooldown")
+	body.role = Character.Role.DEFENDER
+	_check(body.power_time_left <= 0.0, "role change ends the running power")
+	body.power_cooldown_left = 0.0
+	_check(body.try_power(), "defender form starts")
+	body.die()
+	_check(body.alive, "absorb survives the first hit")
+	_check(not body.alive or body.power_time_left <= 0.0, "absorb is spent after one hit")
+	body.end_power()
+	body.die()
+	_check(not body.alive, "dies once the absorb is gone")
+	_check(not body.can_use_power(), "a dead hero cannot use power")

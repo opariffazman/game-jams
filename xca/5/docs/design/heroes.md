@@ -35,7 +35,7 @@ Hero models, picked for silhouette at small size. Each has a distinct head or ha
 
 Limit: no Kenney model has kampong clothing. Kampong flavour comes from names, icons, sound and the scenery. The user can swap any hero to a `character-male-*` or `character-female-*` file without code changes, because the model path lives in `HeroDef`.
 
-Readability rule: team colour must still read. Keep the existing `TEAM_TINT_ALPHA` tint on the body. Add a team-coloured base disc under the hero, one size larger than a regular player, so a hero is findable by size. The human marker stays as it is.
+Readability rule: team colour must still read. Do not tint the body. Draw a team-coloured outline (blue friendly, red enemy) around the model with `scripts/view3d/outline.gdshader`. Add a team-coloured base disc under the hero, one size larger than a regular player, so a hero is findable by size. The human marker stays as it is.
 
 ## Roster
 
@@ -189,5 +189,5 @@ Assets: add a row per new hero model to `ASSETS.md`. Add a credit to `CREDITS.md
 - The hero replaces the human's regular player. A team still has three bodies.
 - The select screen has no timer.
 - The enemy hero is shown before the match.
-- Kenney models without kampong clothing are accepted. Team colour tint still applies.
+- Kenney models without kampong clothing are accepted. Team colour shows as an outline, never a tint.
 - Both teams can pick the same hero.

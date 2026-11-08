@@ -48,6 +48,9 @@ const DODGE_CHANCE: Vector2 = Vector2(0.2, 0.8)
 ## Chance to take a clear shot instead of passing, at difficulty 0 and 1.
 const SHOT_CHANCE: Vector2 = Vector2(0.3, 0.8)
 
+## Distance of a foe that makes a hero bot use its power.
+const POWER_TRIGGER_RADIUS: float = 150.0
+
 ## Arena the bot reads. Set by [method bind].
 var arena: Arena
 ## Round manager the bot reads. Set by [method bind].
@@ -101,6 +104,7 @@ func _physics_process(delta: float) -> void:
 		_enter_phase(round_manager.phase)
 	_clock += delta
 	_dodge_timer = maxf(_dodge_timer - delta, 0.0)
+	_maybe_use_power()
 	match _phase:
 		RoundManager.TOPPLE:
 			if _is_attacker():
@@ -145,6 +149,23 @@ func _apply_difficulty() -> void:
 	dodge_chance = lerpf(DODGE_CHANCE.x, DODGE_CHANCE.y, difficulty)
 	shot_chance = lerpf(SHOT_CHANCE.x, SHOT_CHANCE.y, difficulty)
 	build_skill_factor = lerpf(tuning.bot_build_slowdown, 1.0, difficulty)
+
+
+# A hero bot uses its power when the moment pays: a carrier or a defender with a foe close, or a builder under threat.
+func _maybe_use_power() -> void:
+	if character.hero == null or not character.can_use_power():
+		return
+	if _phase != RoundManager.SCATTER and _phase != RoundManager.TOPPLE:
+		return
+	var foe_team: int = 1 - character.team
+	var near_foe: bool = false
+	for entry: Variant in arena.get_characters(foe_team):
+		var foe: Character = entry as Character
+		if foe.alive and foe.global_position.distance_to(character.global_position) < POWER_TRIGGER_RADIUS:
+			near_foe = true
+			break
+	if near_foe or (_is_attacker() and character.carried != null and _phase == RoundManager.SCATTER):
+		character.try_power()
 
 
 func _enter_phase(phase: int) -> void:

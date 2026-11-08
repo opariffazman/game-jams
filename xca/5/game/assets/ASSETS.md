@@ -65,3 +65,27 @@
 | assets/icons/sandal_wide.svg | Drawn for this project to match the 3D sandal | Project | CC0 | 2026-11-08 |
 | assets/icons/fullscreen_expand.svg | https://game-icons.net delapouite/expand | Delapouite | CC BY 3.0 | 2026-11-08 |
 | assets/icons/fullscreen_contract.svg | https://game-icons.net delapouite/contract | Delapouite | CC BY 3.0 | 2026-11-08 |
+| assets/icons/dice.svg | https://game-icons.net delapouite/dice-six-faces-six | Delapouite | CC BY 3.0 | 2026-11-08 |
+| assets/kenney/characters/character-alien.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-worker.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-soldier.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-robot.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-zombie.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-male-a.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-male-b.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-male-c.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-male-d.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-male-e.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-male-f.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-male-g.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-female-a.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-female-b.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-female-c.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-female-d.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-female-e.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/characters/character-female-f.glb | https://kenney.nl Mini Characters | Kenney | CC0 | 2026-11-08 |
+| assets/icons/power_kilat.svg | https://game-icons.net | Lorc | CC BY 3.0 | 2026-11-08 |
+| assets/icons/power_tukang.svg | https://game-icons.net | Lorc | CC BY 3.0 | 2026-11-08 |
+| assets/icons/power_perisai.svg | https://game-icons.net | Lorc | CC BY 3.0 | 2026-11-08 |
+| assets/icons/power_lontar.svg | https://game-icons.net | Lorc | CC BY 3.0 | 2026-11-08 |
+| assets/icons/power_tangkap.svg | https://game-icons.net | Lorc | CC BY 3.0 | 2026-11-08 |

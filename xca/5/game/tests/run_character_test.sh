@@ -13,7 +13,8 @@ for name in tuning sandal stack arena; do
 	cp "$here/fakes/$name.gd.txt" "$scratch/scripts/$name.gd"
 done
 cp "$game"/scripts/core/{entity_visual,visual_set,skin_ref,settings_ref,audio_ref}.gd "$scratch/scripts/core/"
-mkdir -p "$scratch/scripts/fx"
+mkdir -p "$scratch/scripts/fx" "$scratch/scripts/heroes"
+cp "$game"/scripts/heroes/hero_def.gd "$scratch/scripts/heroes/"
 cp "$game"/scripts/fx/fx_ref.gd "$scratch/scripts/fx/"
 cp "$game"/scripts/characters/*.gd "$scratch/scripts/characters/"
 cp "$game"/ui/touch/{virtual_joystick,dash_button,touch_style}.gd "$scratch/ui/touch/"

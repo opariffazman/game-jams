@@ -50,6 +50,19 @@ static func sound_enabled() -> bool:
 	return bool(settings.get("sound_enabled")) if settings != null else true
 
 
+## Id of the hero picked last. Kilat when the autoload is missing.
+static func hero_id() -> StringName:
+	var settings: Node = node()
+	return StringName(settings.get("hero_id")) if settings != null else &"kilat"
+
+
+## Remembers the picked hero. Does nothing when the autoload is missing.
+static func set_hero_id(value: StringName) -> void:
+	var settings: Node = node()
+	if settings != null:
+		settings.call("set_hero_id", value)
+
+
 ## Switches the scheme. Does nothing when the autoload is missing.
 static func set_scheme(value: int) -> void:
 	var settings: Node = node()

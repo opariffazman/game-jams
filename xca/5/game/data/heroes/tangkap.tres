@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="HeroDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/heroes/hero_def.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/icons/power_tangkap.svg" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = &"tangkap"
+icon = ExtResource("2")
+power_icon = ExtResource("2")
+model_path = "res://assets/kenney/characters/character-zombie.glb"
+model_scale = 1.15
+cooldown_seconds = 20.0
+stat_speed = 3
+stat_build = 3
+stat_guard = 3
+stat_throw = 3
+attack_params = {"duration": 4.0, "pickup_mult": 2.0, "speed_mult": 1.15}
+defence_params = {"duration": 4.0, "pickup_mult": 2.0}

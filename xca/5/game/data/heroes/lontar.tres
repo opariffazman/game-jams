@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="HeroDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/heroes/hero_def.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/icons/power_lontar.svg" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = &"lontar"
+icon = ExtResource("2")
+power_icon = ExtResource("2")
+model_path = "res://assets/kenney/characters/character-robot.glb"
+model_scale = 1.15
+cooldown_seconds = 12.0
+stat_speed = 3
+stat_build = 2
+stat_guard = 2
+stat_throw = 5
+attack_params = {"duration": 3.0, "speed_mult": 1.25}
+defence_params = {"duration": 4.0, "pass_turn_mult": 2.5}

@@ -8,10 +8,16 @@ extends Controller
 ## When the controlled defender passes, control moves to the receiver, so the human always
 ## acts on the sandal. Listen to [signal Controller.character_changed] to hand the old body back to a bot.
 
+## Radius and gap of the power button, in pixels, against the dash button below it.
+const POWER_BUTTON_RADIUS: float = 46.0
+const POWER_BUTTON_GAP: float = 12.0
+
 ## Joystick node. [method build_touch_ui] creates it when null.
 var joystick: VirtualJoystick
 ## Dash button node. [method build_touch_ui] creates it when null.
 var dash_button: DashButton
+## Round button for the hero power, above the dash button. Null until the touch controls exist.
+var power_button: DashButton
 ## The throw scheme in use, or null before [method build_touch_ui].
 var scheme: ThrowScheme
 
@@ -32,12 +38,20 @@ func _process(_delta: float) -> void:
 	character.move_intent = _read_move_intent()
 	if dash_button != null:
 		dash_button.cooldown_ratio = character.dash_cooldown_ratio()
+	if power_button != null:
+		power_button.visible = character.hero != null and not character.is_building()
+		if character.hero != null:
+			power_button.icon = character.hero.power_icon
+			power_button.cooldown_ratio = character.power_cooldown_ratio()
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	var key: InputEventKey = event as InputEventKey
-	if character != null and key != null and key.pressed and not key.echo and key.physical_keycode == KEY_SPACE:
-		character.dash()
+	if character != null and key != null and key.pressed and not key.echo:
+		if key.physical_keycode == KEY_SPACE:
+			character.dash()
+		elif key.physical_keycode == KEY_E:
+			character.try_power()
 
 
 ## Creates the touch controls under [param parent]. Order matters: the dash button is added
@@ -49,6 +63,12 @@ func build_touch_ui(parent: Node, world_parent: Node = null) -> void:
 	joystick = VirtualJoystick.new()
 	parent.add_child(joystick)
 	_build_scheme(SettingsRef.scheme())
+	power_button = DashButton.new()
+	power_button.radius = POWER_BUTTON_RADIUS
+	power_button.edge_margin = Vector2(DashButton.DEFAULT_EDGE_MARGIN.x, DashButton.DEFAULT_EDGE_MARGIN.y + DashButton.DEFAULT_RADIUS + POWER_BUTTON_GAP + POWER_BUTTON_RADIUS)
+	power_button.visible = false
+	power_button.pressed.connect(_on_power_pressed)
+	parent.add_child(power_button)
 	dash_button = DashButton.new()
 	parent.add_child(dash_button)
 	bind_touch_ui(joystick, dash_button)
@@ -135,6 +155,11 @@ func _read_move_intent() -> Vector2:
 
 func _on_scheme_setting_changed(new_scheme: int) -> void:
 	use_scheme(new_scheme)
+
+
+func _on_power_pressed() -> void:
+	if character != null and is_instance_valid(character):
+		character.try_power()
 
 
 func _on_dash_pressed() -> void:

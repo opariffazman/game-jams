@@ -34,6 +34,12 @@ const ORBIT_START_ANGLE: float = PI * 0.5
 const LAST_THROW_ZOOM: float = 1.3
 ## Two kills inside this many milliseconds earn the combo line.
 const COMBO_WINDOW_MS: int = 4000
+## Models of the regular players, per team. A team keeps its own look and the hero model differs from both.
+const REGULAR_MODELS: Array = [
+	["character-male-a", "character-female-a", "character-male-c", "character-female-c", "character-male-e", "character-female-e"],
+	["character-female-b", "character-male-b", "character-female-d", "character-male-d", "character-female-f", "character-male-f"],
+]
+const MODEL_DIR: String = "res://assets/kenney/characters/"
 
 ## Arena the match runs in.
 @export var arena: Arena
@@ -57,6 +63,8 @@ var scores: Array[int] = [0, 0]
 var tuning: Tuning
 ## Controller of the human player.
 var human: HumanController
+## Hero of each team, indexed by team. A null entry means that team has no hero.
+var heroes: Array[HeroDef] = [null, null]
 
 var _character_scene: PackedScene
 var _bots_root: Node
@@ -98,7 +106,9 @@ func _ready() -> void:
 	phase_changed.connect(_play_phase_feedback)
 	round_ended.connect(_play_round_end_feedback)
 	match_ended.connect(_play_match_end_feedback)
+	_pick_default_heroes()
 	start_match()
+	_hook_hero_select()
 
 
 func _physics_process(delta: float) -> void:
@@ -115,6 +125,50 @@ func _physics_process(delta: float) -> void:
 			_timer -= delta
 			if _timer <= 0.0:
 				_leave_round_end()
+
+
+## Sets the hero of each team and starts the match again, so the new heroes stand on the field.
+func set_heroes(human_hero: HeroDef, enemy_hero: HeroDef) -> void:
+	if tuning.human_team != 0 and tuning.human_team != 1:
+		heroes = [human_hero, enemy_hero]
+	else:
+		heroes[tuning.human_team] = human_hero
+		heroes[1 - tuning.human_team] = enemy_hero
+	start_match()
+
+
+func _pick_default_heroes() -> void:
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.randomize()
+	if tuning.human_team != 0 and tuning.human_team != 1:
+		heroes[0] = HeroRoster.random_hero(rng)
+		heroes[1] = HeroRoster.random_hero(rng)
+		return
+	var human_id: StringName = &"kilat"
+	var settings: Node = get_node_or_null("/root/Settings")
+	if settings != null and settings.get("hero_id") is StringName:
+		human_id = settings.get("hero_id")
+	var human_hero: HeroDef = HeroRoster.get_hero(human_id)
+	if human_hero == null:
+		human_hero = HeroRoster.random_hero(rng)
+	heroes[tuning.human_team] = human_hero
+	heroes[1 - tuning.human_team] = HeroRoster.random_hero(rng)
+
+
+# The select screen opens after the title Play tap. A skipped title skips the select too.
+func _hook_hero_select() -> void:
+	var title: Node = get_tree().get_first_node_in_group(TitleScreen.GROUP)
+	if title == null or not title is TitleScreen or not (title as TitleScreen).is_open():
+		return
+	(title as TitleScreen).played.connect(_open_hero_select, CONNECT_ONE_SHOT)
+
+
+func _open_hero_select() -> void:
+	if HeroRoster.all().is_empty():
+		return
+	var select: HeroSelect = HeroSelect.new()
+	get_parent().add_child(select)
+	select.open(self)
 
 
 ## Resets the score and starts at the coin flip.
@@ -389,18 +443,22 @@ func _spawn_round() -> void:
 	for index: int in attackers_count:
 		var slot: float = float(index) - float(attackers_count - 1) * 0.5
 		var position: Vector2 = arena.centre_spot + Vector2.from_angle(PI + slot * spacing) * tuning.throw_radius
-		_spawn_character(attacking_team, Character.Role.ATTACKER, position)
+		_spawn_character(attacking_team, Character.Role.ATTACKER, position, index)
 	for index: int in tuning.team_size:
 		var angle: float = ORBIT_START_ANGLE + TAU * float(index) / float(tuning.team_size)
 		var position: Vector2 = arena.centre_spot + Vector2.from_angle(angle) * tuning.orbit_radius
-		_spawn_character(1 - attacking_team, Character.Role.DEFENDER, position)
+		_spawn_character(1 - attacking_team, Character.Role.DEFENDER, position, index)
 	_attach_controllers()
 	_hold_rings(true)
 
 
-func _spawn_character(team: int, role: Character.Role, position: Vector2) -> void:
+func _spawn_character(team: int, role: Character.Role, position: Vector2, seat: int) -> void:
 	var character: Character = _character_scene.instantiate() as Character
 	character.configure(team, role, tuning, SkinRef.get_visual_set())
+	if seat == 0:
+		character.hero = heroes[team]
+	var models: Array = REGULAR_MODELS[team]
+	character.model_path = MODEL_DIR + String(models[seat % models.size()]) + ".glb"
 	character.arena = arena
 	character.stack = arena.stack
 	character.pickup_enabled = false

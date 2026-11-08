@@ -27,7 +27,11 @@ const STRAP_COLOR: Color = Color8(230, 185, 110)
 const ARENA_FLOOR_COLOR: Color = Color("5c4332")
 const LINE_COLOR: Color = Color(0.78, 0.66, 0.45)
 const SHADOW_DISC_COLOR: Color = Color(0.03, 0.05, 0.09, 0.55)
-const TEAM_TINT_ALPHA: float = 0.7
+const OUTLINE_SHADER: Shader = preload("res://scripts/view3d/outline.gdshader")
+## Model-space thickness of the team outline and of the dark edge outside it.
+const OUTLINE_THICKNESS: float = 0.035
+const OUTLINE_EDGE_THICKNESS: float = 0.06
+const OUTLINE_EDGE_COLOR: Color = Color(0.04, 0.06, 0.1, 0.9)
 const FLASH_ALPHA: float = 0.85
 const DASH_TRANSPARENCY: float = 0.55
 const GUIDE_DASH_RADIANS: float = 0.07
@@ -53,6 +57,7 @@ var _view: World3DView
 var _yaw: float = 0.0
 var _animation_player: AnimationPlayer
 var _tint: StandardMaterial3D
+var _outline: ShaderMaterial
 var _body_meshes: Array[GeometryInstance3D] = []
 var _strap_material: StandardMaterial3D
 var _ring_material: StandardMaterial3D
@@ -122,8 +127,8 @@ func set_facing(angle: float) -> void:
 
 func set_team_color(new_color: Color) -> void:
 	super.set_team_color(new_color)
-	if _tint != null:
-		_tint.albedo_color = Color(new_color, TEAM_TINT_ALPHA)
+	if _outline != null:
+		_outline.set_shader_parameter(&"outline_color", new_color)
 	if _strap_material != null:
 		_strap_material.albedo_color = new_color
 
@@ -182,12 +187,29 @@ func _build() -> void:
 	_node.scale = Vector3.ONE * scale.x
 
 
+# Team colour shows as an outline, never as a tint, so every model keeps its own colours. A dark edge outside
+# the team ring keeps red and blue readable on a bright pitch.
+func _make_outline() -> ShaderMaterial:
+	var edge: ShaderMaterial = ShaderMaterial.new()
+	edge.shader = OUTLINE_SHADER
+	edge.set_shader_parameter(&"outline_color", OUTLINE_EDGE_COLOR)
+	edge.set_shader_parameter(&"thickness", OUTLINE_EDGE_THICKNESS)
+	_outline = ShaderMaterial.new()
+	_outline.shader = OUTLINE_SHADER
+	_outline.set_shader_parameter(&"outline_color", team_color)
+	_outline.set_shader_parameter(&"thickness", OUTLINE_THICKNESS)
+	_outline.next_pass = edge
+	return _outline
+
+
 func _build_character() -> void:
-	var packed: PackedScene = load(CHARACTER_MODELS[kind]) as PackedScene
+	var path: String = model_path if model_path != "" else CHARACTER_MODELS[kind]
+	var packed: PackedScene = load(path) as PackedScene
 	var model: Node3D = packed.instantiate() as Node3D
-	model.scale = Vector3.ONE * model_height
+	model.scale = Vector3.ONE * model_height * model_scale
 	_pivot.add_child(model)
 	_tint = MeshBuilder3D.flat_material(Color(Color.WHITE, 0.0))
+	_tint.next_pass = _make_outline()
 	for mesh: Node in model.find_children("*", "MeshInstance3D", true, false):
 		var instance: MeshInstance3D = mesh as MeshInstance3D
 		instance.material_overlay = _tint
@@ -329,8 +351,7 @@ func _flash() -> void:
 		return
 	_restart_tween()
 	_tint.albedo_color = Color(Color.WHITE, FLASH_ALPHA)
-	var resting: Color = Color(team_color, TEAM_TINT_ALPHA)
-	_tween.tween_property(_tint, "albedo_color", resting, 0.25)
+	_tween.tween_property(_tint, "albedo_color", Color(Color.WHITE, 0.0), 0.25)
 
 
 func _fade_dash() -> void:
