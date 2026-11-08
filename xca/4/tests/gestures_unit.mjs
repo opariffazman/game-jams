@@ -4,7 +4,7 @@ import { copyFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 // The camera package is CommonJS to Node, so the filter loads from a copy with an .mjs extension.
 const filterCopy = `${tmpdir()}/rails-filters-${process.pid}.mjs`;
-copyFileSync(new URL('../../camera/js/filters.js', import.meta.url), filterCopy);
+copyFileSync(new URL('../camera/js/filters.js', import.meta.url), filterCopy);
 const { OneEuro } = await import(filterCopy);
 
 const FRAME_MS = 1000 / 12;

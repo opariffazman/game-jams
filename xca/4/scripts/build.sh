@@ -2,7 +2,7 @@
 # Exports the Godot project and adds the tracker page code and MediaPipe files to build/.
 set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-camera="$here/../camera"
+camera="$here/camera"
 godot="${GODOT:-godot}"
 mkdir -p "$here/build"
 "$godot" --headless --path "$here/game" --export-release Web "$here/build/index.html"
@@ -13,7 +13,7 @@ rm -rf "$here/build/vendor"
 mkdir -p "$here/build/vendor/wasm"
 cp "$camera/vendor/wasm/vision_wasm_internal.js" "$camera/vendor/wasm/vision_wasm_internal.wasm" "$here/build/vendor/wasm/"
 cp "$camera/models/gesture_recognizer.task" "$here/build/models/"
-cp "$camera/node_modules/@mediapipe/tasks-vision/vision_bundle.js" "$here/build/vendor/vision_bundle_classic.js"
+cp "$camera/vendor/mediapipe/vision_bundle.js" "$here/build/vendor/vision_bundle_classic.js"
 cp "$here/web/tracker.js" "$here/build/tracker.js"
 cp "$here/web/hand_worker.js" "$here/build/hand_worker.js"
 cp "$here/web/gestures.js" "$here/web/hologram.js" "$here/build/"
