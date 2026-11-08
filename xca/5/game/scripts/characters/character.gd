@@ -263,7 +263,7 @@ func throw_sandal(direction: Vector2, power: float) -> bool:
 	var throw_direction: Vector2 = _direction_or_facing(direction)
 	var sandal: Sandal = _release_carried()
 	var hand_offset: float = _tuned(&"character_radius") + 12.0
-	sandal.global_position = global_position + throw_direction * hand_offset
+	sandal.place_inside(global_position + throw_direction * hand_offset)
 	_ignore_sandal_briefly(sandal)
 	if role == Role.ATTACKER:
 		sandal.launch_ranged(throw_direction, _tuned(&"throw_radius") - hand_offset)
@@ -286,7 +286,7 @@ func throw_manual(direction: Vector2, power: float) -> bool:
 	var throw_direction: Vector2 = _direction_or_facing(direction)
 	var sandal: Sandal = _release_carried()
 	var hand_offset: float = _tuned(&"character_radius") + 12.0
-	sandal.global_position = global_position + throw_direction * hand_offset
+	sandal.place_inside(global_position + throw_direction * hand_offset)
 	_ignore_sandal_briefly(sandal)
 	var range_left: float = _tuned(&"max_throw_range") * clamped - hand_offset
 	sandal.launch_ranged(throw_direction, range_left, maxf(clamped, _tuned(&"min_throw_power")))
@@ -313,7 +313,7 @@ func pass_to(target: Character) -> bool:
 		return false
 	var pass_direction: Vector2 = _bent_pass_direction(target)
 	var sandal: Sandal = _release_carried()
-	sandal.global_position = global_position + pass_direction * (_tuned(&"character_radius") + 12.0)
+	sandal.place_inside(global_position + pass_direction * (_tuned(&"character_radius") + 12.0))
 	_ignore_sandal_briefly(sandal)
 	sandal.launch(pass_direction, _tuned(&"pass_power"))
 	_flying_passes.append({"sandal": sandal, "target": target, "time": 0.0})
@@ -351,7 +351,7 @@ func die() -> void:
 	velocity = Vector2.ZERO
 	var dropped: Sandal = _release_carried_or_null()
 	if dropped != null:
-		dropped.global_position = global_position
+		dropped.place_inside(global_position)
 		if not dropped.is_pass_sandal:
 			dropped.owner_team = Sandal.NO_OWNER
 	_flying_passes.clear()
@@ -367,6 +367,9 @@ func die() -> void:
 ## Takes [param sandal] into the hands. Returns false when the hands are full or the sandal is held.
 func pick_up(sandal: Sandal) -> bool:
 	if not alive or carried != null or sandal == null or not is_instance_valid(sandal):
+		return false
+	# A frozen sandal is already held or standing in the pyramid. Taking it would give it two holders.
+	if sandal.freeze:
 		return false
 	carried = sandal
 	sandal.owner_team = team
@@ -535,7 +538,7 @@ func _update_carried() -> void:
 	if carried == null or not is_instance_valid(carried):
 		carried = null
 		return
-	carried.global_position = global_position + Vector2.from_angle(facing_angle) * _tuned(&"carry_offset")
+	carried.place_inside(global_position + Vector2.from_angle(facing_angle) * _tuned(&"carry_offset"))
 
 
 func _release_carried_or_null() -> Sandal:
@@ -557,9 +560,9 @@ func _ignore_sandal_briefly(sandal: Sandal) -> void:
 	get_tree().create_timer(_tuned(&"throw_collision_grace")).timeout.connect(_clear_sandal_exception.bind(sandal))
 
 
-func _clear_sandal_exception(sandal: Sandal) -> void:
+func _clear_sandal_exception(sandal: Variant) -> void:
 	if is_instance_valid(sandal):
-		sandal.remove_collision_exception_with(self)
+		(sandal as Sandal).remove_collision_exception_with(self)
 
 
 func _enemy_team() -> int:
@@ -597,11 +600,13 @@ func _bent_pass_direction(target: Character) -> Vector2:
 func _steer_passes(delta: float) -> void:
 	var still_flying: Array[Dictionary] = []
 	for entry: Dictionary in _flying_passes:
-		var sandal: Sandal = entry["sandal"] as Sandal
-		var target: Character = entry["target"] as Character
+		var sandal_ref: Variant = entry["sandal"]
+		var target_ref: Variant = entry["target"]
 		entry["time"] = float(entry["time"]) + delta
-		if sandal == null or not is_instance_valid(sandal) or target == null or not is_instance_valid(target):
+		if not is_instance_valid(sandal_ref) or not is_instance_valid(target_ref):
 			continue
+		var sandal: Sandal = sandal_ref as Sandal
+		var target: Character = target_ref as Character
 		if float(entry["time"]) > _tuned(&"pass_max_time") or not target.alive:
 			continue
 		if sandal.global_position.distance_to(target.global_position) <= _tuned(&"pass_catch_radius"):
@@ -649,7 +654,7 @@ func _update_zone_drop() -> void:
 	if not stack.is_in_zone(global_position):
 		return
 	var dropped: Sandal = _release_carried()
-	dropped.global_position = global_position
+	dropped.place_inside(global_position)
 	dropped.owner_team = Sandal.NO_OWNER
 	_ignore_sandal_briefly(dropped)
 	AudioRef.play(&"place")
@@ -661,7 +666,7 @@ func drop_carried(world_position: Vector2) -> void:
 	if carried == null:
 		return
 	var dropped: Sandal = _release_carried()
-	dropped.global_position = world_position
+	dropped.place_inside(world_position)
 	dropped.owner_team = Sandal.NO_OWNER
 	_ignore_sandal_briefly(dropped)
 

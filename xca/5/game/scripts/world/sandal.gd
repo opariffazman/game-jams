@@ -25,6 +25,9 @@ var in_flight: bool = false:
 	set(value):
 		in_flight = value
 		collision_mask = _flight_mask() if value else _rest_mask()
+		# A ranged throw runs with no damping. Leaving flight by any route restores it.
+		if not value and tuning != null:
+			_end_ranged()
 		# A sandal that comes to rest on the field is shared again. A held one keeps its carrier.
 		if not value and not freeze and not is_pass_sandal:
 			owner_team = NO_OWNER
@@ -114,6 +117,7 @@ func _physics_process(_delta: float) -> void:
 	if not (global_position.is_finite() and linear_velocity.is_finite()):
 		_recover_from_non_finite_state()
 		return
+	_cap_speed()
 	_keep_inside_arena()
 	var swept_from: Vector2 = _last_finite_position
 	_last_finite_position = global_position
@@ -142,6 +146,12 @@ func launch(direction: Vector2, power: float) -> void:
 ## [param speed_power] from 0 to 1 sets the speed, so a weak manual throw still reaches its spot.
 func launch_ranged(direction: Vector2, distance: float, speed_power: float = 1.0) -> void:
 	last_range = distance
+	# A range of zero never ends, so the sandal would keep zero damping and drift for ever.
+	if distance <= 0.0:
+		freeze = false
+		_hit_this_flight.clear()
+		halt()
+		return
 	_range_direction = direction.normalized()
 	_range_left = maxf(distance, 0.0)
 	_range_last_position = global_position
@@ -150,15 +160,33 @@ func launch_ranged(direction: Vector2, distance: float, speed_power: float = 1.0
 	launch(_range_direction, speed_power)
 
 
+## A contact with a body or another sandal can hand a sandal far more speed than any throw. That speed
+## carries it through a wall in one step, so no sandal moves faster than a full-power throw.
+func _cap_speed() -> void:
+	linear_velocity = linear_velocity.limit_length(tuning.throw_speed_max)
+
+
+## Puts the sandal at [param world_position], moved inside the walls. A sandal that starts inside a wall
+## or outside the arena can never be picked up, so every hand-off goes through here.
+func place_inside(world_position: Vector2) -> void:
+	global_position = clamp_to_arena(world_position)
+
+
+## [param world_position] moved to the nearest point where a sandal fits inside the walls.
+func clamp_to_arena(world_position: Vector2) -> Vector2:
+	var inside: Rect2 = Rect2(tuning.arena_centre - tuning.arena_half_extents, tuning.arena_half_extents * 2.0).grow(-tuning.sandal_radius)
+	return Vector2(
+		clampf(world_position.x, inside.position.x, inside.end.x),
+		clampf(world_position.y, inside.position.y, inside.end.y))
+
+
 ## Puts a sandal that left the walls back inside, stopped. A sandal outside the walls can never be picked up,
 ## so the round would wait for it forever.
 func _keep_inside_arena() -> void:
 	var inside: Rect2 = Rect2(tuning.arena_centre - tuning.arena_half_extents, tuning.arena_half_extents * 2.0).grow(-tuning.sandal_radius)
 	if inside.has_point(global_position):
 		return
-	global_position = Vector2(
-		clampf(global_position.x, inside.position.x, inside.end.x),
-		clampf(global_position.y, inside.position.y, inside.end.y))
+	place_inside(global_position)
 	halt()
 	_hit_this_flight.clear()
 

@@ -252,6 +252,9 @@ func _start_topple() -> void:
 
 func _update_topple(delta: float) -> void:
 	if not _awaiting_settle:
+		if _turn_lost_its_sandal():
+			_count_lost_turn()
+			return
 		_auto_throw_for_idle_thrower(delta)
 		return
 	_idle_time = _idle_time + delta if _everything_still() else 0.0
@@ -266,6 +269,28 @@ func _update_topple(delta: float) -> void:
 			_give_throw_sandal(attackers[turn])
 	else:
 		_topple_failed()
+
+
+## True when it is a throw turn but no attacker holds a sandal. A pass that missed its mate leaves
+## the sandal on the floor and sends no throw signal, so without this the turn would wait for ever.
+func _turn_lost_its_sandal() -> bool:
+	for attacker: Character in _attackers():
+		if attacker.carried != null:
+			return false
+	return not _attackers().is_empty()
+
+
+## Counts the lost turn as a throw and waits for the stray sandal to settle like any other throw.
+func _count_lost_turn() -> void:
+	for node: Node in get_tree().get_nodes_in_group(Sandal.GROUP):
+		var sandal: Sandal = node as Sandal
+		if sandal != null and not sandal.is_pass_sandal and sandal.get_parent() == arena and not _thrown.has(sandal):
+			_thrown.append(sandal)
+	_throws_done += 1
+	_idle_time = 0.0
+	_awaiting_settle = true
+	if _throws_done >= _total_throws:
+		_play_last_throw_feel()
 
 
 ## A human who never throws would hold the queue forever. After [member Tuning.topple_throw_seconds]
@@ -431,17 +456,18 @@ func _remove_non_stack_sandals() -> void:
 
 
 func _clear_loose_throw_sandals() -> void:
-	for sandal: Sandal in _thrown:
-		if is_instance_valid(sandal) and sandal.get_parent() != null:
-			sandal.get_parent().remove_child(sandal)
-			sandal.queue_free()
-	_thrown.clear()
+	# Hands first, so no attacker keeps a pointer to a sandal that is about to be freed.
 	for attacker: Character in _attackers():
 		if attacker.carried != null and is_instance_valid(attacker.carried) and not attacker.carried.is_pass_sandal:
-			var held: Sandal = attacker.carried
 			attacker.carried = null
-			held.get_parent().remove_child(held)
-			held.queue_free()
+	# The stack sandals are children of the stack. Every other sandal is a throw sandal, including a passed one
+	# that no throw signal ever reported.
+	for node: Node in get_tree().get_nodes_in_group(Sandal.GROUP):
+		var sandal: Sandal = node as Sandal
+		if sandal != null and not sandal.is_pass_sandal and sandal.get_parent() == arena:
+			arena.remove_child(sandal)
+			sandal.queue_free()
+	_thrown.clear()
 
 
 func _build_human() -> void:

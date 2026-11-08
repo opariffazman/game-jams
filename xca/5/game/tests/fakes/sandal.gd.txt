@@ -21,3 +21,7 @@ func launch_ranged(direction: Vector2, distance: float, _speed_power: float = 1.
 	last_range = distance
 	linear_velocity = direction * 900.0
 	in_flight = true
+
+
+func place_inside(world_position: Vector2) -> void:
+	global_position = world_position

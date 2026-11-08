@@ -229,8 +229,13 @@ func _test_rings_in_round() -> void:
 	if human != null and human.role == Character.Role.DEFENDER:
 		var start_ring: float = human.global_position.distance_to(arena.centre_spot)
 		human.move_intent = Vector2(0.0, -1.0)
-		await _frames(60)
-		_check(absf(human.global_position.distance_to(arena.centre_spot) - start_ring) < 2.0, "human defender cannot leave the ring (drift %.2f, phase %d)" % [human.global_position.distance_to(arena.centre_spot) - start_ring, manager.phase])
+		var worst_drift: float = 0.0
+		for _i: int in 30:
+			await _frames(2)
+			if manager.phase != RoundManager.TOPPLE:
+				break
+			worst_drift = maxf(worst_drift, absf(human.global_position.distance_to(arena.centre_spot) - start_ring))
+		_check(worst_drift < 2.0, "human defender cannot leave the ring (worst drift %.2f)" % worst_drift)
 		human.move_intent = Vector2.ZERO
 	elif human != null:
 		human.move_intent = Vector2(1.0, 0.0)

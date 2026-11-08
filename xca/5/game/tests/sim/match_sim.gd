@@ -28,14 +28,20 @@ const LOPSIDED_MIN_MATCHES: int = 20
 const LOW_BUILD_RATE: float = 0.1
 const SCRIPT_RELEASE_STEP: int = 12
 const SCRIPT_RETRY_STEP: int = 130
+const FUZZ_ACT_CHANCE: float = 0.05
+const FUZZ_RETARGET_FRAMES: int = 45
+const ENDLESS_FLIGHT_SECONDS: float = 6.0
+const OUTSIDE_GRACE_FRAMES: int = 3
 
-const SCENARIO_ORDER: Array[String] = ["bots", "idle_seat0", "idle_seat1", "script_seat0", "script_seat1"]
+const SCENARIO_ORDER: Array[String] = ["bots", "idle_seat0", "idle_seat1", "script_seat0", "script_seat1", "fuzz_seat0", "fuzz_seat1"]
 const SCENARIOS: Dictionary = {
 	"bots": {"human_team": -1, "mode": "none"},
 	"idle_seat0": {"human_team": 0, "mode": "idle"},
 	"idle_seat1": {"human_team": 1, "mode": "idle"},
 	"script_seat0": {"human_team": 0, "mode": "script"},
 	"script_seat1": {"human_team": 1, "mode": "script"},
+	"fuzz_seat0": {"human_team": 0, "mode": "fuzz"},
+	"fuzz_seat1": {"human_team": 1, "mode": "fuzz"},
 }
 const PHASE_NAMES: Array[String] = ["COIN_FLIP", "TOPPLE", "SCATTER", "ROUND_END", "MATCH_END"]
 
@@ -68,6 +74,10 @@ var _next_trace: float = 0.0
 var _script_step: int = -1
 var _pass_hold_time: float = 0.0
 var _pressed: Dictionary = {}
+var _fuzz_target: Vector2 = Vector2.ZERO
+var _fuzz_frames: int = 0
+var _flight_time: Dictionary = {}
+var _outside_frames: Dictionary = {}
 
 var _stats: Dictionary = {}
 var _scatter_clock: float = 0.0
@@ -192,6 +202,8 @@ func _run_match(scenario: String, seed_value: int) -> void:
 	_next_trace = 0.0
 	_script_step = -1
 	_pass_hold_time = 0.0
+	_fuzz_frames = 0
+	_flight_time = {}
 	_build_match(scenario)
 	var stats: Dictionary = _stats[scenario]
 	stats["matches"] += 1
@@ -219,6 +231,7 @@ func _tick() -> void:
 	_check_zone_displacement()
 	_check_bounds()
 	_check_counts()
+	_check_custody()
 	_check_stuck()
 	_check_gather_time()
 	_check_progress()
@@ -418,7 +431,7 @@ func _check_counts() -> void:
 		bad = "%d sandals in play plus %d placed, expected %d in total" % [loose_normal, _arena.stack.placed_count, expected]
 	_count_bad_frames = _count_bad_frames + 1 if bad != "" else 0
 	if _count_bad_frames == COUNT_GRACE_FRAMES:
-		_violation("sandal_count", bad + " in " + PHASE_NAMES[_manager.phase])
+		_violation("sandal_count", bad + " in " + PHASE_NAMES[_manager.phase] + ". " + _describe())
 
 
 func _has_free_sandal() -> bool:
@@ -531,9 +544,13 @@ func _describe() -> String:
 	var human_text: String = "none"
 	if human != null:
 		human_text = "%s%s" % ["attacker" if human.role == Character.Role.ATTACKER else "defender", " holding sandal" if human.carried != null else ""]
-	return "phase %s, attacking team %d, human %s, throws_left %d, stack down %s placed %d, alive %d vs %d, scores %s" % [
+	var sandals: Array[String] = []
+	for sandal: Sandal in _live_sandals():
+		sandals.append("(%.0f,%.0f v%.0f%s%s%s d%.1f)" % [sandal.global_position.x, sandal.global_position.y, sandal.linear_velocity.length(),
+			" flying" if sandal.in_flight else "", " frozen" if sandal.freeze else "", " pass" if sandal.is_pass_sandal else "", sandal.linear_damp])
+	return "phase %s, attacking team %d, human %s, throws_left %d, stack down %s placed %d, alive %d vs %d, scores %s, sandals %s" % [
 		PHASE_NAMES[_manager.phase], _manager.attacking_team, human_text, _manager.throws_left,
-		str(_arena.stack.is_down), _arena.stack.placed_count, _alive_count(0), _alive_count(1), str(_manager.scores)]
+		str(_arena.stack.is_down), _arena.stack.placed_count, _alive_count(0), _alive_count(1), str(_manager.scores), " ".join(sandals)]
 
 
 func _trace() -> void:
@@ -565,17 +582,108 @@ func _trace() -> void:
 
 func _drive_human() -> void:
 	var mode: String = String((SCENARIOS[_scenario] as Dictionary)["mode"])
-	if mode != "script":
+	if mode != "script" and mode != "fuzz":
 		return
 	var body: Character = _human_body()
 	if body == null or not body.alive:
 		_release_actions()
 		_script_step = -1
 		return
-	if body.role == Character.Role.ATTACKER:
+	if mode == "fuzz":
+		_fuzz(body)
+	elif body.role == Character.Role.ATTACKER:
 		_script_attacker(body)
 	else:
 		_script_defender(body)
+
+
+## A human who throws, passes, hits, drops and walks at random, through the same character calls the input schemes use.
+func _fuzz(body: Character) -> void:
+	if _manager.phase == RoundManager.COIN_FLIP or _manager.phase == RoundManager.ROUND_END:
+		_release_actions()
+		return
+	_fuzz_frames -= 1
+	if _fuzz_frames <= 0:
+		_fuzz_frames = FUZZ_RETARGET_FRAMES
+		_fuzz_target = _arena.random_point(30.0)
+		var pick: float = randf()
+		if pick < 0.4:
+			var loose: Array = _arena.get_loose_sandals()
+			if not loose.is_empty():
+				_fuzz_target = (loose[randi() % loose.size()] as Node2D).global_position
+		elif pick < 0.6:
+			_fuzz_target = _arena.centre_spot
+	_walk(body, _fuzz_target, 6.0)
+	if randf() < 0.01:
+		body.dash()
+	if body.carried == null or randf() > FUZZ_ACT_CHANCE:
+		return
+	var direction: Vector2 = Vector2.from_angle(randf() * TAU)
+	var power: float = [0.0, 0.05, 0.2, 0.5, 1.0, randf()][randi() % 6]
+	var mates: Array[Character] = []
+	var foes: Array[Character] = []
+	for team: int in 2:
+		for entry: Variant in _arena.get_characters(team):
+			var other: Character = entry as Character
+			if other != null and other != body and other.alive:
+				(mates if team == body.team else foes).append(other)
+	match randi() % 6:
+		0:
+			body.throw_manual(direction, power)
+		1:
+			body.throw_sandal(direction, power)
+		2:
+			if not mates.is_empty():
+				body.pass_to(mates[randi() % mates.size()])
+		3:
+			if not foes.is_empty():
+				body.hit(foes[randi() % foes.size()])
+		4:
+			if _manager.phase == RoundManager.SCATTER:
+				body.drop_carried(body.global_position)
+		5:
+			body.throw_manual(_arena.centre_spot - body.global_position, power)
+
+
+## Every sandal is either held by exactly one living character, standing in the pyramid, or loose inside the walls.
+func _check_custody() -> void:
+	var holders: Dictionary = {}
+	for team: int in 2:
+		for entry: Variant in _arena.get_characters(team):
+			var member: Character = entry as Character
+			if member == null or member.carried == null or not is_instance_valid(member.carried):
+				continue
+			if not member.alive:
+				_violation("dead_holder", "%s is dead and still holds a sandal" % member.name)
+			var id: int = member.carried.get_instance_id()
+			if holders.has(id):
+				_violation("double_custody", "two characters hold one sandal at %s" % str(member.carried.global_position))
+			holders[id] = member
+	var half: Vector2 = _tuning.arena_half_extents
+	var pass_count: int = 0
+	var flying: Dictionary = {}
+	for sandal: Sandal in _live_sandals():
+		var id: int = sandal.get_instance_id()
+		if sandal.is_pass_sandal:
+			pass_count += 1
+		var offset: Vector2 = sandal.global_position - _arena.centre_spot
+		var outside_frames: int = int(_outside_frames.get(id, 0)) + 1 if absf(offset.x) > half.x or absf(offset.y) > half.y else 0
+		_outside_frames[id] = outside_frames
+		if outside_frames > OUTSIDE_GRACE_FRAMES:
+			_violation("sandal_outside_walls", "sandal at %s, pass %s, held %s, flight %s, frozen %s, placed %s, parent %s, velocity %s, phase %s" % [str(sandal.global_position), str(sandal.is_pass_sandal), str(holders.has(id)), str(sandal.in_flight), str(sandal.freeze), str(sandal.is_placed), sandal.get_parent().name, str(sandal.linear_velocity), PHASE_NAMES[_manager.phase]])
+		if sandal.freeze and not sandal.is_placed and not holders.has(id):
+			_violation("sandal_limbo", "frozen sandal at %s that nobody holds, pass %s" % [str(sandal.global_position), str(sandal.is_pass_sandal)])
+		if holders.has(id) and not sandal.freeze:
+			_violation("held_but_free", "held sandal at %s is not frozen" % str(sandal.global_position))
+		if not sandal.in_flight and not sandal.freeze and sandal.linear_damp <= 0.0:
+			_violation("undamped_rest", "sandal at %s rests with no damping, speed %.0f" % [str(sandal.global_position), sandal.linear_velocity.length()])
+		if sandal.in_flight:
+			flying[id] = float(_flight_time.get(id, 0.0)) + STEP
+			if float(flying[id]) > ENDLESS_FLIGHT_SECONDS:
+				_violation("endless_flight", "sandal at %s flew %.0f s, speed %.0f" % [str(sandal.global_position), ENDLESS_FLIGHT_SECONDS, sandal.linear_velocity.length()])
+	_flight_time = flying
+	if _manager.phase == RoundManager.SCATTER and pass_count == 0 and _alive_count(1 - _manager.attacking_team) > 0:
+		_violation("pass_sandal_missing", "no pass sandal in the scatter phase")
 
 
 func _script_attacker(body: Character) -> void:
