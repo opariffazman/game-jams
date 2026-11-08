@@ -23,6 +23,7 @@ open(path, 'w').write(text.replace(match.group(0), 'const FILES = ' + json.dumps
 PY
 rm -f "$out"
 zip -qr -X "$out" . -x '*.map'
-unzip -l "$out" | grep -q ' index.html$' || { echo "error: index.html is not at the zip root" >&2; exit 1; }
+listing="$(unzip -Z1 "$out")"
+grep -qx 'index.html' <<<"$listing" || { echo "error: index.html is not at the zip root" >&2; exit 1; }
 ls -l "$out" | awk '{print "zip bytes: " $5}'
-unzip -Z1 "$out" | grep -v / | tr '\n' ' '; echo
+grep -v / <<<"$listing" | tr '\n' ' '; echo
