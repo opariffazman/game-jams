@@ -1,6 +1,6 @@
 class_name SpectatorCrowd
 extends Node3D
-## Audience on the tournament stands. Each spectator is an instance of a Kenney character in its rest pose.
+## Audience on the tournament stands. Each spectator plays a looping Kenney clip, baked into a few mesh frames per model and variant.
 ##
 ## One [MultiMeshInstance3D] per model part keeps the draw calls low. A timer bobs the crowd at a low rate, so the
 ## cost stays a few hundred transform writes per second. The crowd has no outline and casts no shadow.
@@ -16,6 +16,10 @@ const BOB_HEIGHT: float = 4.0
 const SWAY_RADIANS: float = 0.12
 const FIRST_SPEED: float = 4.0
 const SPEED_SPREAD: float = 5.0
+## Clip per animation variant. The idle clip keeps the arms wide, so these clips bring them in. interact moves the arms like a cheer.
+const VARIANT_CLIPS: Array[StringName] = [&"holding-both", &"interact-right", &"interact-left"]
+const FRAMES_PER_CLIP: int = 8
+const FRAMES_PER_SECOND: float = 8.0
 
 ## One spectator: ground position, standing height of the tier, model size in pixels and yaw.
 class Spot:
@@ -25,6 +29,7 @@ class Spot:
 	var phase: float
 	var speed: float
 	var model: int
+	var variant: int
 
 var _groups: Array[Dictionary] = []
 var _clock: float = 0.0
@@ -43,11 +48,14 @@ func build(spots: Array[Vector4], stretch: float) -> void:
 		entry.phase = fmod(float(index) * 2.399, TAU)
 		entry.speed = FIRST_SPEED + fmod(float(index) * 1.618, 1.0) * SPEED_SPREAD
 		entry.model = (index * 5 + int(absf(spot.x) * 0.1)) % MODELS.size()
-		if not by_model.has(entry.model):
-			by_model[entry.model] = [] as Array[Spot]
-		(by_model[entry.model] as Array[Spot]).append(entry)
-	for model_index: int in by_model:
-		_add_group(MODELS[model_index], by_model[model_index] as Array[Spot])
+		entry.variant = (index * 7 + int(absf(spot.x) * 0.05)) % VARIANT_CLIPS.size()
+		var key: int = entry.model * VARIANT_CLIPS.size() + entry.variant
+		if not by_model.has(key):
+			by_model[key] = [] as Array[Spot]
+		(by_model[key] as Array[Spot]).append(entry)
+	for key: int in by_model:
+		var variant: int = key % VARIANT_CLIPS.size()
+		_add_group(MODELS[key / VARIANT_CLIPS.size()], by_model[key] as Array[Spot], variant)
 	_update_all()
 
 
@@ -65,6 +73,7 @@ func _process(delta: float) -> void:
 		return
 	_elapsed += _clock
 	_clock = 0.0
+	_show_frames()
 	_update_all()
 
 
@@ -75,27 +84,37 @@ func _facing_yaw(at: Vector3) -> float:
 	return 0.0
 
 
-func _add_group(model_name: String, spots: Array[Spot]) -> void:
+func _add_group(model_name: String, spots: Array[Spot], variant: int) -> void:
 	var packed: PackedScene = load(MODEL_DIR + model_name + ".glb") as PackedScene
 	if packed == null:
 		return
 	var root: Node = packed.instantiate()
 	# Baking the skinned parts needs the skeleton inside the tree.
 	add_child(root)
-	var parts: Array[MultiMesh] = []
-	_pose_idle(root, model_name)
+	var sources: Array[MeshInstance3D] = []
 	for candidate: Node in root.find_children("*", "MeshInstance3D", true, false):
-		var source: MeshInstance3D = candidate as MeshInstance3D
+		sources.append(candidate as MeshInstance3D)
+	var frames: Array[Array] = []
+	for source: MeshInstance3D in sources:
+		frames.append([])
+	var player: AnimationPlayer = root.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	var clip_name: StringName = VARIANT_CLIPS[variant]
+	var clip: Animation = null
+	var clip_length: float = 0.0
+	if player != null and player.has_animation(clip_name):
+		clip = player.get_animation(clip_name)
+		clip_length = clip.length
+	var frame_count: int = FRAMES_PER_CLIP if clip_length > 0.0 else 1
+	for frame: int in frame_count:
+		if clip != null:
+			_pose_bones(root, clip, clip_length * float(frame) / float(frame_count))
+		for part_index: int in sources.size():
+			frames[part_index].append(_bake(sources[part_index]))
+	var parts: Array[MultiMesh] = []
+	for part_index: int in sources.size():
 		var multi: MultiMesh = MultiMesh.new()
 		multi.transform_format = MultiMesh.TRANSFORM_3D
-		var baked: Mesh = source.bake_mesh_from_current_skeleton_pose()
-		if baked == null:
-			baked = source.mesh
-		else:
-			# A baked mesh keeps no materials, so copy the colormap material back or the crowd draws white.
-			for surface: int in baked.get_surface_count():
-				baked.surface_set_material(surface, source.get_active_material(surface))
-		multi.mesh = baked
+		multi.mesh = frames[part_index][0]
 		multi.instance_count = spots.size()
 		var holder: MultiMeshInstance3D = MultiMeshInstance3D.new()
 		holder.multimesh = multi
@@ -103,20 +122,53 @@ func _add_group(model_name: String, spots: Array[Spot]) -> void:
 		add_child(holder)
 		parts.append(multi)
 	root.queue_free()
-	_groups.append({"spots": spots, "parts": parts})
+	var offset: int = (model_name.hash() + variant * 3) % frame_count
+	_groups.append({"spots": spots, "parts": parts, "frames": frames, "offset": offset, "shown": 0})
 
 
-# The rest pose of the Kenney rigs is a T-pose, so the baked pose comes from a frame of the idle clip, which has the arms down.
-func _pose_idle(root: Node, model_name: String) -> void:
-	var player: AnimationPlayer = root.find_child("AnimationPlayer", true, false) as AnimationPlayer
-	if player == null or not player.has_animation(&"idle"):
-		return
-	var clip: Animation = player.get_animation(&"idle")
-	var seed_value: int = model_name.hash()
-	var at: float = clip.length * float(seed_value % 100) / 100.0
-	player.play(&"idle")
-	player.seek(at, true)
-	player.pause()
+# An AnimationPlayer applies a pose only on a processed frame, and the crowd bakes in the frame it is built.
+# Sampling the clip tracks onto the bones sets the pose at once.
+func _pose_bones(root: Node, clip: Animation, time: float) -> void:
+	for track: int in clip.get_track_count():
+		var path: NodePath = clip.track_get_path(track)
+		var skeleton: Skeleton3D = root.get_node_or_null(NodePath(path.get_concatenated_names())) as Skeleton3D
+		if skeleton == null:
+			continue
+		var bone: int = skeleton.find_bone(path.get_concatenated_subnames())
+		if bone < 0:
+			continue
+		match clip.track_get_type(track):
+			Animation.TYPE_POSITION_3D:
+				skeleton.set_bone_pose_position(bone, clip.position_track_interpolate(track, time))
+			Animation.TYPE_ROTATION_3D:
+				skeleton.set_bone_pose_rotation(bone, clip.rotation_track_interpolate(track, time))
+			Animation.TYPE_SCALE_3D:
+				skeleton.set_bone_pose_scale(bone, clip.scale_track_interpolate(track, time))
+
+
+# A baked mesh keeps no materials, so the colormap material is copied back or the crowd draws white.
+func _bake(source: MeshInstance3D) -> Mesh:
+	var baked: Mesh = source.bake_mesh_from_current_skeleton_pose()
+	if baked == null:
+		return source.mesh
+	for surface: int in baked.get_surface_count():
+		baked.surface_set_material(surface, source.get_active_material(surface))
+	return baked
+
+
+func _show_frames() -> void:
+	for group: Dictionary in _groups:
+		var frames: Array = group["frames"]
+		var count: int = (frames[0] as Array).size()
+		if count < 2:
+			continue
+		var shown: int = (int(_elapsed * FRAMES_PER_SECOND) + int(group["offset"])) % count
+		if shown == int(group["shown"]):
+			continue
+		group["shown"] = shown
+		var parts: Array = group["parts"]
+		for part_index: int in parts.size():
+			(parts[part_index] as MultiMesh).mesh = (frames[part_index] as Array)[shown]
 
 
 func _update_all() -> void:

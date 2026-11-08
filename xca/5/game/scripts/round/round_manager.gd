@@ -405,16 +405,20 @@ func _start_scatter() -> void:
 	_clear_loose_throw_sandals()
 	var defenders: Array[Character] = _defenders()
 	if not defenders.is_empty():
-		var pass_sandal: Sandal = Sandal.new()
-		pass_sandal.tuning = tuning
-		pass_sandal.is_pass_sandal = true
-		pass_sandal.position = defenders[0].position
-		pass_sandal.hit_character.connect(_on_pass_hit.bind(pass_sandal))
-		arena.add_child(pass_sandal)
-		defenders[0].pick_up(pass_sandal)
+		_spawn_pass_sandal(defenders[0])
 	_hold_rings(false)
 	_set_pickup(true)
 	_set_phase(SCATTER)
+
+
+func _spawn_pass_sandal(holder: Character) -> void:
+	var pass_sandal: Sandal = Sandal.new()
+	pass_sandal.tuning = tuning
+	pass_sandal.is_pass_sandal = true
+	pass_sandal.position = holder.position
+	pass_sandal.hit_character.connect(_on_pass_hit.bind(pass_sandal))
+	arena.add_child(pass_sandal)
+	holder.pick_up(pass_sandal)
 
 
 ## The defenders win when the attackers cannot build in time, so every round ends.
@@ -437,10 +441,17 @@ func _watch_custody(delta: float) -> void:
 				holders[member.carried.get_instance_id()] = true
 	var inside: Rect2 = Rect2(tuning.arena_centre - tuning.arena_half_extents, tuning.arena_half_extents * 2.0)
 	var ordinary: int = 0
+	var passes: int = 0
 	var broken: bool = false
 	for node: Node in get_tree().get_nodes_in_group(Sandal.GROUP):
 		var sandal: Sandal = node as Sandal
-		if sandal == null or sandal.is_queued_for_deletion() or sandal.is_pass_sandal:
+		if sandal == null or sandal.is_queued_for_deletion():
+			continue
+		if sandal.is_pass_sandal:
+			passes += 1
+			var pass_held: bool = holders.has(sandal.get_instance_id())
+			if not pass_held and (sandal.freeze or not sandal.global_position.is_finite() or not inside.has_point(sandal.global_position)):
+				broken = true
 			continue
 		ordinary += 1
 		var held: bool = holders.has(sandal.get_instance_id())
@@ -452,6 +463,9 @@ func _watch_custody(delta: float) -> void:
 			broken = true
 	if ordinary < tuning.stack_size:
 		broken = true
+	# The pass sandal is the only one the defenders can use, so a round with defenders and none is stuck.
+	if passes == 0 and not _defenders().is_empty():
+		broken = true
 	_custody_bad_time = _custody_bad_time + delta if broken else 0.0
 	if _custody_bad_time < CUSTODY_GRACE:
 		return
@@ -461,11 +475,15 @@ func _watch_custody(delta: float) -> void:
 
 func _repair_custody(holders: Dictionary) -> void:
 	var ordinary: int = 0
+	var passes: int = 0
 	for node: Node in get_tree().get_nodes_in_group(Sandal.GROUP):
 		var sandal: Sandal = node as Sandal
-		if sandal == null or sandal.is_queued_for_deletion() or sandal.is_pass_sandal:
+		if sandal == null or sandal.is_queued_for_deletion():
 			continue
-		ordinary += 1
+		if sandal.is_pass_sandal:
+			passes += 1
+		else:
+			ordinary += 1
 		if holders.has(sandal.get_instance_id()) or sandal.is_placed:
 			continue
 		if sandal.freeze:
@@ -474,6 +492,9 @@ func _repair_custody(holders: Dictionary) -> void:
 			sandal.global_position = arena.centre_spot
 		sandal.place_inside(sandal.global_position)
 		sandal.halt()
+	var defenders: Array[Character] = _defenders()
+	if passes == 0 and not defenders.is_empty():
+		_spawn_pass_sandal(defenders[0])
 	for index: int in maxi(tuning.stack_size - ordinary, 0):
 		var spare: Sandal = Sandal.new()
 		spare.tuning = tuning

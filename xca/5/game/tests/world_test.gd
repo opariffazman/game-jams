@@ -34,6 +34,10 @@ func _frames(count: int) -> void:
 
 
 func _run() -> void:
+	var settings: Node = root.get_node("Settings")
+	settings.path = "user://world_test_settings_%d.cfg" % OS.get_process_id()
+	settings.set("skip_title", true)
+	settings.set("coin_flip_seen", false)
 	var tuning: Tuning = Tuning.load_default()
 	tuning.match_countdown = false
 	var arena: Arena = (load("res://scenes/arena.tscn") as PackedScene).instantiate() as Arena
@@ -263,8 +267,8 @@ func _round_flow() -> void:
 	_check(manager.phase == RoundManager.TOPPLE, "coin flip moves to topple")
 	_check(manager.throws_left == Tuning.load_default().team_size * Tuning.load_default().throws_per_attacker, "throws_left is team size times throws")
 	var arena: Arena = main.get_node("Arena") as Arena
-	_check(arena.get_characters(0).size() == Tuning.load_default().team_size, "team 0 has a full team")
-	_check(arena.get_characters(1).size() == Tuning.load_default().team_size, "team 1 has a full team")
+	_check(arena.get_characters(0).size() == Tuning.load_default().team_size, "team 0 has a full team (%d, phase %d)" % [arena.get_characters(0).size(), manager.phase])
+	_check(arena.get_characters(1).size() == Tuning.load_default().team_size, "team 1 has a full team (%d, phase %d)" % [arena.get_characters(1).size(), manager.phase])
 	var first_attacking: int = manager.attacking_team
 	var ended: Array[bool] = [false]
 	manager.round_ended.connect(func(_winner: int) -> void: ended[0] = true)
@@ -393,5 +397,44 @@ func _test_custody_watchdog() -> void:
 	stuck.freeze = true
 	await _frames(120)
 	_check(not stuck.freeze, "a frozen sandal nobody holds is released")
+	var pass_count: Callable = func() -> int:
+		var total: int = 0
+		for node: Node in manager.get_tree().get_nodes_in_group(Sandal.GROUP):
+			if (node as Sandal).is_pass_sandal and not node.is_queued_for_deletion():
+				total += 1
+		return total
+	_check(pass_count.call() == 1, "one pass sandal exists in scatter")
+	var vanished: Sandal = null
+	for node: Node in manager.get_tree().get_nodes_in_group(Sandal.GROUP):
+		if (node as Sandal).is_pass_sandal:
+			vanished = node as Sandal
+	vanished.get_parent().remove_child(vanished)
+	vanished.queue_free()
+	await _frames(150)
+	_check(pass_count.call() == 1, "a vanished pass sandal is replaced for the defenders")
+	var drifted: Sandal = null
+	for node: Node in manager.get_tree().get_nodes_in_group(Sandal.GROUP):
+		if (node as Sandal).is_pass_sandal:
+			drifted = node as Sandal
+	var holder_alive: bool = false
+	for entry: Variant in arena.get_characters(1 - manager.attacking_team):
+		var member: Character = entry as Character
+		if member != null and member.alive and member.carried == drifted:
+			holder_alive = true
+	if holder_alive:
+		member_drop(arena, manager, drifted)
+	drifted.set_physics_process(false)
+	drifted.global_position = arena.centre_spot + Vector2(5000.0, 5000.0)
+	await _frames(150)
+	_check(drifted.global_position.distance_to(arena.centre_spot) < 2000.0, "a pass sandal outside the walls is put back inside")
 	main.queue_free()
 	await _frames(2)
+
+
+func member_drop(arena: Arena, manager: RoundManager, sandal: Sandal) -> void:
+	for team: int in 2:
+		for entry: Variant in arena.get_characters(team):
+			var member: Character = entry as Character
+			if member != null and member.carried == sandal:
+				member.carried = null
+				sandal.freeze = false
