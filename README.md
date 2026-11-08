@@ -15,8 +15,9 @@ One directory per jam entry, under the jam series folder.
 - `store/` holds the cover and icon for the portal.
 - `GAMEPIX.md` holds the portal checklist.
 
-`xca/5` is the reference layout. `xca/4` predates it and still uses its own flat layout.
-`xca/4/build.sh` reads `../camera` and `../../tools`, which are not in this repo. It does not run until they are moved in.
+Both entries use this layout. `xca/4` also keeps `tests/`, `tools/` and `web/`.
+`xca/4/scripts/build.sh` and `xca/4/tests/gestures_unit.mjs` read `xca/camera`, which is not in this repo. They do not run until it is moved in.
+`xca/4/scripts/deploy-pages.sh` force-pushes a `gh-pages` branch. Do not use it while Pages deploys from Actions.
 
 ## Publishing
 

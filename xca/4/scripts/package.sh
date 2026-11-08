@@ -2,7 +2,7 @@
 # Zips the existing build/ for GamePix with index.html at the zip root. Run build.sh first.
 # The dev pages stay in build/ for the tests, but the zip omits them because nothing in the game loads them.
 set -euo pipefail
-here="$(cd "$(dirname "$0")" && pwd)"
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 out=/tmp/home-by-light.zip
 stage="$(mktemp -d)"
 trap 'rm -rf "$stage"' EXIT

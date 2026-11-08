@@ -5,9 +5,9 @@ Flick, swipe or use hand tracking through the webcam to steer. Clean your weapon
 
 ## Run it
 
-- `./build.sh` exports the Godot web build to `build/`.
-- `python3 serve.py` serves it over HTTPS on port 8446. The camera needs HTTPS. Create a local certificate in `cert/` first.
-- `./package.sh` zips `build/` for GamePix, with `index.html` at the zip root.
+- `GODOT=/path/to/godot scripts/build.sh` exports the Godot web build to `build/`.
+- `python3 scripts/serve.py` serves it over HTTPS on port 8446. The camera needs HTTPS. Create a local certificate in `cert/` first.
+- `scripts/package.sh` zips `build/` for GamePix, with `index.html` at the zip root.
 - `?quality=low` or `?quality=high` forces a quality tier. `?debug` shows the debug panel.
 
 ## Camera

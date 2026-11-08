@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Exports the Godot project and adds the tracker page code and MediaPipe files to build/.
 set -euo pipefail
-here="$(cd "$(dirname "$0")" && pwd)"
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 camera="$here/../camera"
-godot="$here/../../tools/godot-4.6.3/Godot_v4.6.3-stable_linux.x86_64"
+godot="${GODOT:-godot}"
 mkdir -p "$here/build"
-"$godot" --headless --path "$here/godot" --export-release Web "$here/build/index.html"
+"$godot" --headless --path "$here/game" --export-release Web "$here/build/index.html"
 mkdir -p "$here/build/js" "$here/build/vendor" "$here/build/models"
 cp "$camera/js/filters.js" "$camera/js/models.js" "$camera/js/camera.js" "$here/build/js/"
 # Chrome always has SIMD, so the nosimd and module wasm builds never load.

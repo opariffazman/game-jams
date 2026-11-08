@@ -4,8 +4,8 @@
 # Full scale effects clipped and buried the loops before, so the loudest shots sit at -3 dBFS.
 set -euo pipefail
 here="$(cd "$(dirname "$0")/.." && pwd)"
-src="$here/godot/audio_candidates"
-out="$here/godot/assets/audio"
+src="$here/game/audio_candidates"
+out="$here/game/assets/audio"
 
 # name | candidate path | start s | length s | target peak dBFS | extra ffmpeg filter (optional)
 specs=(

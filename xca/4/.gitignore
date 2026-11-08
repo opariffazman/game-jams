@@ -6,4 +6,4 @@ cert/
 node_modules/
 tests/*.png
 tests/tests/
-godot/audio_candidates/
+game/audio_candidates/

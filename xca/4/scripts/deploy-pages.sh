@@ -2,7 +2,7 @@
 # Publishes the packaged build to the gh-pages branch of origin, so GitHub Pages serves it at the top level where the camera prompt works.
 # Run build.sh and package.sh first. main stays source only.
 set -euo pipefail
-here="$(cd "$(dirname "$0")" && pwd)"
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 zip=/tmp/home-by-light.zip
 [ -f "$zip" ] || { echo "error: $zip is missing, run package.sh first" >&2; exit 1; }
 stage="$(mktemp -d)"

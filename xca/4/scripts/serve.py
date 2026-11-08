@@ -4,7 +4,7 @@ import pathlib
 import ssl
 import subprocess
 
-ROOT = pathlib.Path(__file__).resolve().parent
+ROOT = pathlib.Path(__file__).resolve().parent.parent
 BUILD_DIR = ROOT / "build"
 CERT_DIR = ROOT / "cert"
 PORT = 8446
