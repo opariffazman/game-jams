@@ -21,6 +21,9 @@ Both entries use this layout. `xca/4` also keeps `tests/`, `tools/` and `web/`.
 
 ## Publishing
 
-`.github/workflows/pages.yml` builds `xca/5` and deploys it to GitHub Pages.
+`.github/workflows/pages.yml` deploys one site to GitHub Pages. `site/` is the landing page and `site/games.json` lists the games.
+Each game is built into its own folder, for example `xca/5` into `baling-selipar/`.
+To add a game, add a row to `site/games.json` and a build and copy step to the workflow.
+Home by Light (`xca/4`) is not listed yet, because its build needs `xca/camera`.
 Set Settings > Pages > Source to GitHub Actions once.
 Downloaded asset packs (`*.zip`) are not committed. Their extracted files live in `game/assets`.

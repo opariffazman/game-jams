@@ -298,3 +298,21 @@ func _test_ricochet_matrix() -> void:
 	await _frames(30)
 	_check(not plain.alive, "an attacker outside the guard ring still dies at max speed")
 	_check(not lethal.in_flight, "the sandal stops where it kills")
+	await _test_sandal_stays_inside()
+
+
+func _test_sandal_stays_inside() -> void:
+	await _build_stage()
+	var inside: Rect2 = Rect2(_tuning.arena_centre - _tuning.arena_half_extents, _tuning.arena_half_extents * 2.0)
+	var worst: int = 0
+	for angle_step: int in 16:
+		var sandal: Sandal = Sandal.new()
+		sandal.tuning = _tuning
+		sandal.position = _arena.centre_spot + Vector2.from_angle(TAU * angle_step / 16.0) * 200.0
+		_arena.add_child(sandal)
+		await _frames(1)
+		sandal.launch(Vector2.from_angle(TAU * angle_step / 16.0), 1.0)
+		await _frames(90)
+		if not inside.has_point(sandal.global_position):
+			worst += 1
+	_check(worst == 0, "a sandal thrown at a wall at full speed never leaves the arena (%d escaped)" % worst)

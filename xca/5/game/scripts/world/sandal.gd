@@ -114,6 +114,7 @@ func _physics_process(_delta: float) -> void:
 	if not (global_position.is_finite() and linear_velocity.is_finite()):
 		_recover_from_non_finite_state()
 		return
+	_keep_inside_arena()
 	var swept_from: Vector2 = _last_finite_position
 	_last_finite_position = global_position
 	if _range_left > 0.0:
@@ -147,6 +148,19 @@ func launch_ranged(direction: Vector2, distance: float, speed_power: float = 1.0
 	linear_damp_mode = RigidBody2D.DAMP_MODE_REPLACE
 	linear_damp = 0.0
 	launch(_range_direction, speed_power)
+
+
+## Puts a sandal that left the walls back inside, stopped. A sandal outside the walls can never be picked up,
+## so the round would wait for it forever.
+func _keep_inside_arena() -> void:
+	var inside: Rect2 = Rect2(tuning.arena_centre - tuning.arena_half_extents, tuning.arena_half_extents * 2.0).grow(-tuning.sandal_radius)
+	if inside.has_point(global_position):
+		return
+	global_position = Vector2(
+		clampf(global_position.x, inside.position.x, inside.end.x),
+		clampf(global_position.y, inside.position.y, inside.end.y))
+	halt()
+	_hit_this_flight.clear()
 
 
 ## Puts the sandal back at its last finite position and stops it. A sandal with a NaN position is

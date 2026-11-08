@@ -601,6 +601,10 @@ func _on_pass_hit(character: Character, sandal: Sandal) -> void:
 	sandal.halt()
 	# The tombstone stands where the body fell and would hide a sandal that stops inside it.
 	sandal.global_position = character.global_position - travel.normalized() * (tuning.character_radius + tuning.sandal_radius + 6.0)
+	var inside: Rect2 = Rect2(tuning.arena_centre - tuning.arena_half_extents, tuning.arena_half_extents * 2.0).grow(-tuning.sandal_radius)
+	sandal.global_position = Vector2(
+		clampf(sandal.global_position.x, inside.position.x, inside.end.x),
+		clampf(sandal.global_position.y, inside.position.y, inside.end.y))
 
 
 func _on_human_changed(previous: Character, current: Character) -> void:

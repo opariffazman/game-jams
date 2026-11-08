@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Game jams</title>
+<style>
+	:root { color-scheme: dark; }
+	body { margin: 0; min-height: 100vh; background: #1c1710; color: #fff3da; font: 18px/1.5 system-ui, sans-serif; }
+	main { max-width: 44rem; margin: 0 auto; padding: 3rem 1.25rem; }
+	h1 { margin: 0 0 2rem; font-size: 2rem; }
+	ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+	a.card { display: block; padding: 1.25rem 1.5rem; border: 2px solid #ffc857; border-radius: 0.75rem; background: #3b2d1e; color: inherit; text-decoration: none; }
+	a.card:hover, a.card:focus-visible { background: #4b3a27; outline: 3px solid #fff3da; outline-offset: 2px; }
+	.title { display: block; font-size: 1.25rem; font-weight: 700; }
+	.note { color: #e0c48a; }
+</style>
+</head>
+<body>
+<main>
+	<h1>Game jams</h1>
+	<ul id="games"></ul>
+</main>
+<script>
+	fetch('games.json').then((r) => r.json()).then((games) => {
+		const list = document.getElementById('games');
+		for (const game of games) {
+			const item = document.createElement('li');
+			const link = document.createElement('a');
+			link.className = 'card';
+			link.href = game.path + '/';
+			const title = document.createElement('span');
+			title.className = 'title';
+			title.textContent = game.title;
+			const note = document.createElement('span');
+			note.className = 'note';
+			note.textContent = game.note;
+			link.append(title, note);
+			item.append(link);
+			list.append(item);
+		}
+	});
+</script>
+</body>
+</html>
