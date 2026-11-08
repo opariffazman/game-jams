@@ -26,7 +26,10 @@ const SOLE_COLOR: Color = Color8(144, 87, 65)
 const STRAP_COLOR: Color = Color8(230, 185, 110)
 const ARENA_FLOOR_COLOR: Color = Color("5c4332")
 const LINE_COLOR: Color = Color(0.78, 0.66, 0.45)
-const SHADOW_DISC_COLOR: Color = Color(0.03, 0.05, 0.09, 0.55)
+const SHADOW_COLOR: Color = Color(0.05, 0.08, 0.04, 0.5)
+## Blob shadow size against the drawing radius, and its shift away from the sun, in radii (x, z).
+const SHADOW_SIZE_FACTOR: float = 3.0
+const SHADOW_OFFSET: Vector2 = Vector2(0.25, 0.3)
 const OUTLINE_SHADER: Shader = preload("res://scripts/view3d/outline.gdshader")
 ## Model-space thickness of the team outline and of the dark edge outside it.
 const OUTLINE_THICKNESS: float = 0.035
@@ -61,6 +64,7 @@ var _outline: ShaderMaterial
 var _body_meshes: Array[GeometryInstance3D] = []
 var _strap_material: StandardMaterial3D
 var _ring_material: StandardMaterial3D
+static var _shadow_material: StandardMaterial3D
 var _extent: Vector2 = Vector2(1080.0, 600.0)
 var _guide_radii: Vector2 = Vector2.ZERO
 var _tween: Tween
@@ -222,19 +226,36 @@ func _build_character() -> void:
 				_animation_player.get_animation(animation_name).loop_mode = Animation.LOOP_LINEAR
 		_play_loop(&"idle")
 	var disc: MeshInstance3D = MeshInstance3D.new()
-	var disc_mesh: CylinderMesh = CylinderMesh.new()
-	disc_mesh.top_radius = radius * 1.05
-	disc_mesh.bottom_radius = radius * 1.05
-	disc_mesh.height = 0.2
-	disc_mesh.radial_segments = 24
-	disc_mesh.rings = 1
+	var disc_mesh: PlaneMesh = PlaneMesh.new()
+	disc_mesh.size = Vector2.ONE * radius * SHADOW_SIZE_FACTOR
 	disc.mesh = disc_mesh
-	disc.material_override = MeshBuilder3D.flat_material(SHADOW_DISC_COLOR)
-	disc.position.y = -0.2
+	disc.material_override = _soft_shadow_material()
+	disc.position = Vector3(radius * SHADOW_OFFSET.x, -0.2, radius * SHADOW_OFFSET.y)
 	disc.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_flat.add_child(disc)
 	if has_team_color:
 		set_team_color(team_color)
+
+
+# The pitch is unshaded, so a real light shadow cannot land on it. A radial-fade blob stays cheap on web
+# and has no hard edge.
+func _soft_shadow_material() -> StandardMaterial3D:
+	if _shadow_material == null:
+		var fade: Gradient = Gradient.new()
+		fade.set_color(0, SHADOW_COLOR)
+		fade.set_color(1, Color(SHADOW_COLOR, 0.0))
+		var texture: GradientTexture2D = GradientTexture2D.new()
+		texture.gradient = fade
+		texture.fill = GradientTexture2D.FILL_RADIAL
+		texture.fill_from = Vector2(0.5, 0.5)
+		texture.fill_to = Vector2(0.5, 0.0)
+		texture.width = 64
+		texture.height = 64
+		var material: StandardMaterial3D = MeshBuilder3D.flat_material(Color.WHITE)
+		material.albedo_texture = texture
+		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		_shadow_material = material
+	return _shadow_material
 
 
 func _build_sandal() -> void:

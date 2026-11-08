@@ -108,7 +108,7 @@ func _ready() -> void:
 	match_ended.connect(_play_match_end_feedback)
 	_pick_default_heroes()
 	start_match()
-	_hook_hero_select()
+	_hook_hero_select.call_deferred()
 
 
 func _physics_process(delta: float) -> void:
@@ -156,6 +156,7 @@ func _pick_default_heroes() -> void:
 
 
 # The select screen opens after the title Play tap. A skipped title skips the select too.
+## Deferred: the title sits after this node in the tree, so it joins its group only after this node is ready.
 func _hook_hero_select() -> void:
 	var title: Node = get_tree().get_first_node_in_group(TitleScreen.GROUP)
 	if title == null or not title is TitleScreen or not (title as TitleScreen).is_open():

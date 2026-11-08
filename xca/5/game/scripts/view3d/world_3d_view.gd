@@ -21,7 +21,7 @@ const CAMERA_DISTANCE: float = 2400.0
 const MIN_RENDER_SCALE: float = 0.5
 const MAX_RENDER_SCALE: float = 2.0
 ## Colour behind the arena. It matches the 2D surround.
-const BACKGROUND_COLOR: Color = Color("1f7a45")
+const BACKGROUND_COLOR: Color = Color("2a6b3d")
 ## Canvas layer of the 3D picture. It sits below the default 2D layer.
 const CANVAS_LAYER: int = -10
 
@@ -119,15 +119,15 @@ func _build_environment() -> void:
 	environment.background_mode = Environment.BG_COLOR
 	environment.background_color = BACKGROUND_COLOR
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	environment.ambient_light_color = Color(1.0, 0.97, 0.9)
-	environment.ambient_light_energy = 1.0
+	environment.ambient_light_color = Color(1.0, 0.95, 0.86)
+	environment.ambient_light_energy = 0.85
 	var holder: WorldEnvironment = WorldEnvironment.new()
 	holder.environment = environment
 	_viewport.add_child(holder)
 	var sun: DirectionalLight3D = DirectionalLight3D.new()
 	sun.shadow_enabled = false
-	sun.light_energy = 0.9
-	sun.light_color = Color(1.0, 0.96, 0.85)
+	sun.light_energy = 0.75
+	sun.light_color = Color(1.0, 0.93, 0.78)
 	sun.rotation_degrees = Vector3(-55.0, -25.0, 0.0)
 	_viewport.add_child(sun)
 

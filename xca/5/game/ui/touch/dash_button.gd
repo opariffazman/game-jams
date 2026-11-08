@@ -42,7 +42,7 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		var touch: InputEventScreenTouch = event
-		if touch.pressed and finger_index == -1 and _centre().distance_to(touch.position) <= radius:
+		if touch.pressed and finger_index == -1 and is_visible_in_tree() and _centre().distance_to(touch.position) <= radius:
 			finger_index = touch.index
 			pressed.emit()
 			queue_redraw()

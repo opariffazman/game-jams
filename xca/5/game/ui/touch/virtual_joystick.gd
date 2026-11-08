@@ -49,7 +49,8 @@ func _process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		var touch: InputEventScreenTouch = event
-		if touch.pressed and finger_index == -1 and _in_zone(touch.position):
+		# A press on the owning index means the release was lost, so the stick restarts instead of staying locked.
+		if touch.pressed and (finger_index == -1 or touch.index == finger_index) and _in_zone(touch.position):
 			finger_index = touch.index
 			_origin = touch.position
 			_knob = touch.position

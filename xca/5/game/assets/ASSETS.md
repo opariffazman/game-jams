@@ -89,3 +89,14 @@
 | assets/icons/power_perisai.svg | https://game-icons.net | Lorc | CC BY 3.0 | 2026-11-08 |
 | assets/icons/power_lontar.svg | https://game-icons.net | Lorc | CC BY 3.0 | 2026-11-08 |
 | assets/icons/power_tangkap.svg | https://game-icons.net | Lorc | CC BY 3.0 | 2026-11-08 |
+| assets/kenney/arena/stairs.glb | https://kenney.nl Mini Arena | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/arena/stairs-corner.glb | https://kenney.nl Mini Arena | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/arena/wall.glb | https://kenney.nl Mini Arena | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/arena/wall-gate.glb | https://kenney.nl Mini Arena | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/arena/column.glb | https://kenney.nl Mini Arena | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/arena/weapon-rack.glb | https://kenney.nl Mini Arena | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/arena/trophy.glb | https://kenney.nl Mini Arena | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/arena/statue.glb | https://kenney.nl Mini Arena | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/arena/block.glb | https://kenney.nl Mini Arena | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/forest/platform.glb | https://kenney.nl Mini Forest | Kenney | CC0 | 2026-11-08 |
+| assets/kenney/forest/target.glb | https://kenney.nl Mini Forest | Kenney | CC0 | 2026-11-08 |

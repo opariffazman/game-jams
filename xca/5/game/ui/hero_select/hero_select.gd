@@ -21,6 +21,21 @@ const CARD_LIFT: float = 6.0
 const CONFIRM_SIZE: float = 64.0
 const ENEMY_CARD: float = 52.0
 const PIPS: int = 5
+const FRIEND: Color = Color("3d9bff")
+const ENEMY: Color = Color("ff5a45")
+## Icon per stat row: speed, build, guard, throw.
+const STAT_ICONS: Array[String] = ["res://assets/icons/joystick.svg", "res://assets/icons/hud_stack.svg", "res://assets/icons/hud_shield.svg", "res://assets/icons/slingshot.svg"]
+## Icon per power param key, drawn when the form uses it.
+const PARAM_ICONS: Dictionary = {
+	"speed_mult": "res://assets/icons/joystick.svg",
+	"pickup_mult": "res://assets/icons/throw_stack.svg",
+	"pass_turn_mult": "res://assets/icons/throw_pass.svg",
+	"carry_free": "res://assets/icons/hud_sandal.svg",
+	"absorb": "res://assets/icons/hud_shield.svg",
+	"dash_burst": "res://assets/icons/fire-dash.svg",
+}
+const ATTACK_ICON: String = "res://assets/icons/hud_sandal.svg"
+const DEFENCE_ICON: String = "res://assets/icons/hud_shield.svg"
 
 var cards: Array[Control] = []
 var heroes: Array[HeroDef] = []
@@ -192,7 +207,8 @@ func _draw_canvas() -> void:
 	var preview: float = 120.0 * scale
 	var centre: Vector2 = Vector2(screen.x * 0.5 - 150.0 * scale, 28.0 * scale + preview * 0.5 + 8.0 * scale)
 	_canvas.draw_circle(centre, preview * 0.6, FACE)
-	_canvas.draw_arc(centre, preview * 0.6, 0.0, TAU, 64, RING, 4.0 * scale, true)
+	_canvas.draw_arc(centre, preview * 0.6, 0.0, TAU, 64, FRIEND, 6.0 * scale, true)
+	_canvas.draw_arc(centre, preview * 0.6 + 7.0 * scale, 0.0, TAU, 64, CREAM, 1.5 * scale, true)
 	_canvas.draw_texture_rect(hero.icon, Rect2(centre - Vector2.ONE * preview * 0.4, Vector2.ONE * preview * 0.8), false, CREAM)
 	var power_centre: Vector2 = centre + Vector2(preview * 0.95, 0.0)
 	var power_radius: float = 30.0 * scale
@@ -200,7 +216,29 @@ func _draw_canvas() -> void:
 	_canvas.draw_texture_rect(hero.power_icon, Rect2(power_centre - Vector2.ONE * power_radius * 0.62, Vector2.ONE * power_radius * 1.24), false, CREAM)
 	_draw_cooldown_ring(power_centre, power_radius, hero)
 	_draw_pips(Vector2(power_centre.x + power_radius + 28.0 * scale, centre.y - 36.0 * scale), scale, hero)
+	_draw_legend(Vector2(screen.x * 0.5 - 150.0 * scale - preview * 0.6, centre.y + preview * 0.75), scale, hero)
 	_draw_enemy_card(screen, scale)
+
+
+## Two rows, one per round form of the power. Each icon says which rule the form changes. Pips give its length.
+func _draw_legend(origin: Vector2, scale: float, hero: HeroDef) -> void:
+	var size: float = 26.0 * scale
+	var forms: Array = [[ATTACK_ICON, hero.attack_params], [DEFENCE_ICON, hero.defence_params]]
+	for row: int in forms.size():
+		var at: Vector2 = origin + Vector2(0.0, (size + 8.0 * scale) * row)
+		var params: Dictionary = forms[row][1]
+		_canvas.draw_rect(Rect2(at, Vector2(size, size)), FACE)
+		_canvas.draw_rect(Rect2(at, Vector2(size, size)), FRIEND, false, 2.0 * scale)
+		_canvas.draw_texture_rect(load(forms[row][0]) as Texture2D, Rect2(at + Vector2.ONE * size * 0.15, Vector2.ONE * size * 0.7), false, CREAM)
+		var x: float = at.x + size + 10.0 * scale
+		for key: String in PARAM_ICONS:
+			if not params.has(key) or (params[key] is bool and not params[key]):
+				continue
+			_canvas.draw_texture_rect(load(PARAM_ICONS[key]) as Texture2D, Rect2(Vector2(x, at.y + size * 0.1), Vector2.ONE * size * 0.8), false, RING)
+			x += size
+		var seconds: int = clampi(roundi(float(params.get("duration", 0.0))), 0, 8)
+		for second: int in seconds:
+			_canvas.draw_circle(Vector2(x + 10.0 * scale + 8.0 * scale * second, at.y + size * 0.5), 3.0 * scale, CREAM)
 
 
 func _draw_cooldown_ring(centre: Vector2, radius: float, hero: HeroDef) -> void:
@@ -213,6 +251,8 @@ func _draw_pips(origin: Vector2, scale: float, hero: HeroDef) -> void:
 	var stats: Array[int] = [hero.stat_speed, hero.stat_build, hero.stat_guard, hero.stat_throw]
 	var radius: float = 5.0 * scale
 	for row: int in stats.size():
+		var icon_size: float = radius * 3.0
+		_canvas.draw_texture_rect(load(STAT_ICONS[row]) as Texture2D, Rect2(origin + Vector2(-icon_size - radius, (radius * 3.2) * row - icon_size * 0.5), Vector2.ONE * icon_size), false, CREAM)
 		for pip: int in PIPS:
 			var at: Vector2 = origin + Vector2((radius * 2.6) * pip, (radius * 3.2) * row)
 			_canvas.draw_circle(at, radius, RING if pip < stats[row] else DIM_PIP)
@@ -222,7 +262,7 @@ func _draw_enemy_card(screen: Vector2, scale: float) -> void:
 	var side: float = ENEMY_CARD * scale
 	var at: Vector2 = Vector2(screen.x - side - 20.0 * scale, 20.0 * scale)
 	_canvas.draw_rect(Rect2(at, Vector2.ONE * side), FACE)
-	_canvas.draw_rect(Rect2(at, Vector2.ONE * side), RING, false, 2.0 * scale)
+	_canvas.draw_rect(Rect2(at, Vector2.ONE * side), ENEMY, false, 4.0 * scale)
 	var icon: Texture2D = _enemy_hero.icon if _enemy_hero != null else _dice
 	_canvas.draw_texture_rect(icon, Rect2(at + Vector2.ONE * side * 0.15, Vector2.ONE * side * 0.7), false, CREAM)
 	if _enemy_hero != null:

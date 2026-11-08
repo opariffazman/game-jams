@@ -22,6 +22,8 @@ func _run_all() -> void:
 	await _test_ring_movement()
 	await _test_hero_power()
 	_test_joystick()
+	_test_hidden_button_ignores_touch()
+	_test_stale_finger_recovers()
 	print("character_test: %d checks, %d failures" % [_checks, _failures])
 	quit(1 if _failures > 0 else 0)
 
@@ -321,3 +323,45 @@ func _test_hero_power() -> void:
 	body.die()
 	_check(not body.alive, "dies once the absorb is gone")
 	_check(not body.can_use_power(), "a dead hero cannot use power")
+
+
+func _touch(index: int, pressed: bool, at: Vector2) -> InputEventScreenTouch:
+	var event: InputEventScreenTouch = InputEventScreenTouch.new()
+	event.index = index
+	event.pressed = pressed
+	event.position = at
+	return event
+
+
+func _test_hidden_button_ignores_touch() -> void:
+	_clear()
+	root.size = Vector2i(1280, 720)
+	var button: DashButton = DashButton.new()
+	root.add_child(button)
+	var presses: Array[int] = []
+	button.pressed.connect(func() -> void: presses.append(1))
+	var on_button: Vector2 = Vector2(1280.0, 720.0) - button.edge_margin
+	button.visible = false
+	button._input(_touch(3, true, on_button))
+	_check(presses.is_empty() and button.finger_index == -1, "a hidden button ignores a touch on it")
+	button.visible = true
+	button._input(_touch(3, true, on_button))
+	_check(presses.size() == 1 and button.finger_index == 3, "a visible button takes the touch")
+	button.visible = false
+	button._input(_touch(3, false, on_button))
+	_check(button.finger_index == -1, "a button hidden mid-press still lets go on release")
+
+
+func _test_stale_finger_recovers() -> void:
+	_clear()
+	root.size = Vector2i(1280, 720)
+	var stick: VirtualJoystick = VirtualJoystick.new()
+	root.add_child(stick)
+	stick._input(_touch(0, true, Vector2(100.0, 300.0)))
+	_check(stick.finger_index == 0, "stick takes the first finger")
+	stick._input(_touch(0, true, Vector2(150.0, 320.0)))
+	_check(stick.finger_index == 0 and stick._origin.is_equal_approx(Vector2(150.0, 320.0)), "a press on the owner index restarts the stick when the release was lost")
+	var cancel: InputEventScreenTouch = _touch(0, false, Vector2(150.0, 320.0))
+	cancel.canceled = true
+	stick._input(cancel)
+	_check(stick.finger_index == -1, "a cancelled touch frees the stick")
