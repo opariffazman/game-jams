@@ -16,7 +16,7 @@ const PATCH_TINT: Color = Color(0.55, 0.78, 0.5)
 ## Multiplier on the sand floor colour. It turns the tile into a bright lime pitch that stays clear of the darker green surround.
 const FLOOR_TINT: Color = Color(0.42, 0.85, 0.5)
 ## Multiplier on the stand blocks. It darkens the wood so the spectators stand out.
-const STAND_TINT: Color = Color(0.72, 0.6, 0.52)
+const STAND_TINT: Color = Color(0.3, 0.33, 0.42)
 const FLOOR_TILE: float = 120.0
 const FLOOR_LIFT: float = 0.0
 const GRASS_PATCH_SIZE: float = 70.0
@@ -40,8 +40,8 @@ const STAND_TIER_HEIGHT: float = 16.0
 const BACK_TIERS: int = 2
 const SIDE_TIERS: int = 1
 const STAND_OVERHANG: float = 40.0
-const SPECTATOR_SPACING: float = 58.0
-const SPECTATOR_SIZE: float = 56.0
+const SPECTATOR_SPACING: float = 72.0
+const SPECTATOR_SIZE: float = 92.0
 const WALL_SIZE: float = 44.0
 const CANOPY_HEIGHT: float = 62.0
 const CANOPY_RADIUS: float = 78.0
@@ -55,8 +55,8 @@ const BUNTING_SAG: float = 9.0
 const DIRT_COLOR: Color = Color("c08a55")
 const DIRT_WIDTH: float = 46.0
 const DIRT_LIFT: float = -0.4
-const MOWN_LIGHT: Color = Color("3a8240")
-const MOWN_DARK: Color = Color("2d6f38")
+const MOWN_LIGHT: Color = Color("459a4a")
+const MOWN_DARK: Color = Color("29683a")
 ## Fake ambient occlusion: darkness at the foot of stands and inside the pitch edge, and under props.
 const AO_LIFT: float = 0.7
 const AO_STAND_ALPHA: float = 0.5
@@ -638,7 +638,7 @@ func _add_multi_mesh(parent: Node3D, mesh: Mesh, transforms: Array[Transform3D],
 
 func _textured(path: String, tint: Color) -> StandardMaterial3D:
 	var material: StandardMaterial3D = StandardMaterial3D.new()
-	material.albedo_texture = load(path) as Texture2D
+	material.albedo_texture = MipmappedTexture.of(load(path) as Texture2D)
 	material.albedo_color = tint
 	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL

@@ -80,19 +80,28 @@ func _add_group(model_name: String, spots: Array[Spot]) -> void:
 	if packed == null:
 		return
 	var root: Node = packed.instantiate()
+	# Baking the skinned parts needs the skeleton inside the tree.
+	add_child(root)
 	var parts: Array[MultiMesh] = []
 	for candidate: Node in root.find_children("*", "MeshInstance3D", true, false):
 		var source: MeshInstance3D = candidate as MeshInstance3D
 		var multi: MultiMesh = MultiMesh.new()
 		multi.transform_format = MultiMesh.TRANSFORM_3D
-		multi.mesh = source.mesh
+		var baked: Mesh = source.bake_mesh_from_current_skeleton_pose()
+		if baked == null:
+			baked = source.mesh
+		else:
+			# A baked mesh keeps no materials, so copy the colormap material back or the crowd draws white.
+			for surface: int in baked.get_surface_count():
+				baked.surface_set_material(surface, source.get_active_material(surface))
+		multi.mesh = baked
 		multi.instance_count = spots.size()
 		var holder: MultiMeshInstance3D = MultiMeshInstance3D.new()
 		holder.multimesh = multi
 		holder.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		add_child(holder)
 		parts.append(multi)
-	root.free()
+	root.queue_free()
 	_groups.append({"spots": spots, "parts": parts})
 
 

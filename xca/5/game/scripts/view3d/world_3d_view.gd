@@ -29,12 +29,12 @@ const SHADOW_SPLITS_MODE: DirectionalLight3D.ShadowMode = DirectionalLight3D.SHA
 const SHADOW_MAX_DISTANCE: float = 3300.0
 const SHADOW_SOFT_QUALITY: RenderingServer.ShadowQuality = RenderingServer.SHADOW_QUALITY_SOFT_ULTRA
 ## Share of light a shadow removes. Below 1.0 keeps the shadow soft and tinted by the ambient.
-const SHADOW_OPACITY: float = 0.85
+const SHADOW_OPACITY: float = 0.95
 const SHADOW_BIAS: float = 0.3
 const SHADOW_NORMAL_BIAS: float = 2.0
 const TONEMAP_MODE: Environment.ToneMapper = Environment.TONE_MAPPER_FILMIC
-const SUN_ENERGY: float = 0.8
-const AMBIENT_ENERGY: float = 0.5
+const SUN_ENERGY: float = 1.0
+const AMBIENT_ENERGY: float = 0.38
 const GLOW_ENABLED: bool = false
 const GLOW_INTENSITY: float = 0.35
 const GLOW_BLOOM: float = 0.04
@@ -143,7 +143,7 @@ func _build_environment() -> void:
 	environment.background_mode = Environment.BG_COLOR
 	environment.background_color = BACKGROUND_COLOR
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	environment.ambient_light_color = Color(0.86, 0.93, 1.0)
+	environment.ambient_light_color = Color(0.72, 0.84, 1.0)
 	environment.ambient_light_energy = AMBIENT_ENERGY
 	environment.tonemap_mode = TONEMAP_MODE
 	environment.glow_enabled = GLOW_ENABLED

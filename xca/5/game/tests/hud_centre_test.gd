@@ -56,7 +56,7 @@ func _run() -> void:
 		await _frames(5)
 		waited += 5
 	_check(manager.phase == RoundManager.SCATTER, "the round reaches scatter")
-	await _frames(10)
+	await _frames(3)
 	var size: Vector2 = root.get_visible_rect().size
 	var pitch: Rect2 = Rect2(size * Vector2(0.25, 0.3), size * Vector2(0.5, 0.4))
 	var icon: TextureRect = hud._ring_icon

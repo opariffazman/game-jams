@@ -225,6 +225,7 @@ func _build_character() -> void:
 	var model: Node3D = packed.instantiate() as Node3D
 	model.scale = Vector3.ONE * model_height * model_scale
 	_pivot.add_child(model)
+	MipmappedTexture.apply_to_model(model)
 	_tint = MeshBuilder3D.flat_material(Color(Color.WHITE, 0.0))
 	_tint.next_pass = _make_outline()
 	for mesh: Node in model.find_children("*", "MeshInstance3D", true, false):
