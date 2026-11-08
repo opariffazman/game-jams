@@ -16,7 +16,7 @@ extends Resource
 ## Icon in the middle of the stack progress ring.
 @export var stack_ring: Texture2D
 ## One icon per attacker. Lights up when that attacker is mati.
-@export var tombstone: Texture2D
+@export var skull: Texture2D
 ## Coin shown during the coin flip at the start of a match.
 @export var coin_flip: Texture2D
 ## Trophy shown when the match ends.

@@ -11,6 +11,8 @@ const ARENA_SCENE: String = "res://scenes/arena.tscn"
 const RulesChecks: GDScript = preload("res://tests/sim/rules_checks.gd")
 
 const STEP: float = 1.0 / 60.0
+const SPIKE_CHANCE: float = 0.004
+const SPIKE_RATES: Array[int] = [15, 10]
 const GATHER_SETTLE_SECONDS: float = 1.0
 const STALL_SECONDS: float = 20.0
 const PROGRESS_PIXELS: float = 15.0
@@ -33,7 +35,7 @@ const FUZZ_RETARGET_FRAMES: int = 45
 const ENDLESS_FLIGHT_SECONDS: float = 6.0
 const OUTSIDE_GRACE_FRAMES: int = 3
 
-const SCENARIO_ORDER: Array[String] = ["bots", "idle_seat0", "idle_seat1", "script_seat0", "script_seat1", "fuzz_seat0", "fuzz_seat1"]
+const SCENARIO_ORDER: Array[String] = ["bots", "idle_seat0", "idle_seat1", "script_seat0", "script_seat1", "fuzz_seat0", "fuzz_seat1", "hero_bots", "hero_fuzz_seat0", "hero_fuzz_seat1"]
 const SCENARIOS: Dictionary = {
 	"bots": {"human_team": -1, "mode": "none"},
 	"idle_seat0": {"human_team": 0, "mode": "idle"},
@@ -42,6 +44,9 @@ const SCENARIOS: Dictionary = {
 	"script_seat1": {"human_team": 1, "mode": "script"},
 	"fuzz_seat0": {"human_team": 0, "mode": "fuzz"},
 	"fuzz_seat1": {"human_team": 1, "mode": "fuzz"},
+	"hero_bots": {"human_team": -1, "mode": "none", "heroes": true, "spikes": true},
+	"hero_fuzz_seat0": {"human_team": 0, "mode": "fuzz", "heroes": true, "spikes": true},
+	"hero_fuzz_seat1": {"human_team": 1, "mode": "fuzz", "heroes": true, "spikes": true},
 }
 const PHASE_NAMES: Array[String] = ["COIN_FLIP", "TOPPLE", "SCATTER", "ROUND_END", "MATCH_END"]
 
@@ -57,6 +62,7 @@ var _original_scheme: int = 0
 var _scenario: String = ""
 var _seed: int = 0
 var _frame: int = 0
+var _dt: float = 1.0 / 60.0
 var _sim_time: float = 0.0
 var _round_time: float = 0.0
 var _since_progress: float = 0.0
@@ -117,6 +123,7 @@ func _run_all() -> void:
 		_check_scenario_level(scenario)
 	SettingsRef.set_scheme(_original_scheme)
 	Engine.time_scale = 1.0
+	Engine.physics_ticks_per_second = 60
 	_print_report(float(Time.get_ticks_msec() - started_ms) / 1000.0)
 	quit(1 if _total_violations > 0 else 0)
 
@@ -179,6 +186,10 @@ func _build_match(scenario: String) -> void:
 	_manager.round_ended.connect(_on_round_ended)
 	_manager.match_ended.connect(_on_match_ended)
 	_stage.add_child(_manager)
+	if bool((SCENARIOS[scenario] as Dictionary).get("heroes", false)):
+		var roster: Array[HeroDef] = HeroRoster.all()
+		_manager.heroes = [roster[_seed % roster.size()], roster[(_seed / roster.size()) % roster.size()]]
+		_manager.start_match()
 
 
 func _run_match(scenario: String, seed_value: int) -> void:
@@ -221,8 +232,10 @@ func _run_match(scenario: String, seed_value: int) -> void:
 
 func _tick() -> void:
 	_frame += 1
-	_sim_time += STEP
-	_round_time += STEP
+	_dt = 1.0 / float(Engine.physics_ticks_per_second)
+	_sim_time += _dt
+	_round_time += _dt
+	_apply_scenario_stress()
 	if _manager.phase == RoundManager.MATCH_END:
 		return
 	_drive_human()
@@ -237,6 +250,21 @@ func _tick() -> void:
 	_check_progress()
 	if _trace_on():
 		_trace()
+
+
+## Hero scenarios force every ready power and drop single physics steps to 15 or 10 Hz, as a slow web frame does.
+func _apply_scenario_stress() -> void:
+	var config: Dictionary = SCENARIOS[_scenario]
+	Engine.physics_ticks_per_second = 60
+	if bool(config.get("spikes", false)) and randf() < SPIKE_CHANCE:
+		Engine.physics_ticks_per_second = SPIKE_RATES[randi() % SPIKE_RATES.size()]
+	if not bool(config.get("heroes", false)):
+		return
+	for team: int in 2:
+		for entry: Variant in _arena.get_characters(team):
+			var member: Character = entry as Character
+			if member != null and member.can_use_power():
+				member.try_power()
 
 
 func _trace_on() -> bool:
@@ -328,9 +356,9 @@ func _on_round_ended(winner_team: int) -> void:
 func _check_gather_time() -> void:
 	if _manager.phase != RoundManager.SCATTER or _gathered:
 		return
-	_scatter_clock += STEP
+	_scatter_clock += _dt
 	if _arena.stack.zone_sandals().size() + _arena.stack.placed_count >= _tuning.stack_size:
-		_gather_streak += STEP
+		_gather_streak += _dt
 	else:
 		_gather_streak = 0.0
 	if _gather_streak >= GATHER_SETTLE_SECONDS:
@@ -405,7 +433,7 @@ func _check_bounds() -> void:
 		var offset: Vector2 = sandal.global_position - _arena.centre_spot
 		var id: int = sandal.get_instance_id()
 		if absf(offset.x) > half.x or absf(offset.y) > half.y:
-			live[id] = float(_out_of_bounds.get(id, 0.0)) + STEP
+			live[id] = float(_out_of_bounds.get(id, 0.0)) + _dt
 			if float(live[id]) > OUT_OF_BOUNDS_SECONDS:
 				_violation("sandal_out_of_bounds", "sandal at %s for over %.0f s" % [str(sandal.global_position), OUT_OF_BOUNDS_SECONDS])
 	_out_of_bounds = live
@@ -475,7 +503,7 @@ func _check_stuck() -> void:
 			if not _stuck.has(id):
 				_stuck[id] = {"pos": member.global_position, "time": 0.0, "work": true}
 			var record: Dictionary = _stuck[id]
-			record["time"] = float(record["time"]) + STEP
+			record["time"] = float(record["time"]) + _dt
 			record["work"] = bool(record["work"]) and _has_work(member)
 			if float(record["time"]) < STUCK_WINDOW_SECONDS:
 				continue
@@ -511,7 +539,7 @@ func _check_progress() -> void:
 		_sandal_mark = snapshot
 		_since_progress = 0.0
 	else:
-		_since_progress += STEP
+		_since_progress += _dt
 	if _manager.phase == RoundManager.ROUND_END or _manager.phase == RoundManager.COIN_FLIP:
 		return
 	if _since_progress >= STALL_SECONDS:
@@ -678,7 +706,7 @@ func _check_custody() -> void:
 		if not sandal.in_flight and not sandal.freeze and sandal.linear_damp <= 0.0:
 			_violation("undamped_rest", "sandal at %s rests with no damping, speed %.0f" % [str(sandal.global_position), sandal.linear_velocity.length()])
 		if sandal.in_flight:
-			flying[id] = float(_flight_time.get(id, 0.0)) + STEP
+			flying[id] = float(_flight_time.get(id, 0.0)) + _dt
 			if float(flying[id]) > ENDLESS_FLIGHT_SECONDS:
 				_violation("endless_flight", "sandal at %s flew %.0f s, speed %.0f" % [str(sandal.global_position), ENDLESS_FLIGHT_SECONDS, sandal.linear_velocity.length()])
 	_flight_time = flying
@@ -716,7 +744,7 @@ func _script_defender(body: Character) -> void:
 	if _manager.phase != RoundManager.SCATTER or body.carried == null or not body.carried.is_pass_sandal:
 		_pass_hold_time = 0.0
 		return
-	_pass_hold_time += STEP
+	_pass_hold_time += _dt
 	if _pass_hold_time < 1.0:
 		return
 	_pass_hold_time = 0.0

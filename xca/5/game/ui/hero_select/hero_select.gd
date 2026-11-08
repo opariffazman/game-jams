@@ -50,6 +50,8 @@ var _enemy_hero: HeroDef
 var _last_tap_msec: int = -1000
 var _last_tap_index: int = -1
 var _dice: Texture2D = preload("res://assets/icons/dice.svg")
+var _preview: ModelStage
+var _card_stages: Array[ModelStage] = []
 
 
 func _ready() -> void:
@@ -144,6 +146,9 @@ func _build() -> void:
 	_canvas.draw.connect(_draw_canvas)
 	_canvas.resized.connect(_layout)
 	add_child(_canvas)
+	_preview = ModelStage.new(Vector2i(256, 256))
+	_canvas.add_child(_preview)
+	_preview.show_hero(heroes[selected])
 	for index: int in heroes.size():
 		var card: Control = Control.new()
 		card.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -151,6 +156,10 @@ func _build() -> void:
 		card.draw.connect(_draw_card.bind(card, index))
 		_canvas.add_child(card)
 		cards.append(card)
+		var stage: ModelStage = ModelStage.new(Vector2i(128, 128))
+		stage.show_hero(heroes[index])
+		card.add_child(stage)
+		_card_stages.append(stage)
 	confirm_button = TitleIconButton.new(TitleIconButton.Kind.PLAY)
 	confirm_button.pulse = true
 	confirm_button.pressed.connect(func() -> void: confirm(heroes[selected].id))
@@ -172,7 +181,14 @@ func _layout() -> void:
 		var lift: float = CARD_LIFT * scale if index == selected else 0.0
 		cards[index].position = Vector2(left + (card_size.x + gap) * index, top - lift)
 		cards[index].size = card_size
+		var inset: float = card_size.x * 0.06
+		_card_stages[index].place(Rect2(Vector2.ONE * inset, card_size - Vector2.ONE * inset * 2.0))
+		_card_stages[index].modulate = Color.WHITE if index == selected else Color(0.65, 0.65, 0.65)
 		cards[index].queue_redraw()
+	var preview_side: float = 120.0 * scale
+	var preview_centre: Vector2 = Vector2(screen.x * 0.5 - 150.0 * scale, 28.0 * scale + preview_side * 0.5 + 8.0 * scale)
+	_preview.place(Rect2(preview_centre - Vector2.ONE * preview_side * 0.62, Vector2.ONE * preview_side * 1.24))
+	_preview.show_hero(heroes[selected])
 	var confirm_size: float = maxf(CONFIRM_SIZE * scale, 44.0)
 	confirm_button.size = Vector2.ONE * confirm_size
 	confirm_button.position = Vector2(left + total - confirm_size, top - confirm_size - 12.0 * scale)
@@ -209,7 +225,6 @@ func _draw_canvas() -> void:
 	_canvas.draw_circle(centre, preview * 0.6, FACE)
 	_canvas.draw_arc(centre, preview * 0.6, 0.0, TAU, 64, FRIEND, 6.0 * scale, true)
 	_canvas.draw_arc(centre, preview * 0.6 + 7.0 * scale, 0.0, TAU, 64, CREAM, 1.5 * scale, true)
-	_canvas.draw_texture_rect(hero.icon, Rect2(centre - Vector2.ONE * preview * 0.4, Vector2.ONE * preview * 0.8), false, CREAM)
 	var power_centre: Vector2 = centre + Vector2(preview * 0.95, 0.0)
 	var power_radius: float = 30.0 * scale
 	_canvas.draw_circle(power_centre, power_radius, FACE)
@@ -275,5 +290,105 @@ func _draw_card(card: Control, index: int) -> void:
 	var rect: Rect2 = Rect2(Vector2.ZERO, card.size)
 	card.draw_rect(rect, FACE)
 	card.draw_rect(rect, RING if is_selected else DIM_PIP, false, 5.0 if is_selected else 2.0)
-	var inset: float = card.size.x * 0.16
-	card.draw_texture_rect(heroes[index].icon, Rect2(Vector2.ONE * inset, card.size - Vector2.ONE * inset * 2.0), false, CREAM if is_selected else CREAM.darkened(0.25))
+
+
+## One hero model on a slow turntable in its own World3D, with the blue team outline of [DepthVisual].
+class ModelStage extends SubViewportContainer:
+	const SPIN_SPEED: float = 0.9
+	const FRAME_MARGIN: float = 1.2
+
+	var _viewport: SubViewport
+	var _pivot: Node3D
+	var _camera: Camera3D
+	var _hero: HeroDef
+	var _wanted: HeroDef
+
+	func _init(resolution: Vector2i) -> void:
+		stretch = true
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		_viewport = SubViewport.new()
+		_viewport.size = resolution
+		_viewport.own_world_3d = true
+		_viewport.transparent_bg = true
+		_viewport.msaa_3d = Viewport.MSAA_DISABLED
+		_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+		add_child(_viewport)
+		var environment: Environment = Environment.new()
+		environment.background_mode = Environment.BG_CLEAR_COLOR
+		environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+		environment.ambient_light_color = Color(1.0, 0.97, 0.9)
+		environment.ambient_light_energy = 0.8
+		var world_environment: WorldEnvironment = WorldEnvironment.new()
+		world_environment.environment = environment
+		_viewport.add_child(world_environment)
+		var sun: DirectionalLight3D = DirectionalLight3D.new()
+		sun.light_energy = 0.8
+		sun.rotation_degrees = Vector3(-45.0, 30.0, 0.0)
+		_viewport.add_child(sun)
+		_pivot = Node3D.new()
+		_viewport.add_child(_pivot)
+		_camera = Camera3D.new()
+		_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+		_viewport.add_child(_camera)
+
+	func place(rect: Rect2) -> void:
+		position = rect.position
+		size = rect.size
+
+	func show_hero(hero: HeroDef) -> void:
+		_wanted = hero
+		if is_inside_tree():
+			_apply()
+
+	func _enter_tree() -> void:
+		if _wanted != null:
+			_apply.call_deferred()
+
+	func _apply() -> void:
+		var hero: HeroDef = _wanted
+		if hero == null or hero == _hero or not is_inside_tree():
+			return
+		_hero = hero
+		for child: Node in _pivot.get_children():
+			child.queue_free()
+		var packed: PackedScene = load(hero.model_path) as PackedScene
+		if packed == null:
+			return
+		var model: Node3D = packed.instantiate() as Node3D
+		model.scale = Vector3.ONE * hero.model_scale
+		_pivot.add_child(model)
+		var outline: ShaderMaterial = _make_outline()
+		var bounds: AABB = AABB()
+		var has_bounds: bool = false
+		for mesh: Node in model.find_children("*", "MeshInstance3D", true, false):
+			var instance: MeshInstance3D = mesh as MeshInstance3D
+			instance.material_overlay = outline
+			var box: AABB = instance.global_transform * instance.get_aabb()
+			bounds = box if not has_bounds else bounds.merge(box)
+			has_bounds = true
+		var player: AnimationPlayer = model.find_child("AnimationPlayer", true, false) as AnimationPlayer
+		if player != null and player.has_animation(&"idle"):
+			player.get_animation(&"idle").loop_mode = Animation.LOOP_LINEAR
+			player.play(&"idle")
+		var centre: Vector3 = bounds.get_center() if has_bounds else Vector3(0.0, 0.5, 0.0)
+		var height: float = maxf(bounds.size.y, 0.1) if has_bounds else 1.0
+		_pivot.position = Vector3(-centre.x, 0.0, -centre.z)
+		_camera.size = height * FRAME_MARGIN
+		_camera.position = Vector3(0.0, centre.y + height * 0.25, height * 4.0)
+		_camera.look_at(Vector3(0.0, centre.y, 0.0))
+
+	func _process(delta: float) -> void:
+		_pivot.rotation.y += SPIN_SPEED * delta
+
+	func _make_outline() -> ShaderMaterial:
+		var edge: ShaderMaterial = ShaderMaterial.new()
+		edge.shader = DepthVisual.OUTLINE_SHADER
+		edge.set_shader_parameter(&"outline_color", DepthVisual.OUTLINE_EDGE_COLOR)
+		edge.set_shader_parameter(&"thickness", DepthVisual.OUTLINE_EDGE_THICKNESS)
+		var team: ShaderMaterial = ShaderMaterial.new()
+		team.shader = DepthVisual.OUTLINE_SHADER
+		team.set_shader_parameter(&"outline_color", FRIEND)
+		team.set_shader_parameter(&"thickness", DepthVisual.OUTLINE_THICKNESS)
+		team.next_pass = edge
+		return team

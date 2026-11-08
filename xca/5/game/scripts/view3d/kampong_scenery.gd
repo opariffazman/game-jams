@@ -35,13 +35,13 @@ const POLE_COLOR: Color = Color("6b4a2b")
 
 ## Stand tiers: first distance from the field edge, depth and height step of each tier. Heights rise with every tier.
 const STAND_GAP: float = 40.0
-const STAND_TIER_DEPTH: float = 30.0
-const STAND_TIER_HEIGHT: float = 14.0
-const BACK_TIERS: int = 3
-const SIDE_TIERS: int = 2
+const STAND_TIER_DEPTH: float = 42.0
+const STAND_TIER_HEIGHT: float = 22.0
+const BACK_TIERS: int = 2
+const SIDE_TIERS: int = 1
 const STAND_OVERHANG: float = 40.0
-const SPECTATOR_SPACING: float = 30.0
-const SPECTATOR_SIZE: float = 34.0
+const SPECTATOR_SPACING: float = 50.0
+const SPECTATOR_SIZE: float = 46.0
 const WALL_SIZE: float = 44.0
 const CANOPY_HEIGHT: float = 62.0
 const CANOPY_RADIUS: float = 78.0
@@ -313,7 +313,7 @@ func _bunting_point(from: Vector3, to: Vector3, t: float) -> Vector3:
 # Strings run between the standards along the far stand and both side stands, above the crowd's heads.
 func _add_bunting(builder: SurfaceTool, half: Vector2) -> void:
 	var far: float = (half.y + STAND_GAP - 4.0) * _stretch
-	var height: float = 36.0
+	var height: float = 92.0
 	var count: int = 6
 	for index: int in count:
 		var x0: float = lerpf(-half.x - STAND_OVERHANG, half.x + STAND_OVERHANG, float(index) / float(count))
@@ -340,7 +340,7 @@ func _add_standards(builder: SurfaceTool, half: Vector2) -> void:
 		var colour: Color = FRIENDLY_COLOR if spot.x < 0.0 else ENEMY_COLOR
 		if absf(spot.x) < 1.0:
 			colour = CREAM_COLOR
-		var pole_height: float = 74.0
+		var pole_height: float = 100.0
 		_add_quad(builder, spot + Vector3(-1.2, 0.0, 0.0), spot + Vector3(1.2, 0.0, 0.0), spot + Vector3(1.2, pole_height, 0.0), spot + Vector3(-1.2, pole_height, 0.0), POLE_COLOR)
 		var top: Vector3 = spot + Vector3(0.0, pole_height, 0.0)
 		var flag_length: float = 26.0

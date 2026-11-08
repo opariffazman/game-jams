@@ -7,6 +7,8 @@ extends Node
 ## [code]RoundManager.TOPPLE[/code] resolves for any script.
 
 ## Emitted on every phase change. [param phase] is one of the phase constants.
+## Emitted when the custody watchdog put a sandal back.
+signal custody_repaired
 signal phase_changed(phase: int)
 ## Emitted when a round ends. [param winner_team] won the round.
 signal round_ended(winner_team: int)
@@ -28,6 +30,8 @@ const HUMAN_GROUP: StringName = &"human_controlled"
 const CHARACTER_SCENE_PATH: String = "res://scenes/character.tscn"
 ## Speed under which a sandal counts as still.
 const STILL_SPEED: float = 30.0
+## Seconds a sandal can be missing, held by nobody or outside the walls before the watchdog repairs it.
+const CUSTODY_GRACE: float = 1.5
 ## Angle of the first defender when a round starts. The defenders then stay 120 degrees apart.
 const ORBIT_START_ANGLE: float = PI * 0.5
 ## Camera zoom during the last-throw slow-mo.
@@ -81,6 +85,7 @@ var _clearing: bool = false
 var _countdown_step: int = -1
 var _last_kill_ms: int = -1000000
 var _throw_clock: float = 0.0
+var _custody_bad_time: float = 0.0
 var _build_zoom_tween: Tween
 var _human_building: bool = false
 
@@ -416,8 +421,65 @@ func _start_scatter() -> void:
 func _update_scatter(delta: float) -> void:
 	scatter_time_left = maxf(scatter_time_left - delta, 0.0)
 	_drop_for_idle_carrier(delta)
+	_watch_custody(delta)
 	if scatter_time_left <= 0.0 and not _round_over:
 		end_round(1 - attacking_team)
+
+
+## Last resort: a sandal that vanished, has a holder that is gone, or sits outside the walls for
+## [constant CUSTODY_GRACE] seconds is put back, so a round never waits for a sandal nobody can reach.
+func _watch_custody(delta: float) -> void:
+	var holders: Dictionary = {}
+	for team: int in 2:
+		for entry: Variant in arena.get_characters(team):
+			var member: Character = entry as Character
+			if member != null and member.alive and member.carried != null and is_instance_valid(member.carried):
+				holders[member.carried.get_instance_id()] = true
+	var inside: Rect2 = Rect2(tuning.arena_centre - tuning.arena_half_extents, tuning.arena_half_extents * 2.0)
+	var ordinary: int = 0
+	var broken: bool = false
+	for node: Node in get_tree().get_nodes_in_group(Sandal.GROUP):
+		var sandal: Sandal = node as Sandal
+		if sandal == null or sandal.is_queued_for_deletion() or sandal.is_pass_sandal:
+			continue
+		ordinary += 1
+		var held: bool = holders.has(sandal.get_instance_id())
+		if sandal.is_placed or sandal.get_parent() == arena.stack and not arena.stack.is_down:
+			continue
+		if sandal.freeze and not held:
+			broken = true
+		elif not held and (not sandal.global_position.is_finite() or not inside.has_point(sandal.global_position)):
+			broken = true
+	if ordinary < tuning.stack_size:
+		broken = true
+	_custody_bad_time = _custody_bad_time + delta if broken else 0.0
+	if _custody_bad_time < CUSTODY_GRACE:
+		return
+	_custody_bad_time = 0.0
+	_repair_custody(holders)
+
+
+func _repair_custody(holders: Dictionary) -> void:
+	var ordinary: int = 0
+	for node: Node in get_tree().get_nodes_in_group(Sandal.GROUP):
+		var sandal: Sandal = node as Sandal
+		if sandal == null or sandal.is_queued_for_deletion() or sandal.is_pass_sandal:
+			continue
+		ordinary += 1
+		if holders.has(sandal.get_instance_id()) or sandal.is_placed:
+			continue
+		if sandal.freeze:
+			sandal.freeze = false
+		if not sandal.global_position.is_finite():
+			sandal.global_position = arena.centre_spot
+		sandal.place_inside(sandal.global_position)
+		sandal.halt()
+	for index: int in maxi(tuning.stack_size - ordinary, 0):
+		var spare: Sandal = Sandal.new()
+		spare.tuning = tuning
+		spare.position = arena.centre_spot + Vector2.from_angle(float(index) * TAU / 3.0) * tuning.build_zone_radius * 0.5
+		arena.add_child(spare)
+	custody_repaired.emit()
 
 
 func _leave_round_end() -> void:

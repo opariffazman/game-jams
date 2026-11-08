@@ -12,7 +12,7 @@ const MODELS: Array[String] = [
 	"character-male-b", "character-female-d", "character-male-d", "character-female-f",
 ]
 const TICK_SECONDS: float = 1.0 / 15.0
-const BOB_HEIGHT: float = 3.5
+const BOB_HEIGHT: float = 4.0
 const FIRST_SPEED: float = 4.0
 const SPEED_SPREAD: float = 5.0
 
@@ -38,7 +38,7 @@ func build(spots: Array[Vector4], stretch: float) -> void:
 		var entry: Spot = Spot.new()
 		entry.at = Vector3(spot.x, spot.z, spot.y * stretch)
 		entry.size = spot.w
-		entry.yaw = _facing_yaw(entry.at, stretch)
+		entry.yaw = _facing_yaw(entry.at)
 		entry.phase = fmod(float(index) * 2.399, TAU)
 		entry.speed = FIRST_SPEED + fmod(float(index) * 1.618, 1.0) * SPEED_SPREAD
 		entry.model = (index * 5 + int(absf(spot.x) * 0.1)) % MODELS.size()
@@ -67,10 +67,11 @@ func _process(delta: float) -> void:
 	_update_all()
 
 
-# Spectators look at the field centre, so the side stands face across the pitch.
-func _facing_yaw(at: Vector3, stretch: float) -> float:
-	var to_centre: Vector2 = Vector2(-at.x, -at.z / stretch)
-	return atan2(to_centre.x, to_centre.y)
+# Spectators face straight across their stand toward the pitch. Aiming at the field centre fans the far ends out and looks skewed.
+func _facing_yaw(at: Vector3) -> float:
+	if absf(at.x) > absf(at.z):
+		return -PI * 0.5 * signf(at.x)
+	return 0.0
 
 
 func _add_group(model_name: String, spots: Array[Spot]) -> void:

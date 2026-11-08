@@ -56,6 +56,19 @@ static func hero_id() -> StringName:
 	return StringName(settings.get("hero_id")) if settings != null else &"kilat"
 
 
+## True once the coin flip has played. True when the autoload is missing, so a bare scene never plays it.
+static func coin_flip_seen() -> bool:
+	var settings: Node = node()
+	return bool(settings.get("coin_flip_seen")) if settings != null else true
+
+
+## Remembers that the coin flip played. Does nothing when the autoload is missing.
+static func mark_coin_flip_seen() -> void:
+	var settings: Node = node()
+	if settings != null:
+		settings.call("mark_coin_flip_seen")
+
+
 ## Remembers the picked hero. Does nothing when the autoload is missing.
 static func set_hero_id(value: StringName) -> void:
 	var settings: Node = node()

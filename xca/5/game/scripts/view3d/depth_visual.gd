@@ -31,6 +31,7 @@ const SHADOW_COLOR: Color = Color(0.05, 0.08, 0.04, 0.5)
 const SHADOW_SIZE_FACTOR: float = 3.0
 const SHADOW_OFFSET: Vector2 = Vector2(0.25, 0.3)
 const OUTLINE_SHADER: Shader = preload("res://scripts/view3d/outline.gdshader")
+const OUTLINE_EDGE_SHADER: Shader = preload("res://scripts/view3d/outline_edge.gdshader")
 ## Model-space thickness of the team outline and of the dark edge outside it.
 const OUTLINE_THICKNESS: float = 0.035
 const OUTLINE_EDGE_THICKNESS: float = 0.06
@@ -194,16 +195,16 @@ func _build() -> void:
 # Team colour shows as an outline, never as a tint, so every model keeps its own colours. A dark edge outside
 # the team ring keeps red and blue readable on a bright pitch.
 func _make_outline() -> ShaderMaterial:
-	var edge: ShaderMaterial = ShaderMaterial.new()
-	edge.shader = OUTLINE_SHADER
-	edge.set_shader_parameter(&"outline_color", OUTLINE_EDGE_COLOR)
-	edge.set_shader_parameter(&"thickness", OUTLINE_EDGE_THICKNESS)
 	_outline = ShaderMaterial.new()
 	_outline.shader = OUTLINE_SHADER
 	_outline.set_shader_parameter(&"outline_color", team_color)
 	_outline.set_shader_parameter(&"thickness", OUTLINE_THICKNESS)
-	_outline.next_pass = edge
-	return _outline
+	var edge: ShaderMaterial = ShaderMaterial.new()
+	edge.shader = OUTLINE_EDGE_SHADER
+	edge.set_shader_parameter(&"outline_color", OUTLINE_EDGE_COLOR)
+	edge.set_shader_parameter(&"thickness", OUTLINE_EDGE_THICKNESS)
+	edge.next_pass = _outline
+	return edge
 
 
 func _build_character() -> void:

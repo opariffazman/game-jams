@@ -3,7 +3,7 @@
 Icons from game-icons.net, licensed CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/).
 
 - Delapouite: sandal, plain circle, stack, joystick, slingshot, anticlockwise rotation, throwing ball, vibrating smartphone, button finger, cube, plain square, speaker, speaker off, cctv camera
-- Lorc: crosshair arrow, tombstone, trophy, fire dash, cog, cross mark, padlock, magnifying glass, return arrow
+- Lorc: crosshair arrow, skull crack, trophy, fire dash, cog, cross mark, padlock, magnifying glass, return arrow
 - SBed: shield
 - Caro Asercion: coin flip
 - Skoll: bullseye

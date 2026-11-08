@@ -21,6 +21,7 @@ func _initialize() -> void:
 	await _test_projection()
 	await _test_camera_settings()
 	await _test_rings_only_on_human()
+	await _test_outline_colour_and_order()
 	await _test_no_leak_over_restarts()
 	print("view_test: %s (%d failures)" % ["PASS" if _failures == 0 else "FAIL", _failures])
 	_settings.set_view(SettingsRef.VIEW_FLAT)
@@ -270,6 +271,43 @@ func _test_rings_only_on_human() -> void:
 				other_rings += rings
 		_check(other_rings == 0, "view %d: no team ring on a character the human does not control (%d)" % [view, other_rings])
 		await _unload(scene)
+
+
+# The team ring must draw after the dark edge, and keep the team colour through role swaps and hits.
+func _test_outline_colour_and_order() -> void:
+	var scene: Node = await _load_main(SettingsRef.VIEW_DEPTH)
+	var manager: RoundManager = scene.find_child("RoundManager", true, false) as RoundManager
+	await _frames(10)
+	var checked: int = 0
+	var wrong_colour: int = 0
+	var wrong_order: int = 0
+	for round_index: int in 3:
+		for team: int in 2:
+			for entry: Variant in manager.arena.get_characters(team):
+				var character: Character = entry as Character
+				var depth: DepthVisual = character.visual as DepthVisual
+				if depth == null or depth.get("_tint") == null:
+					continue
+				var first: ShaderMaterial = (depth.get("_tint") as BaseMaterial3D).next_pass as ShaderMaterial
+				var ring: ShaderMaterial = first.next_pass as ShaderMaterial if first != null else null
+				checked += 1
+				if ring == null or ring != depth.get("_outline"):
+					wrong_order += 1
+					continue
+				var colour: Color = ring.get_shader_parameter(&"outline_color")
+				if not colour.is_equal_approx(character.call("_team_color")):
+					wrong_colour += 1
+		for team: int in 2:
+			for entry: Variant in manager.arena.get_characters(team):
+				var character: Character = entry as Character
+				character.role = Character.Role.DEFENDER if character.role == Character.Role.ATTACKER else Character.Role.ATTACKER
+				if character.visual != null:
+					character.visual.play(&"hit")
+		await _frames(15)
+	_check(checked > 0, "outline test saw depth characters (%d)" % checked)
+	_check(wrong_order == 0, "team ring draws after the dark edge (%d wrong)" % wrong_order)
+	_check(wrong_colour == 0, "team ring keeps the team colour through role swaps and hits (%d wrong)" % wrong_colour)
+	await _unload(scene)
 
 
 # A team ring is an annulus mesh under the character visual in the depth view. The flat view draws none.

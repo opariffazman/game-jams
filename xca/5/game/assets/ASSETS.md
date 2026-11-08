@@ -9,7 +9,7 @@
 | assets/icons/camera_reset.svg | https://game-icons.net lorc/return-arrow | Lorc | CC BY 3.0 | 2026-11-08 |
 | assets/icons/hud_stack.svg | https://game-icons.net delapouite/stack | Delapouite | CC BY 3.0 | 2026-11-07 |
 | assets/icons/hud_crosshair.svg | https://game-icons.net lorc/crosshair-arrow | Lorc | CC BY 3.0 | 2026-11-07 |
-| assets/icons/hud_tombstone.svg | https://game-icons.net lorc/tombstone | Lorc | CC BY 3.0 | 2026-11-07 |
+| assets/icons/hud_skull.svg | https://game-icons.net lorc/skull-crack | Lorc | CC BY 3.0 | 2026-11-08 |
 | assets/icons/hud_trophy.svg | https://game-icons.net lorc/trophy | Lorc | CC BY 3.0 | 2026-11-07 |
 | assets/icons/hud_shield.svg | https://game-icons.net sbed/shield | SBed | CC BY 3.0 | 2026-11-07 |
 | assets/icons/hud_coin.svg | https://game-icons.net caro-asercion/coinflip | Caro Asercion | CC BY 3.0 | 2026-11-07 |

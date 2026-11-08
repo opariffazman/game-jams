@@ -1,5 +1,5 @@
 extends SceneTree
-## Headless test of the pyramid rebuild: QTE timing, carry rule, hit cancels a build, scatter timeout
+## Headless test of the pyramid rebuild: carry rule, hit cancels a build, scatter timeout
 ## and bots that finish builds over seeded rounds.
 ##
 ## Run: godot --headless --path game --script res://tests/build_test.gd
@@ -36,9 +36,9 @@ func _frames(count: int) -> void:
 
 
 func _run() -> void:
-	_test_qte_windows()
 	await _test_carry_one_at_a_time()
 	await _test_hit_cancels_build()
+	await _test_human_hold_builds_alone()
 	await _test_defender_bodies_never_move_sandals()
 	await _test_scatter_timeout()
 	await _test_bots_build_over_seeded_rounds()
@@ -79,49 +79,6 @@ func _prepare_down_pyramid() -> void:
 	for index: int in free.size():
 		free[index].halt()
 		free[index].global_position = _arena.centre_spot + Vector2.from_angle(float(index) * 2.0) * 40.0
-
-
-func _test_qte_windows() -> void:
-	var tuning: Tuning = Tuning.load_default()
-	var qte: BuildQte = BuildQte.new(tuning, 7)
-	var passed: Array[int] = []
-	var misses: Array[int] = [0]
-	qte.step_passed.connect(func(step: int) -> void: passed.append(step))
-	qte.missed.connect(func() -> void: misses[0] += 1)
-	qte.start()
-	_check(qte.kind == BuildQte.Kind.TAP, "the first prompt is a tap")
-	qte.update(tuning.qte_tap_seconds * 0.3)
-	qte.tap()
-	_check(misses[0] == 1, "a tap while the ring is far out is a miss")
-	_check(qte.penalty_left == tuning.miss_penalty_seconds, "a miss costs miss_penalty_seconds")
-	qte.tap()
-	_check(misses[0] == 1 and passed.is_empty(), "input during the penalty is ignored")
-	qte.update(tuning.miss_penalty_seconds + 0.01)
-	_check(qte.penalty_left == 0.0 and qte.step == 0, "the penalty ends and the step stays the same")
-	qte.update(tuning.qte_tap_seconds)
-	_check(qte.in_window(), "the window opens when the ring reaches the target")
-	qte.tap()
-	_check(passed == [0] and qte.step == 1, "a tap in the window passes step 0")
-	_check(qte.kind == BuildQte.Kind.SWIPE, "the next prompt is a swipe")
-	var wrong: Vector2 = -qte.direction
-	qte.swipe(wrong)
-	_check(misses[0] == 2, "a swipe the wrong way is a miss")
-	qte.update(tuning.miss_penalty_seconds + 0.01)
-	qte.swipe(qte.direction * 5.0)
-	_check(qte.step == 2, "a swipe the right way passes step 1")
-	qte.update(tuning.qte_tap_seconds + tuning.qte_window_seconds + 0.01)
-	_check(misses[0] == 3, "a tap prompt that times out is a miss")
-	qte.update(tuning.miss_penalty_seconds + 0.01)
-	var finished: Array[bool] = [false]
-	qte.finished.connect(func() -> void: finished[0] = true)
-	qte.update(tuning.qte_tap_seconds)
-	qte.tap()
-	_check(finished[0] and not qte.active, "the last step ends the QTE")
-	var again: BuildQte = BuildQte.new(tuning, 7)
-	var other: BuildQte = BuildQte.new(tuning, 7)
-	again.start(1)
-	other.start(1)
-	_check(again.direction == other.direction, "the same seed gives the same prompt")
 
 
 func _test_carry_one_at_a_time() -> void:
@@ -168,6 +125,43 @@ func _test_hit_cancels_build() -> void:
 	flying.in_flight = true
 	await _frames(2)
 	_check(stack.placed_count == 0, "a flying sandal knocks the placed sandals loose")
+
+
+func _test_human_hold_builds_alone() -> void:
+	_build_stage()
+	await _frames(2)
+	var stack: Stack = _arena.stack
+	var human: Character = _spawn(0, Character.Role.ATTACKER, _arena.centre_spot)
+	human.pickup_enabled = false
+	human.add_to_group(RoundManager.HUMAN_GROUP)
+	var manager: RoundManager = RoundManager.new()
+	manager.tuning = _tuning
+	manager.arena = _arena
+	_stage.add_child(manager)
+	await _frames(2)
+	_prepare_down_pyramid()
+	manager.phase = RoundManager.SCATTER
+	var overlay: BuildOverlay = BuildOverlay.new()
+	overlay.round_manager = manager
+	overlay.tuning = _tuning
+	overlay.stack = stack
+	_stage.add_child(overlay)
+	await _frames(2)
+	human.move_intent = Vector2.RIGHT
+	manager.set_process(false)
+	manager.set_physics_process(false)
+	manager.phase = RoundManager.SCATTER
+	overlay._process(_tuning.build_hold_seconds * 0.5)
+	_check(stack.builder == null, "the build waits for the hold time")
+	overlay._process(_tuning.build_hold_seconds)
+	_check(stack.builder == human, "holding in the zone starts the build with no tap")
+	for _i: int in 3:
+		overlay._process(_tuning.build_step_seconds + 0.01)
+	_check(stack.placed_count == 3, "the timer places all three sandals with no prompt")
+	_check(stack.builder == null or stack.placed_count == 3, "the build is complete")
+	manager.phase = RoundManager.TOPPLE
+	manager.queue_free()
+	overlay.queue_free()
 
 
 func _test_scatter_timeout() -> void:

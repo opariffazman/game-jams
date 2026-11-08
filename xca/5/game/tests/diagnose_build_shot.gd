@@ -2,7 +2,7 @@ extends SceneTree
 ## Screenshot driver for the build moment. Needs a window, so run it under a virtual display:
 ## xvfb-run -a godot --path game --resolution 844x390 --script res://tests/diagnose_build_shot.gd
 ## DIAGNOSE_VIEW=flat or depth, DIAGNOSE_OUT=directory. It forces a human attacker, topples the pyramid,
-## shows the build button, starts the build, and places all three sandals.
+## shows the hold ring, starts the build, and places all three sandals.
 
 const MAIN_SCENE: String = "res://scenes/main.tscn"
 
@@ -65,7 +65,7 @@ func _run() -> void:
 	overlay._begin()
 	await _frames(30)
 	print("building ", stack.builder != null, " blend ", ViewProjection.build_blend)
-	await _shot(name_prefix + "-2-qte")
+	await _shot(name_prefix + "-2-building")
 	while stack.builder != null and stack.placed_count < 3:
 		stack.builder.complete_build_step()
 		await _frames(25)

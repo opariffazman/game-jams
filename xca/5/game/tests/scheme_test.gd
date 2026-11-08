@@ -63,6 +63,8 @@ func _run() -> void:
 	_tuning = Tuning.load_default()
 	_tuning.match_countdown = false
 	_settings = root.get_node("Settings")
+	_settings.path = "user://scheme_test_run.cfg"
+	_settings.scheme = SettingsRef.SCHEME_LOCK_FIRE
 	await _test_tuning()
 	await _test_attacker_lock_picks_the_stack()
 	await _test_defender_default_lock()

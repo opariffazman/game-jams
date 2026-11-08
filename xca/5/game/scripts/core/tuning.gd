@@ -71,40 +71,14 @@ static var _default: Tuning
 @export_group("Pyramid build")
 ## Radius around the centre spot where sandals count as delivered and where a build can run.
 @export_range(40.0, 200.0, 1.0, "suffix:px") var build_zone_radius: float = 90.0
-## Seconds one build step takes for a bot at full skill. The human answers a timed prompt instead.
+## Seconds one build step takes at full skill. The human build takes the same time per step.
 @export_range(0.3, 5.0, 0.05, "suffix:s") var build_step_seconds: float = 1.2
-## Seconds a missed prompt costs before the same step prompts again.
-@export_range(0.0, 3.0, 0.05, "suffix:s") var miss_penalty_seconds: float = 0.8
 ## Seconds a complete pyramid must stand before the attackers win the round.
 @export_range(0.0, 3.0, 0.05, "suffix:s") var build_stable_seconds: float = 0.5
 ## Seconds of scatter phase before the defenders win the round.
 @export_range(10.0, 300.0, 1.0, "suffix:s") var scatter_time_limit: float = 60.0
-## Seconds either side of the meeting time in which a tap prompt counts as a hit.
-@export_range(0.1, 1.0, 0.01, "suffix:s") var qte_window_seconds: float = 0.3
-## Seconds a tap prompt ring shrinks before it meets the target ring.
-@export_range(0.5, 3.0, 0.05, "suffix:s") var qte_tap_seconds: float = 1.1
-## Seconds a swipe prompt waits before it counts as a miss.
-@export_range(0.5, 5.0, 0.05, "suffix:s") var qte_swipe_seconds: float = 1.8
-## A swipe prompt answers to a drag at least this long, in CSS pixels.
-@export_range(10.0, 120.0, 1.0, "suffix:px") var qte_swipe_min_css_px: float = 40.0
-## True: the human build is the balance minigame. False: the tap and swipe prompts.
-@export var build_balance_enabled: bool = true
-## The sandal is steady while the lean stays under this share of the full lean.
-@export_range(0.1, 0.9, 0.01) var balance_safe_band: float = 0.35
-## Seconds the sandal must stay steady to lock a build step.
-@export_range(0.2, 3.0, 0.05, "suffix:s") var balance_hold_seconds: float = 0.9
-## Sideways push on the lean per second on the first step. Later steps push a little harder.
-@export_range(0.0, 2.0, 0.01) var balance_wobble: float = 0.45
-## Seconds at the start of a step before the wobble begins.
-@export_range(0.0, 2.0, 0.05, "suffix:s") var balance_grace_seconds: float = 0.6
-## How fast a leaning sandal falls further. Higher is less stable.
-@export_range(0.0, 3.0, 0.05) var balance_instability: float = 0.9
-## Lean change per second at full player input.
-@export_range(0.5, 6.0, 0.1) var balance_control: float = 2.2
-## Lean a single tap moves toward the centre.
-@export_range(0.05, 0.6, 0.01) var balance_tap_nudge: float = 0.25
-## Seconds a human stands still in the zone with all three sandals before the build starts alone.
-@export_range(0.3, 5.0, 0.1, "suffix:s") var balance_auto_start_seconds: float = 1.5
+## Seconds a human stands in the zone with empty hands and all sandals there before the build starts alone.
+@export_range(0.1, 3.0, 0.05, "suffix:s") var build_hold_seconds: float = 0.4
 ## Camera zoom while the human builds.
 @export_range(1.0, 3.0, 0.05) var build_zoom: float = 1.8
 ## Bot build time factor at difficulty 0. At difficulty 1 the factor is 1.

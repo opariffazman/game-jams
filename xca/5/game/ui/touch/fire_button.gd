@@ -20,9 +20,9 @@ signal cancelled
 ## Icon shown while the touch is cancelling.
 @export var cancel_icon: Texture2D = preload("res://assets/icons/throw_cancel.svg")
 ## Ring and icon colour while ready.
-@export var ready_color: Color = Color(1.0, 1.0, 1.0, 0.85)
+@export var ready_color: Color = Color(1.0, 1.0, 1.0, 0.6)
 ## Fill behind the icon.
-@export var backdrop_color: Color = Color(0.06, 0.09, 0.16, 0.7)
+@export var backdrop_color: Color = Color(0.06, 0.09, 0.16, 0.4)
 
 ## Tuning for sizes. Set by the scheme.
 var tuning: Tuning

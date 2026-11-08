@@ -87,6 +87,7 @@ var _role_icon: TextureRect
 var _throws_row: HBoxContainer
 var _mati_row: HBoxContainer
 var _center_icon: TextureRect
+var _coin: CoinFlip
 var _count_label: Label
 var _count_tween: Tween
 var _ring_icon: TextureRect
@@ -200,6 +201,9 @@ func _build_ui() -> void:
 	_center_icon.pivot_offset = Vector2(CENTER_ICON_PX, CENTER_ICON_PX) * 0.5
 	_center_icon.visible = false
 	centre_box.add_child(_center_icon)
+	_coin = CoinFlip.new()
+	_coin.visible = false
+	centre_box.add_child(_coin)
 	_count_label = Label.new()
 	_count_label.add_theme_font_size_override("font_size", COUNT_FONT_PX)
 	_count_label.add_theme_color_override("font_color", Color.WHITE)
@@ -349,6 +353,8 @@ func _connect_round_manager() -> void:
 		_round_manager.connect("round_ended", _on_round_ended)
 	if _round_manager.has_signal("countdown_tick"):
 		_round_manager.connect("countdown_tick", _on_countdown_tick)
+	if _round_manager.get("phase") != null:
+		_on_phase_changed(_round_manager.get("phase"))
 
 
 func _connect_stack() -> void:
@@ -388,6 +394,8 @@ func _on_countdown_tick(step: int) -> void:
 func _on_phase_changed(phase: Variant) -> void:
 	_phase_name = _phase_names.get(phase, "")
 	_stop_center_tween()
+	if _phase_name != "COIN_FLIP" and _coin != null:
+		_coin.stop()
 	if _phase_name != "COIN_FLIP" and _count_label != null:
 		_count_label.visible = false
 	match _phase_name:
@@ -395,7 +403,7 @@ func _on_phase_changed(phase: Variant) -> void:
 			if _match_over:
 				_scores = [0, 0]
 				_match_over = false
-			_play_coin_flip()
+			_play_coin_flip.call_deferred()
 		"TOPPLE":
 			_throws_max = 0
 			_center_icon.visible = false
@@ -508,7 +516,7 @@ func _refresh_mati() -> void:
 		for child: Node in _mati_row.get_children():
 			child.queue_free()
 		for index: int in total:
-			_mati_row.add_child(_make_icon_rect(icons.tombstone, _icon_px, DIM_COLOR))
+			_mati_row.add_child(_make_icon_rect(icons.skull, _icon_px, DIM_COLOR))
 	_shown_mati_total = total
 	_shown_mati_dead = dead
 	var stones: Array[Node] = _mati_row.get_children()
@@ -538,25 +546,17 @@ func _refresh_overlay() -> void:
 	_overlay.queue_redraw()
 
 
+# The coin plays once ever. Later rounds and matches skip it, and the attacking team is already decided.
+# The match under the hero select screen is paused and is restarted on confirm, so that start does not count.
 func _play_coin_flip() -> void:
-	_center_icon.texture = _icon(icons.coin_flip, CENTER_ICON_PX)
-	_center_icon.modulate = Color.WHITE
-	_center_icon.scale = Vector2.ONE
-	_center_icon.visible = true
+	if _phase_name != "COIN_FLIP" or SettingsRef.coin_flip_seen() or get_tree().paused:
+		return
+	SettingsRef.mark_coin_flip_seen()
+	var colors: Array[Color] = [_team_color(0), _team_color(1)]
+	_coin.play(colors, _attacking_team(), COIN_SPIN_TIME)
 	_center_tween = create_tween()
-	_center_tween.tween_method(_spin_coin, 0.0, 1.0, COIN_SPIN_TIME)
-	_center_tween.tween_callback(_land_coin)
-	_center_tween.tween_interval(0.6)
-	_center_tween.tween_property(_center_icon, "modulate:a", 0.0, 0.25)
-
-
-func _spin_coin(progress: float) -> void:
-	_center_icon.scale = Vector2(cos(progress * TAU * 4.0), 1.0 + 0.25 * sin(progress * PI))
-
-
-func _land_coin() -> void:
-	_center_icon.scale = Vector2.ONE
-	_center_icon.modulate = _team_color(_attacking_team())
+	_center_tween.tween_interval(COIN_SPIN_TIME + 0.6)
+	_center_tween.tween_callback(_coin.stop)
 
 
 func _show_trophy() -> void:

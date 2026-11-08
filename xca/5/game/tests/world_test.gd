@@ -82,6 +82,7 @@ func _run() -> void:
 	_test_clean_lane(tuning)
 	await _test_ranged_throw(tuning)
 	await _test_rings_in_round()
+	await _test_custody_watchdog()
 	await _round_flow()
 
 
@@ -353,3 +354,44 @@ func _rebuild_as_human(body: Character, arena: Arena) -> void:
 			return
 		goal = nearest.global_position
 	body.move_intent = (goal - body.global_position).normalized()
+
+
+func _test_custody_watchdog() -> void:
+	for child: Node in root.get_children():
+		if child is Arena or child.name == "Main":
+			child.queue_free()
+	await _frames(2)
+	var main: Node = (load("res://scenes/main.tscn") as PackedScene).instantiate()
+	root.add_child(main)
+	await _frames(5)
+	var manager: RoundManager = main.get_node("RoundManager") as RoundManager
+	var arena: Arena = main.get_node("Arena") as Arena
+	await _frames(int(Tuning.load_default().coin_flip_time * 60.0) + 10)
+	arena.stack._topple()
+	await _frames(5)
+	_check(manager.phase == RoundManager.SCATTER, "watchdog test reaches scatter")
+	var repaired: Array[int] = [0]
+	manager.custody_repaired.connect(func() -> void: repaired[0] += 1)
+	var loose: Array = arena.get_loose_sandals().filter(func(node: Variant) -> bool: return not (node as Sandal).is_pass_sandal)
+	_check(loose.size() == 3, "three ordinary sandals loose after the topple")
+	var lost: Sandal = loose[0] as Sandal
+	lost.get_parent().remove_child(lost)
+	lost.queue_free()
+	await _frames(120)
+	_check(repaired[0] == 1, "a vanished sandal is replaced after the grace time")
+	var count: int = 0
+	for node: Node in manager.get_tree().get_nodes_in_group(Sandal.GROUP):
+		if not (node as Sandal).is_pass_sandal and not node.is_queued_for_deletion():
+			count += 1
+	_check(count == 3, "three ordinary sandals again")
+	var far: Sandal = arena.get_loose_sandals().filter(func(node: Variant) -> bool: return not (node as Sandal).is_pass_sandal)[0] as Sandal
+	far.set_physics_process(false)
+	far.global_position = arena.centre_spot + Vector2(5000.0, 5000.0)
+	await _frames(120)
+	_check(far.global_position.distance_to(arena.centre_spot) < 2000.0, "a sandal outside the walls is put back inside")
+	var stuck: Sandal = arena.get_loose_sandals().filter(func(node: Variant) -> bool: return not (node as Sandal).is_pass_sandal)[1] as Sandal
+	stuck.freeze = true
+	await _frames(120)
+	_check(not stuck.freeze, "a frozen sandal nobody holds is released")
+	main.queue_free()
+	await _frames(2)

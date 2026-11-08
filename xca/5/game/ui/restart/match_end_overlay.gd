@@ -24,7 +24,7 @@ const BACKDROP_COLOR: Color = Color(0.06, 0.09, 0.16, 0.85)
 ## Icon shown when the human team wins.
 @export var trophy_icon: Texture2D = preload("res://assets/icons/hud_trophy.svg")
 ## Icon shown when the human team loses.
-@export var tombstone_icon: Texture2D = preload("res://assets/icons/hud_tombstone.svg")
+@export var skull_icon: Texture2D = preload("res://assets/icons/hud_skull.svg")
 ## Icon on the restart button.
 @export var restart_icon: Texture2D = preload("res://assets/icons/restart_rotate.svg")
 ## Colour over the whole game while the overlay shows.
@@ -89,7 +89,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _draw() -> void:
 	var screen_size: Vector2 = get_viewport().get_visible_rect().size
 	draw_rect(Rect2(Vector2.ZERO, screen_size), scrim_color)
-	var result_icon: Texture2D = trophy_icon if _human_won else tombstone_icon
+	var result_icon: Texture2D = trophy_icon if _human_won else skull_icon
 	if result_icon != null:
 		draw_texture_rect(result_icon, _icon_box, false, icon_color)
 	var tint: Color = pressed_color if _pressed else icon_color

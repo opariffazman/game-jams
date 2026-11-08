@@ -46,6 +46,8 @@ var camera_zoom: float = ViewProjection.DEFAULT_FIT
 var skip_title: bool = false
 ## True once the player has seen the how-to-play cards.
 var how_to_seen: bool = false
+## True once the coin flip has played. It plays on the first match only.
+var coin_flip_seen: bool = false
 ## Id of the hero the player picked last. The select screen opens on it.
 var hero_id: StringName = &"kilat"
 ## Where settings are read from and written to. Tests point it at a scratch file.
@@ -70,6 +72,7 @@ func load_settings() -> void:
 	view = stored_view if stored_view in [View.FLAT, View.DEPTH] else View.DEPTH
 	skip_title = bool(file.get_value(SECTION, "skip_title", false))
 	how_to_seen = bool(file.get_value(SECTION, "how_to_seen", false))
+	coin_flip_seen = bool(file.get_value(SECTION, "coin_flip_seen", false))
 	hero_id = StringName(str(file.get_value(SECTION, "hero_id", "kilat")))
 	camera_pitch = clampf(float(file.get_value(SECTION, "camera_pitch", ViewProjection.DEFAULT_PITCH_DEGREES)), ViewProjection.MIN_PITCH_DEGREES, ViewProjection.MAX_PITCH_DEGREES)
 	camera_zoom = clampf(float(file.get_value(SECTION, "camera_zoom", ViewProjection.DEFAULT_FIT)), ViewProjection.MIN_FIT, ViewProjection.MAX_FIT)
@@ -84,6 +87,7 @@ func save_settings() -> int:
 	file.set_value(SECTION, "sound", sound_enabled)
 	file.set_value(SECTION, "skip_title", skip_title)
 	file.set_value(SECTION, "how_to_seen", how_to_seen)
+	file.set_value(SECTION, "coin_flip_seen", coin_flip_seen)
 	file.set_value(SECTION, "hero_id", String(hero_id))
 	file.set_value(SECTION, "camera_pitch", camera_pitch)
 	file.set_value(SECTION, "camera_zoom", camera_zoom)
@@ -104,6 +108,14 @@ func mark_how_to_seen() -> void:
 	if how_to_seen:
 		return
 	how_to_seen = true
+	save_settings()
+
+
+## Remembers that the coin flip played, so it never plays again.
+func mark_coin_flip_seen() -> void:
+	if coin_flip_seen:
+		return
+	coin_flip_seen = true
 	save_settings()
 
 
