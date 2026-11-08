@@ -11,10 +11,10 @@ const FOREST_TEXTURE: String = "res://assets/kenney/forest/Textures/colormap.png
 const ARENA_DIR: String = "res://assets/kenney/arena/"
 const ARENA_TEXTURE: String = "res://assets/kenney/arena/Textures/colormap.png"
 
-const GRASS_COLOR: Color = Color("2c4526")
-const PATCH_TINT: Color = Color(0.62, 0.62, 0.55)
-## Multiplier on the sand floor colour. It keeps enemy red above 3:1 on the floor, also for protanopia (measured on the rendered floor).
-const FLOOR_TINT: Color = Color(0.22, 0.22, 0.22)
+const GRASS_COLOR: Color = Color("1f7a45")
+const PATCH_TINT: Color = Color(1.0, 1.0, 1.0)
+## Multiplier on the sand floor colour. It turns the tile into a bright lime pitch that stays clear of the darker green surround.
+const FLOOR_TINT: Color = Color(0.5, 1.0, 0.6)
 const FLOOR_TILE: float = 120.0
 const FLOOR_LIFT: float = 0.0
 const GRASS_PATCH_SIZE: float = 70.0
