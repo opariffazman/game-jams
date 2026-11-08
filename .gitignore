@@ -1,0 +1,6 @@
+xca/5/game/.godot/
+xca/5/game/build/
+xca/5/game/tests/e2e/out/
+*.tmp
+xca/5/.certs/
+xca/*/*.zip

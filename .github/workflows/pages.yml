@@ -1,0 +1,63 @@
+name: pages
+
+on:
+  push:
+    branches: [main]
+    paths: ["xca/5/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  GODOT_VERSION: 4.6.3-stable
+  GODOT_DIR: ${{ github.workspace }}/.godot-bin
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Cache Godot binary and export templates
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.GODOT_DIR }}
+            ~/.local/share/godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}
+      - name: Install Godot and export templates
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          base="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}"
+          mkdir -p "$GODOT_DIR" "$RUNNER_TEMP/dl"
+          curl -fsSL -o "$RUNNER_TEMP/dl/godot.zip" "$base/Godot_v${GODOT_VERSION}_linux.x86_64.zip"
+          curl -fsSL -o "$RUNNER_TEMP/dl/templates.tpz" "$base/Godot_v${GODOT_VERSION}_export_templates.tpz"
+          unzip -q "$RUNNER_TEMP/dl/godot.zip" -d "$GODOT_DIR"
+          templates="$HOME/.local/share/godot/export_templates/${GODOT_VERSION/-/.}"
+          mkdir -p "$templates" "$RUNNER_TEMP/tpl"
+          unzip -q "$RUNNER_TEMP/dl/templates.tpz" -d "$RUNNER_TEMP/tpl"
+          mv "$RUNNER_TEMP/tpl/templates/"* "$templates/"
+      - name: Import project assets
+        run: |
+          chmod +x "$GODOT_DIR/Godot_v${GODOT_VERSION}_linux.x86_64"
+          # A fresh clone has no .godot cache. Godot can exit non-zero after a good import.
+          "$GODOT_DIR/Godot_v${GODOT_VERSION}_linux.x86_64" --headless --path xca/5/game --import || true
+      - name: Export the web build
+        run: |
+          GODOT="$GODOT_DIR/Godot_v${GODOT_VERSION}_linux.x86_64" bash xca/5/scripts/export.sh
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: xca/5/game/build/web
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
