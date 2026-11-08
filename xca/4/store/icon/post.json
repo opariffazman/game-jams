@@ -1,0 +1,33 @@
+{
+  "name": "icon",
+  "template": "og-template.html",
+  "dist": "dist/icon.html",
+  "png": "icon-512x512.png",
+  "canvas": [
+    512,
+    512
+  ],
+  "meta": {
+    "look": "night purple fog, orange lantern accent, Atkinson Hyperlegible Next, game frame fills the canvas",
+    "tags": [],
+    "status": "draft"
+  },
+  "fonts": [
+    "assets/fonts"
+  ],
+  "sprite": "assets/mdi",
+  "assets": {
+    "SHOT": "assets/shot.png"
+  },
+  "vars": {
+    "BG": "#140F26",
+    "INK": "#FFF4E0",
+    "SOFT": "#E3D6F2",
+    "ACCENT": "#FF9A3C",
+    "PANEL": "#241A44",
+    "RULE": "#3B2D66"
+  },
+  "must_say": [
+    "Light"
+  ]
+}

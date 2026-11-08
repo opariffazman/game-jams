@@ -1,0 +1,58 @@
+import { chromium } from 'playwright-core';
+// Usage: node tests/bench.mjs [clip.y4m]. Opens the bench on a fake camera clip, records, drops a marker and checks the saved log.
+const clip = process.argv[2] ?? '/tmp/hands/pointing_up.y4m';
+const args = ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', `--use-file-for-fake-video-capture=${clip}`,
+  '--ignore-certificate-errors', '--enable-unsafe-swiftshader', '--use-gl=angle', '--use-angle=swiftshader'];
+const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', headless: true, args });
+let failed = 0;
+const check = (name, ok, detail = '') => { console.log(`${ok ? 'PASS' : 'FAIL'} ${name} ${detail}`); if (!ok) failed++; };
+for (const viewport of [{ width: 1024, height: 768 }, { width: 768, height: 1024 }]) {
+  const page = await browser.newPage({ viewport });
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('https://localhost:8446/bench.html');
+  check(`page loads at ${viewport.width}x${viewport.height}`, (await page.title()) === 'Hand test bench');
+  await page.click('#startCam');
+  await page.waitForFunction(() => document.getElementById('startCam').textContent === 'Camera on', null, { timeout: 90000 });
+  await page.waitForFunction(() => window.benchState?.hands > 0, null, { timeout: 60000 });
+  check('a hand shows in the panel', (await page.textContent('#hands')).includes('MediaPipe:'));
+  check('the pose panel shows numbers', /min ratio \d\.\d\d/.test(await page.textContent('#pose')));
+  const info = await page.textContent('#qualityInfo');
+  check('Low end (CPU) is the default', (await page.inputValue('#quality')) === 'low' && /Mode: Low end/.test(info) && /Delegate: CPU/.test(info));
+  check('the panel names the delegate and a reason', /Delegate: (GPU|CPU)  \(.+\)/.test(info), info.split('\n')[1]);
+  check('headless may fall back to CPU, and the reason says why', !/Delegate: CPU  \(GPU/.test(info) || /using CPU/.test(info));
+  check('the panel shows capture, detection size, fps and drops', /Capture: \d+x\d+/.test(info) && /Detection frame sent: 320x240/.test(info) && /Tracker: \d/.test(info) && /Dropped frames: \d/.test(info) && /avg, .* ms max/.test(info));
+  await page.click('#record');
+  await page.fill('#markText', 'hand hanging');
+  await page.click('#mark');
+  await page.keyboard.press('m');
+  await page.waitForTimeout(2500);
+  const log = await page.evaluate(() => window.benchSave());
+  check('the log carries delegate, resolution, fps and pinch limits', !!log.quality?.delegate && /\d+x\d+/.test(log.quality.capture) && typeof log.quality.trackerFps === 'number' && typeof log.quality.workerMsMax === 'number' && log.pinchLimits.Right.pinchOn > 0);
+  await page.selectOption('#quality', 'hd');
+  await page.waitForFunction(() => window.benchState?.quality === 'hd' && window.benchState.running && window.benchState.delegate !== '-', null, { timeout: 90000 });
+  check('1280x720 option sends a 960x720 4:3 crop', /Detection frame sent: 960x720/.test(await page.textContent('#qualityInfo')));
+  await page.selectOption('#quality', 'pc');
+  await page.waitForFunction(() => window.benchState?.quality === 'pc' && window.benchState.running && window.benchState.delegate !== '-', null, { timeout: 90000 });
+  await page.waitForFunction(() => window.benchState?.hands > 0, null, { timeout: 60000 });
+  check('confidences show 0.6 in PC quality', /0.6 detect, 0.6 presence, 0.6 tracking/.test(await page.textContent('#qualityInfo')));
+  check('pinch calibration button starts a countdown', await (async () => { await page.click('#calibratePinch'); await page.waitForTimeout(300); return /Hold a pinch: \d\.\d s/.test(await page.textContent('#calibratePinch')); })());
+  await page.click('#calibratePinch');
+  check('the log has frames', log.frames.length > 5, `${log.frames.length} frames`);
+  check('a frame carries gesture, score and ratios', log.frames.at(-1).hands[0]?.ratios?.length === 5 && typeof log.frames.at(-1).hands[0].score === 'number');
+  check('the 3D panel shows tuning and depth source', /Rotation tuning: .*pinchOn/.test(await page.textContent('#box3d')) && /world landmarks/.test(await page.textContent('#box3d')));
+  check('the rub panel shows tuning', /Rub tuning: .*reversalSize/.test(await page.textContent('#box3d')));
+  check('the box canvas draws', await page.evaluate(() => { const c = document.getElementById('box'); const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; for (let i = 3; i < d.length; i += 4) if (d[i]) return true; return false; }));
+  check('the log carries world landmarks and rub fields', log.frames.at(-1).hands[0]?.world?.length === 21 && typeof log.frames.at(-1).rubLevel === 'number');
+  check('the typed marker is logged', log.allMarkers.some((m) => m.label === 'hand hanging'));
+  check('key M adds a marker', log.allMarkers.length >= 2);
+  const small = await page.evaluate(() => [...document.querySelectorAll('button, input[type=text], label.btn')].filter((e) => { const r = e.getBoundingClientRect(); return r.width < 48 || r.height < 48; }).map((e) => e.id || e.textContent));
+  check('every control is at least 48 px', small.length === 0, small.join(','));
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
+  check('no sideways scroll', !overflow);
+  await page.screenshot({ path: new URL(`./bench-${viewport.width}x${viewport.height}.png`, import.meta.url).pathname });
+  check('no page errors', errors.length === 0, errors.join('|'));
+  await page.close();
+}
+await browser.close();
+process.exit(failed ? 1 : 0);

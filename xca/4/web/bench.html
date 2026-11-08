@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hand test bench</title>
+<style>
+  :root { color-scheme: dark; --bg: #0b0f14; --panel: #151c24; --line: #3a4756; --text: #f2f5f7; --dim: #b6c2cf; --cyan: #5ee0ff; --amber: #ffcf5a; --red: #ff9a9a; --green: #8cf0a0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 18px/1.4 system-ui, sans-serif; padding: 8px; padding-left: max(8px, env(safe-area-inset-left)); padding-right: max(8px, env(safe-area-inset-right)); }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  h2 { font-size: 17px; margin: 0 0 6px; color: var(--cyan); }
+  button, input[type=text], select, label.btn { font: 600 18px system-ui, sans-serif; min-height: 52px; min-width: 52px; padding: 0 16px; border-radius: 8px; border: 2px solid var(--line); background: #1f2a36; color: var(--text); }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+  button.on { background: #7a1f1f; border-color: var(--red); }
+  button.primary { background: #0f5a6e; border-color: var(--cyan); }
+  input[type=text] { flex: 1; min-width: 160px; font-weight: 400; }
+  label.btn { display: inline-flex; align-items: center; gap: 8px; }
+  input[type=checkbox] { width: 28px; height: 28px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px; min-width: 0; }
+  pre { margin: 0; font: 15px/1.4 ui-monospace, monospace; white-space: pre-wrap; word-break: break-word; }
+  #stage { position: relative; width: 100%; max-width: 640px; aspect-ratio: 4 / 3; background: #000; transform: scaleX(-1); border-radius: 8px; overflow: hidden; }
+  #stage video, #stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #stage video { object-fit: cover; }
+  select { font: 600 18px system-ui, sans-serif; background: #1f2a36; color: var(--text); border: 2px solid var(--line); border-radius: 8px; min-height: 44px; padding: 0 8px; }
+  #flash { position: absolute; inset: 0; display: grid; place-items: center; font: 800 min(22vw, 140px) system-ui; color: #fff; text-shadow: 0 0 12px #000, 0 0 4px #000; background: rgba(0, 120, 160, 0.45); opacity: 0; pointer-events: none; transition: opacity 0.2s; border-radius: 8px; transform: scaleX(-1); }
+  #flash.show { opacity: 1; }
+  .meter { height: 22px; background: #0a0e12; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; margin: 4px 0 8px; }
+  .meter > i { display: block; height: 100%; width: 0; background: var(--cyan); }
+  .meter.amber > i { background: var(--amber); }
+  .meter.green > i { background: var(--green); }
+  #log { max-height: 240px; overflow: auto; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .warn { color: var(--amber); }
+  .bad { color: var(--red); }
+  .good { color: var(--green); }
+  #lab { grid-column: 1 / -1; }
+  #labPrompt { font: 700 clamp(22px, 5vw, 34px)/1.25 system-ui, sans-serif; margin: 6px 0; }
+  #labClock { font: 800 clamp(40px, 12vw, 72px)/1 ui-monospace, monospace; color: var(--amber); margin: 4px 0; }
+  #labCard { margin: 8px 0; padding: 10px; border: 2px solid var(--line); border-radius: 8px; }
+  #labCard.PASS { border-color: var(--green); }
+  #labCard.WARN { border-color: var(--amber); }
+  #labCard.FAIL { border-color: var(--red); }
+  #labVerdict { font: 800 28px system-ui, sans-serif; }
+  table.lab { border-collapse: collapse; width: 100%; font-size: 16px; }
+  table.lab th, table.lab td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; }
+  table.lab td.PASS { color: var(--green); font-weight: 700; }
+  table.lab td.WARN { color: var(--amber); font-weight: 700; }
+  table.lab td.FAIL { color: var(--red); font-weight: 700; }
+  #err { display: none; background: #7a1f1f; padding: 8px; margin-bottom: 8px; border-radius: 8px; }
+</style>
+</head>
+<body>
+<h1>Hand test bench</h1>
+<pre id="err" role="alert"></pre>
+<div class="bar">
+  <button id="startCam" class="primary">Start camera</button>
+  <button id="record" aria-pressed="false">Record (off)</button>
+  <button id="save">Save log</button>
+  <label class="btn"><input type="checkbox" id="twoHands" checked> Two hands</label>
+  <label class="btn"><input type="checkbox" id="useDefaults"> Default pose limits</label>
+  <label class="btn"><input type="checkbox" id="worldPinch"> Pinch in world space</label>
+  <label class="btn">Quality
+    <select id="quality" aria-label="Quality">
+      <option value="pc">PC quality (640x480, GPU)</option>
+      <option value="hd">1280x720 capture (GPU)</option>
+      <option value="low" selected>Low end (320x240, CPU)</option>
+    </select>
+  </label>
+</div>
+<div class="grid">
+  <section class="panel" aria-label="Camera">
+    <h2>Camera (mirrored)</h2>
+    <div id="stage"><video id="cam" playsinline muted></video><canvas id="overlay" width="640" height="480"></canvas><div id="flash"></div></div>
+    <pre id="status">Camera off</pre>
+  </section>
+  <section class="panel" aria-label="Quality and pinch calibration">
+    <h2>Quality, delegate and pinch limits</h2>
+    <pre id="qualityInfo">Camera off</pre>
+    <div class="bar" style="margin-top:8px"><button id="calibratePinch">Calibrate pinch</button></div>
+    <pre id="calibrateNote" class="warn" aria-live="polite"></pre>
+  </section>
+  <section class="panel" id="lab" aria-label="Gesture lab">
+    <h2>Gesture lab</h2>
+    <p style="margin:0 0 8px">Test one canned gesture at a time. Use Start, then follow the prompt. Each step gives 1 s to get ready and 3 s of measuring. Run each positive gesture 3 times with Retry.</p>
+    <div class="bar">
+      <button id="labStart" class="primary">Start lab</button>
+      <button id="labRetry" disabled>Retry</button>
+      <button id="labNext" disabled>Next</button>
+      <button id="labSummary">Show summary</button>
+      <button id="labDownload">Download JSON</button>
+      <button id="labCopy">Copy summary</button>
+    </div>
+    <div id="labStepInfo" aria-live="polite"></div>
+    <div id="labPrompt" aria-live="assertive">Press Start lab. The camera must be on.</div>
+    <div id="labClock" aria-hidden="true"></div>
+    <div id="labCard" hidden>
+      <div id="labVerdict"></div>
+      <pre id="labStats"></pre>
+    </div>
+    <div id="labTableWrap" style="overflow-x:auto"><table class="lab" id="labTable"><thead><tr><th>Gesture</th><th>Type</th><th>Verdict</th><th>Attempts</th><th>Correct</th><th>Safe hold</th></tr></thead><tbody></tbody></table></div>
+    <pre id="labNote" aria-live="polite"></pre>
+  </section>
+  <section class="panel" aria-label="Hands">
+    <h2>Hands</h2>
+    <pre id="hands">No hands.</pre>
+  </section>
+  <section class="panel" aria-label="Pose decision">
+    <h2>How the game picks palm, fist or none</h2>
+    <pre id="pose">-</pre>
+  </section>
+  <section class="panel" aria-label="Gestures">
+    <h2>Flick, slide, two hands, scrub</h2>
+    <pre id="gest">-</pre>
+    <div>Slide</div><div class="meter"><i id="slideBar"></i></div>
+    <div>Scrub, game rule (reversals in the last 2 s)</div><div class="meter amber"><i id="scrubBar"></i></div>
+    <div>Scrub, path candidate (any hand, any direction)</div><div class="meter green"><i id="pathBar"></i></div>
+  </section>
+  <section class="panel" aria-label="3D inspect and rub">
+    <h2>3D inspect box and rub meter</h2>
+    <canvas id="box" width="480" height="300" style="width:100%;max-width:480px;background:#000;border-radius:8px" role="img" aria-label="Box turned by your hand"></canvas>
+    <pre id="box3d">Pinch or make a fist to grab the box, turn your wrist, open to let go.</pre>
+    <div>Rub energy (hand over the weapon box, any direction)</div><div class="meter green"><i id="rubBar"></i></div>
+  </section>
+  <section class="panel" aria-label="Inspect triggers">
+    <h2>Would the game open inspect?</h2>
+    <pre id="gates">-</pre>
+    <div>Current rule: palm hold</div><div class="meter"><i id="gatePalm"></i></div>
+    <div>Candidate: thumbs-up hold</div><div class="meter green"><i id="gateThumb"></i></div>
+    <div>Candidate: two open palms</div><div class="meter green"><i id="gateTwo"></i></div>
+    <button id="resetCounts">Reset counters</button>
+  </section>
+  <section class="panel" aria-label="Markers and events">
+    <h2>Markers and events</h2>
+    <div class="bar"><input type="text" id="markText" placeholder="What are you doing?" aria-label="Marker label"><button id="mark">Mark (M)</button></div>
+    <div class="chips" id="chips"></div>
+    <h2 style="margin-top:10px">Event log</h2>
+    <pre id="log"></pre>
+  </section>
+</div>
+<script type="module" src="bench.js"></script>
+</body>
+</html>

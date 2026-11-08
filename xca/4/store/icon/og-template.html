@@ -1,0 +1,35 @@
+<title>Home by Light - GamePix icon</title>
+<style>
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-weight: 200 800; src: url(data:font/woff2;base64,{{F_ATKINSONNEXT_VARIABLE}}) format('woff2'); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #000; }
+  .ic { width: 1em; height: 1em; fill: currentColor; display: inline-block; }
+  .sheet {
+    --ink: {{INK}}; --accent: {{ACCENT}};
+    width: 512px; height: 512px; position: relative; overflow: hidden; background: #0b0618;
+    font-family: 'Atkinson Hyperlegible Next', sans-serif; color: var(--ink);
+  }
+  .crop { position: absolute; inset: 0; overflow: hidden; }
+  /* Tight crop on the hero and the lit road. The HUD column is off canvas. */
+  .shot { position: absolute; left: -1020px; top: -610px; width: 2400px; height: 1350px; background: url(data:image/png;base64,{{SHOT}}) 0 0 / 100% 100%;
+    filter: contrast(1.5) saturate(1.5) brightness(1.15); }
+  .layer { position: absolute; inset: 0; }
+  .grade { background: linear-gradient(180deg, rgba(60,20,120,.6), rgba(20,60,110,.15)); mix-blend-mode: soft-light; }
+  .glow { background: radial-gradient(circle 170px at 50% 14%, rgba(255,170,70,.95), rgba(255,110,30,.4) 55%, rgba(255,90,20,0) 78%); mix-blend-mode: screen; }
+  .vig { background: radial-gradient(circle at 50% 45%, rgba(0,0,0,0) 38%, rgba(5,2,15,.9) 100%); }
+  .basefade { background: linear-gradient(0deg, rgba(8,4,22,.95) 0%, rgba(8,4,22,.7) 22%, rgba(8,4,22,0) 46%); }
+  .flame { position: absolute; left: 0; right: 0; top: -6px; text-align: center; font-size: 170px; line-height: 1; color: #ffd27a;
+    filter: drop-shadow(0 0 14px rgba(255,200,90,1)) drop-shadow(0 0 40px rgba(255,120,20,.95)) drop-shadow(0 0 80px rgba(255,90,10,.8)); }
+  h1 { position: absolute; left: 0; right: 0; bottom: 26px; margin: 0; text-align: center; font-weight: 800; font-size: 96px; line-height: .92; letter-spacing: -.03em; color: #ffa63c;
+    -webkit-text-stroke: 4px #2a0d4a; paint-order: stroke fill; text-shadow: 0 4px 0 #9a3412, 0 8px 0 #431407, 0 0 30px rgba(255,140,30,.8); }
+</style>
+{{SPRITE}}
+<div class="sheet">
+  <div class="crop"><div class="shot"></div></div>
+  <div class="layer grade"></div>
+  <div class="layer glow"></div>
+  <div class="layer vig"></div>
+  <div class="layer basefade"></div>
+  <div class="flame"><svg class="ic"><use href="#i-fire"/></svg></div>
+  <h1>Light</h1>
+</div>

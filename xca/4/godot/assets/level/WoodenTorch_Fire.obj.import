@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://djyd3uw1f40s"
+path="res://.godot/imported/WoodenTorch_Fire.obj-e7f0e8ab2e92f3affe418bf879f46dfa.mesh"
+
+[deps]
+
+files=["res://.godot/imported/WoodenTorch_Fire.obj-e7f0e8ab2e92f3affe418bf879f46dfa.mesh"]
+
+source_file="res://assets/level/WoodenTorch_Fire.obj"
+dest_files=["res://.godot/imported/WoodenTorch_Fire.obj-e7f0e8ab2e92f3affe418bf879f46dfa.mesh", "res://.godot/imported/WoodenTorch_Fire.obj-e7f0e8ab2e92f3affe418bf879f46dfa.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

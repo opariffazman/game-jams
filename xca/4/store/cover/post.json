@@ -1,0 +1,34 @@
+{
+  "name": "cover",
+  "template": "og-template.html",
+  "dist": "dist/cover.html",
+  "png": "cover-1360x850.png",
+  "canvas": [
+    1360,
+    850
+  ],
+  "meta": {
+    "look": "night purple fog, orange lantern accent, Atkinson Hyperlegible Next, game frame fills the canvas",
+    "tags": [],
+    "status": "draft"
+  },
+  "fonts": [
+    "assets/fonts"
+  ],
+  "sprite": "assets/mdi",
+  "assets": {
+    "SHOT": "assets/shot.png"
+  },
+  "vars": {
+    "BG": "#140F26",
+    "INK": "#FFF4E0",
+    "SOFT": "#E3D6F2",
+    "ACCENT": "#FF9A3C",
+    "PANEL": "#241A44",
+    "RULE": "#3B2D66"
+  },
+  "must_say": [
+    "Home by Light",
+    "Flick. Clean your weapon. Get home."
+  ]
+}

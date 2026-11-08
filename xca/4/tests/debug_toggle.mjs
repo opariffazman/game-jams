@@ -1,0 +1,15 @@
+import { chromium } from 'playwright-core';
+import { startByTouch } from './start.mjs';
+const args = ['--ignore-certificate-errors', '--enable-unsafe-swiftshader', '--use-gl=angle', '--use-angle=swiftshader'];
+const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', headless: true, args });
+const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+const errors = [];
+page.on('pageerror', (e) => errors.push(e.message));
+await page.goto('https://localhost:8446/');
+await page.waitForTimeout(15000);
+await startByTouch(page);
+await page.waitForTimeout(3000);
+await page.screenshot({ path: 'tests/debug-off.png' });
+console.log('debug off', await page.evaluate(() => ({ on: window.railsBridge.debugOn, panel: getComputedStyle(document.getElementById('panel')).display, hud: getComputedStyle(document.getElementById('hud')).visibility })));
+console.log('errors', errors.length ? errors : 'none');
+await browser.close();

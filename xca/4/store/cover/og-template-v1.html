@@ -1,0 +1,29 @@
+<title>Home by Light - GamePix cover</title>
+<style>
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-weight: 200 800; src: url(data:font/woff2;base64,{{F_ATKINSONNEXT_VARIABLE}}) format('woff2'); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #000; }
+  .ic { width: 1em; height: 1em; fill: currentColor; display: inline-block; flex-shrink: 0; }
+  .sheet {
+    --bg: {{BG}}; --ink: {{INK}}; --soft: {{SOFT}}; --accent: {{ACCENT}}; --panel: {{PANEL}};
+    width: 1360px; height: 850px; position: relative; overflow: hidden; background: var(--bg);
+    font-family: 'Atkinson Hyperlegible Next', sans-serif; color: var(--ink);
+  }
+  .shot { position: absolute; inset: 0; background: url(data:image/png;base64,{{SHOT}}) left center / cover; }
+  /* The game frame carries its own HUD, so the title sits on a dark fade at the bottom and the HUD stays clear. */
+  .fade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,15,38,.96) 0%, rgba(20,15,38,.86) 28%, rgba(20,15,38,0) 62%); }
+  .copy { position: absolute; left: 72px; right: 72px; bottom: 64px; }
+  h1 { margin: 0; font-weight: 800; font-size: 150px; line-height: 1; letter-spacing: -.02em; text-shadow: 0 6px 0 rgba(0,0,0,.35); }
+  h1 em { font-style: normal; color: var(--accent); }
+  .tag { margin: 18px 0 0; display: flex; align-items: center; gap: 16px; font-size: 40px; font-weight: 600; color: var(--soft); }
+  .tag .ic { font-size: 44px; color: var(--accent); }
+</style>
+{{SPRITE}}
+<div class="sheet">
+  <div class="shot"></div>
+  <div class="fade"></div>
+  <div class="copy">
+    <h1>Home by <em>Light</em></h1>
+    <p class="tag"><svg class="ic"><use href="#i-fire"/></svg>Flick. Aim. Clean your weapon. Get home.</p>
+  </div>
+</div>

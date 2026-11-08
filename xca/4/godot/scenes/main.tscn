@@ -1,0 +1,138 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/rails_course.gd" id="2_course"]
+[ext_resource type="Script" path="res://scripts/rails_hero.gd" id="3_hero"]
+[ext_resource type="Script" path="res://scripts/zombie_pool.gd" id="4_pool"]
+[ext_resource type="Script" path="res://scripts/confetti_pool.gd" id="5_confetti"]
+[ext_resource type="Script" path="res://scripts/rails_director.gd" id="6_director"]
+[ext_resource type="Script" path="res://scripts/shooter.gd" id="7_shooter"]
+[ext_resource type="Script" path="res://scripts/body_input.gd" id="8_body"]
+[ext_resource type="Script" path="res://scripts/pointer_input.gd" id="9_pointer"]
+[ext_resource type="Script" path="res://scripts/aim_reticle.gd" id="10_reticle"]
+[ext_resource type="Script" path="res://scripts/hearts_display.gd" id="11_hearts"]
+[ext_resource type="Script" path="res://scripts/weapon_hud.gd" id="12_weapon_hud"]
+[ext_resource type="Script" path="res://scripts/juice.gd" id="13_juice"]
+
+[sub_resource type="Environment" id="Env_night"]
+background_mode = 1
+background_color = Color(0.09, 0.07, 0.18, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.62, 0.6, 0.85, 1)
+ambient_light_energy = 0.9
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_main")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_night")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.7, 0.7, 0, -0.7, 0.7, 0, 8, 0)
+light_color = Color(0.75, 0.8, 1, 1)
+light_energy = 0.9
+shadow_enabled = false
+
+[node name="Course" type="Node3D" parent="."]
+script = ExtResource("2_course")
+
+[node name="Hero" type="Node3D" parent="."]
+script = ExtResource("3_hero")
+
+[node name="ZombiePool" type="Node3D" parent="."]
+script = ExtResource("4_pool")
+
+[node name="Confetti" type="Node3D" parent="."]
+script = ExtResource("5_confetti")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.9, 0.4, 0, -0.4, 0.9, 0, 4.6, 6)
+fov = 55.0
+far = 95.0
+current = true
+
+[node name="Director" type="Node" parent="."]
+script = ExtResource("6_director")
+
+[node name="Shooter" type="Node" parent="."]
+script = ExtResource("7_shooter")
+
+[node name="Juice" type="Node3D" parent="."]
+script = ExtResource("13_juice")
+
+[node name="BodyInput" type="Node" parent="."]
+script = ExtResource("8_body")
+
+[node name="PointerInput" type="Node" parent="."]
+script = ExtResource("9_pointer")
+
+[node name="Hud" type="CanvasLayer" parent="."]
+
+[node name="AimReticle" type="Control" parent="Hud"]
+mouse_filter = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("10_reticle")
+
+[node name="Hearts" type="Control" parent="Hud"]
+mouse_filter = 2
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 8.0
+offset_bottom = 70.0
+script = ExtResource("11_hearts")
+
+[node name="WeaponHud" type="Control" parent="Hud"]
+mouse_filter = 2
+anchor_right = 1.0
+offset_top = 70.0
+offset_bottom = 170.0
+script = ExtResource("12_weapon_hud")
+
+[node name="Message" type="Label" parent="Hud"]
+mouse_filter = 2
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -110.0
+offset_bottom = -30.0
+horizontal_alignment = 1
+
+[node name="Info" type="Label" parent="Hud"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 620.0
+offset_bottom = 130.0
+
+[node name="Controls" type="GridContainer" parent="Hud"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -150.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_vertical = 0
+columns = 6
+
+[node name="StartOverlay" type="ColorRect" parent="Hud"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.3)
+
+[node name="StartButton" type="Button" parent="Hud/StartOverlay"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -70.0
+offset_right = 220.0
+offset_bottom = 70.0
+theme_override_font_sizes/font_size = 48
+text = "Tap to start"

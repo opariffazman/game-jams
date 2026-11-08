@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cfawnubt6dsbm"
+path="res://.godot/imported/Home by Light.wav-7647ea20619912fb0ed96021b7eaf8c1.sample"
+
+[deps]
+
+source_file="res://audio_suno/Home by Light.wav"
+dest_files=["res://.godot/imported/Home by Light.wav-7647ea20619912fb0ed96021b7eaf8c1.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

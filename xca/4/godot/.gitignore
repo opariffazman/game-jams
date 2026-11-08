@@ -1,0 +1,4 @@
+cert/
+.godot/
+build/
+tests/node_modules/

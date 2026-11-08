@@ -1,0 +1,11 @@
+# GamePix store art for Home by Light
+- `node store/shoot.mjs` captures gameplay frames into `store/shots/`. The dev server must run on https://localhost:8446/.
+- `store/render.sh` copies the chosen frames and runs `./gfx verify` from ~/repo/graphics. The cover uses `run-7.png`, the icon uses `run-7.png`.
+- Outputs: `cover/cover-1360x850.png` and `icon/icon-512x512.png`. The earlier plain versions are `*-v1.png`, with templates `og-template-v1.html`.
+- Capsule research: design the small size first, since Steam shows it near 184x69 and 120x45.
+- Use one focal point and one bright accent against a dark scene. Dark on dark fails.
+- Make the logo bold and stacked, with an outline and glow, so it survives small sizes.
+- Keep one clean zone for the logo. Drop the HUD, small text and clutter.
+- Split warm and cool light: purple shadows, orange lamps and fire. Add rim light, bloom and haze for depth.
+- The cover crops out the HUD in the template. Frames still need a zombie horde once fog allows one.
+- Upload with `get_asset_upload_url` (icon, cover). Nothing is uploaded yet.

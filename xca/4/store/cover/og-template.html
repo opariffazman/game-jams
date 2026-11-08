@@ -1,0 +1,59 @@
+<title>Home by Light - GamePix cover</title>
+<style>
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-weight: 200 800; src: url(data:font/woff2;base64,{{F_ATKINSONNEXT_VARIABLE}}) format('woff2'); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #000; }
+  .ic { width: 1em; height: 1em; fill: currentColor; display: inline-block; flex-shrink: 0; }
+  .sheet {
+    --ink: {{INK}}; --accent: {{ACCENT}};
+    width: 1360px; height: 850px; position: relative; overflow: hidden; background: #0b0618;
+    font-family: 'Atkinson Hyperlegible Next', sans-serif; color: var(--ink);
+  }
+  /* The crop starts right of the HUD column and ends left of the gear, so no HUD shows. The frame sits low so the hero stays whole. */
+  .crop { position: absolute; inset: 0; overflow: hidden; }
+    .shot { position: absolute; left: -414px; top: -175px; width: 1892px; height: 1064px; background: url(data:image/png;base64,{{SHOT}}) 0 0 / 100% 100%;
+    filter: contrast(1.35) saturate(1.45) brightness(1.18); }
+  .layer { position: absolute; inset: 0; pointer-events: none; }
+  /* Cool-to-warm split: teal in the shadows, orange from the lamps and the horizon. */
+  .grade { background: linear-gradient(180deg, rgba(40,10,90,.55) 0%, rgba(20,60,110,.18) 55%, rgba(255,120,30,.0) 100%); mix-blend-mode: soft-light; }
+  .horizon { background: radial-gradient(ellipse 340px 190px at 50% 40%, rgba(255,150,60,.95), rgba(255,100,30,.45) 45%, rgba(255,80,20,0) 72%); mix-blend-mode: screen; }
+  .lamp { background:
+    radial-gradient(circle 150px at 78% 8%, rgba(255,190,100,.95), rgba(255,150,60,0) 70%),
+    radial-gradient(circle 110px at 56% 24%, rgba(255,180,90,.75), rgba(255,150,60,0) 70%),
+    radial-gradient(circle 80px at 60% 38%, rgba(255,170,80,.5), rgba(255,150,60,0) 70%); mix-blend-mode: screen; }
+  .rays { background: conic-gradient(from 160deg at 78% 5%, rgba(255,190,110,0) 0deg, rgba(255,190,110,.32) 8deg, rgba(255,190,110,0) 16deg, rgba(255,190,110,.2) 26deg, rgba(255,190,110,0) 36deg, rgba(255,190,110,.26) 46deg, rgba(255,190,110,0) 58deg); mix-blend-mode: screen; filter: blur(10px); }
+  .rim { background: radial-gradient(ellipse 260px 330px at 50% 76%, rgba(255,140,50,.38), rgba(255,140,50,0) 70%); mix-blend-mode: screen; }
+  .haze { background: linear-gradient(0deg, rgba(120,90,200,.0) 0%, rgba(150,110,230,.30) 42%, rgba(120,90,200,0) 58%); mix-blend-mode: screen; }
+  .vig { background: radial-gradient(ellipse 75% 70% at 50% 55%, rgba(0,0,0,0) 45%, rgba(5,2,15,.88) 100%); }
+  .titlefade { background: linear-gradient(180deg, rgba(8,4,22,.92) 0%, rgba(8,4,22,.6) 24%, rgba(8,4,22,0) 44%); }
+  .tagfade { background: linear-gradient(0deg, rgba(8,4,22,.9) 0%, rgba(8,4,22,.55) 10%, rgba(8,4,22,0) 20%); }
+  .boxdim { background: radial-gradient(ellipse 230px 150px at 66% 79%, rgba(8,4,22,.55), rgba(8,4,22,0) 100%); }
+  .grain { opacity: .22; mix-blend-mode: overlay; }
+  .copy { position: absolute; left: 0; right: 0; top: 34px; text-align: center; }
+  /* A hard offset stack plus a stroke gives the title depth and keeps it readable at 184 px wide. */
+  h1 { margin: 0; font-weight: 800; font-size: 178px; line-height: .94; letter-spacing: -.03em; color: #fff4e0;
+    -webkit-text-stroke: 3px #2a0d4a; paint-order: stroke fill;
+    text-shadow: 0 3px 0 #4a1c7a, 0 6px 0 #3a1560, 0 9px 0 #2a0d4a, 0 12px 0 #1a0830, 0 18px 40px rgba(0,0,0,.7); }
+  h1 .by { display: block; font-size: 68px; letter-spacing: .02em; color: #e3d6f2; margin-bottom: -4px; text-shadow: 0 3px 0 #2a0d4a, 0 8px 22px rgba(0,0,0,.7); }
+  h1 em { font-style: normal; color: #ffa63c; text-shadow: 0 3px 0 #c2410c, 0 6px 0 #9a3412, 0 9px 0 #7c2d12, 0 12px 0 #431407, 0 0 36px rgba(255,150,40,.95), 0 0 90px rgba(255,110,20,.7); }
+  .tag { position: absolute; left: 0; right: 0; bottom: 34px; margin: 0; text-align: center; font-size: 40px; font-weight: 700; color: #fff4e0; letter-spacing: .01em; text-shadow: 0 2px 0 #000, 0 0 18px rgba(0,0,0,.9); }
+  .tag .ic { font-size: 40px; color: #ffa63c; vertical-align: -6px; margin-right: 10px; filter: drop-shadow(0 0 10px rgba(255,150,40,.9)); }
+</style>
+{{SPRITE}}
+<svg width="0" height="0" style="position:absolute"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7"/><feColorMatrix type="saturate" values="0"/></filter></svg>
+<div class="sheet">
+  <div class="crop"><div class="shot"></div></div>
+  <div class="layer grade"></div>
+  <div class="layer haze"></div>
+  <div class="layer horizon"></div>
+  <div class="layer rays"></div>
+  <div class="layer lamp"></div>
+  <div class="layer rim"></div>
+  <div class="layer vig"></div>
+  <div class="layer titlefade"></div>
+  <div class="layer boxdim"></div>
+  <div class="layer tagfade"></div>
+  <svg class="layer grain" width="1360" height="850"><rect width="100%" height="100%" filter="url(#noise)"/></svg>
+  <div class="copy"><h1><span class="by">Home by</span><em>Light</em></h1></div>
+  <p class="tag"><svg class="ic"><use href="#i-fire"/></svg>Flick. Clean your weapon. Get home.</p>
+</div>

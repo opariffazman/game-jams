@@ -1,0 +1,25 @@
+<title>Home by Light - GamePix icon</title>
+<style>
+  @font-face { font-family: 'Atkinson Hyperlegible Next'; font-weight: 200 800; src: url(data:font/woff2;base64,{{F_ATKINSONNEXT_VARIABLE}}) format('woff2'); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #000; }
+  .ic { width: 1em; height: 1em; fill: currentColor; display: inline-block; }
+  .sheet {
+    --bg: {{BG}}; --ink: {{INK}}; --accent: {{ACCENT}};
+    width: 512px; height: 512px; position: relative; overflow: hidden; background: var(--bg);
+    font-family: 'Atkinson Hyperlegible Next', sans-serif; color: var(--ink);
+  }
+  .shot { position: absolute; inset: 0; background: url(data:image/png;base64,{{SHOT}}) 52% 70% / 300% auto; }
+  .fade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,15,38,.97) 0%, rgba(20,15,38,.9) 40%, rgba(20,15,38,.15) 78%); }
+  .flame { position: absolute; left: 0; right: 0; top: 46px; text-align: center; font-size: 150px; color: var(--accent); line-height: 1; filter: drop-shadow(0 0 28px rgba(255,154,60,.7)); }
+  h1 { position: absolute; left: 0; right: 0; bottom: 40px; margin: 0; text-align: center; font-weight: 800; font-size: 82px; line-height: .98; letter-spacing: -.02em; }
+  h1 em { font-style: normal; color: var(--accent); }
+  h1 small { display: block; font-size: 46px; font-weight: 600; color: #E3D6F2; letter-spacing: 0; }
+</style>
+{{SPRITE}}
+<div class="sheet">
+  <div class="shot"></div>
+  <div class="fade"></div>
+  <div class="flame"><svg class="ic"><use href="#i-fire"/></svg></div>
+  <h1><small>Home by</small><em>Light</em></h1>
+</div>
