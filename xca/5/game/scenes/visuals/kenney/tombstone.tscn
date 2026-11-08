@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/view3d/depth_visual.gd" id="1"]
+
+[node name="TombstoneDepth" type="Node2D"]
+script = ExtResource("1")
+kind = 6
+radius = 18.0
+color = Color(0.8, 0.82, 0.88, 1)

@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/view3d/depth_visual.gd" id="1"]
+
+[node name="DefenderDepth" type="Node2D"]
+script = ExtResource("1")
+kind = 1
+radius = 18.0
+model_height = 64.0
+color = Color(1, 0.322, 0.188, 1)

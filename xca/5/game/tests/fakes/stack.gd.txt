@@ -1,0 +1,41 @@
+class_name Stack
+extends Node2D
+## Fake stack for the character test.
+
+signal toppled
+signal rebuilt
+signal build_started(builder: Character)
+signal build_ended(builder: Character, completed: bool)
+
+var is_down: bool = false
+var is_built: bool = true
+var placed_count: int = 0
+var builder: Character = null
+var zone_radius: float = 90.0
+
+
+func is_in_zone(world_point: Vector2) -> bool:
+	return world_point.distance_to(global_position) <= zone_radius
+
+
+func can_build() -> bool:
+	return is_down
+
+
+func begin_build(character: Character) -> bool:
+	if builder != null or not is_down:
+		return false
+	builder = character
+	build_started.emit(character)
+	return true
+
+
+func end_build(character: Character) -> void:
+	if builder == character:
+		builder = null
+		build_ended.emit(character, false)
+
+
+func place_sandal() -> bool:
+	placed_count += 1
+	return true

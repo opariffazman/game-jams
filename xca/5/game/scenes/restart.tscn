@@ -1,0 +1,28 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://ui/restart/restart_layer.gd" id="1_layer"]
+[ext_resource type="Script" path="res://ui/restart/restart_button.gd" id="2_button"]
+[ext_resource type="Script" path="res://ui/restart/match_end_overlay.gd" id="3_overlay"]
+
+[node name="Restart" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_layer")
+
+[node name="RestartButton" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_button")
+
+[node name="MatchEndOverlay" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_overlay")

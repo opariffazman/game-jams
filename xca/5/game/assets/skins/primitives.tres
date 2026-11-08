@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="VisualSet" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/visual_set.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/primitives/attacker.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/primitives/defender.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/primitives/sandal.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/primitives/pass_sandal.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/primitives/stack_marker.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/primitives/arena.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/primitives/tombstone.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/primitives/hit_effect.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/primitives/topple_effect.tscn" id="10"]
+
+[resource]
+script = ExtResource("1")
+attacker = ExtResource("2")
+defender = ExtResource("3")
+sandal = ExtResource("4")
+pass_sandal = ExtResource("5")
+stack_marker = ExtResource("6")
+arena = ExtResource("7")
+tombstone = ExtResource("8")
+hit_effect = ExtResource("9")
+topple_effect = ExtResource("10")

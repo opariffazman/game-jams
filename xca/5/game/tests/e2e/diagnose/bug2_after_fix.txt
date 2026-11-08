@@ -1,0 +1,3 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+RESULT scatter_phases=96 non_finite_events_recovered=3 non_finite_unrecovered=0 stalls=0

@@ -1,0 +1,22 @@
+attempt 0 scheme A: ring (275,259) bearing (0.917,-0.399) stack bbox 18x46 -> 198x124 moved 258 => TOPPLED
+attempt 1 scheme A: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 121x75 moved 148 => TOPPLED
+attempt 2 scheme A: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 6x6 moved 56 => TOPPLED
+attempt 3 scheme A: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 18x46 moved 0 => stood
+attempt 4 scheme A: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> -Infinityx-Infinity moved Infinity => TOPPLED
+attempt 5 scheme A: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 6x5 moved 181 => TOPPLED
+attempt 6 scheme A: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 4x5 moved 115 => TOPPLED
+attempt 7 scheme A: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 128x46 moved 110 => TOPPLED
+attempt 8 scheme A: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> -Infinityx-Infinity moved Infinity => TOPPLED
+attempt 9 scheme A: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 6x6 moved 68 => TOPPLED
+attempt 10 scheme A: ring (277,259) bearing (0.915,-0.403) stack bbox 18x46 -> -Infinityx-Infinity moved Infinity => TOPPLED
+attempt 11 scheme A: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 128x108 moved 172 => TOPPLED
+attempt 12 scheme A: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 107x62 moved 131 => TOPPLED
+attempt 13 scheme A: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 5x6 moved 307 => TOPPLED
+attempt 14 scheme A: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 56x88 moved 130 => TOPPLED
+attempt 15 scheme A: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 5x6 moved 57 => TOPPLED
+attempt 16 scheme A: ring (279,259) bearing (0.913,-0.407) stack bbox 18x46 -> 79x113 moved 128 => TOPPLED
+attempt 17 scheme A: ring (279,259) bearing (0.913,-0.407) stack bbox 18x46 -> 18x46 moved 0 => stood
+attempt 18 scheme A: ring (276,259) bearing (0.916,-0.401) stack bbox 18x46 -> 5x5 moved 282 => TOPPLED
+attempt 19 scheme A: ring (276,259) bearing (0.916,-0.401) stack bbox 18x46 -> 5x5 moved 58 => TOPPLED
+
+SCHEME A: topple 18 of 20 (90 percent)

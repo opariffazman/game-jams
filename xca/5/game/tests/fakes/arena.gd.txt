@@ -1,0 +1,27 @@
+class_name Arena
+extends Node2D
+## Fake arena for the character test. Mirrors the real registration API.
+
+var centre_spot: Vector2 = Vector2(640.0, 360.0)
+var loose: Array = []
+
+var _characters: Dictionary = {0: [], 1: []}
+
+
+func register_character(character: Character) -> void:
+	if not _characters.has(character.team):
+		_characters[character.team] = []
+	if not _characters[character.team].has(character):
+		_characters[character.team].append(character)
+
+
+func clear_characters() -> void:
+	_characters = {0: [], 1: []}
+
+
+func get_characters(team: int) -> Array:
+	return _characters.get(team, [])
+
+
+func get_loose_sandals() -> Array:
+	return loose

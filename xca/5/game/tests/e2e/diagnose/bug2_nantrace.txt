@@ -1,0 +1,207 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+driver attached: true owner_probe set: true
+scatter 1 started, stalls so far 0, frame 374
+heartbeat frame=600 phase=2 scatters=1 stalls=0
+scatter 2 started, stalls so far 0, frame 1117
+heartbeat frame=1200 phase=2 scatters=2 stalls=0
+scatter 3 started, stalls so far 0, frame 1673
+heartbeat frame=1800 phase=2 scatters=3 stalls=0
+heartbeat frame=2400 phase=0 scatters=3 stalls=0
+scatter 4 started, stalls so far 0, frame 2511
+heartbeat frame=3000 phase=3 scatters=4 stalls=0
+scatter 5 started, stalls so far 0, frame 3102
+heartbeat frame=3600 phase=3 scatters=5 stalls=0
+scatter 6 started, stalls so far 0, frame 3694
+heartbeat frame=4200 phase=2 scatters=6 stalls=0
+scatter 7 started, stalls so far 0, frame 4365
+heartbeat frame=4800 phase=0 scatters=7 stalls=0
+scatter 8 started, stalls so far 0, frame 4882
+heartbeat frame=5400 phase=3 scatters=8 stalls=0
+scatter 9 started, stalls so far 0, frame 5503
+heartbeat frame=6000 phase=1 scatters=9 stalls=0
+scatter 10 started, stalls so far 0, frame 6006
+scatter 11 started, stalls so far 0, frame 6558
+heartbeat frame=6600 phase=2 scatters=11 stalls=0
+scatter 12 started, stalls so far 0, frame 7103
+heartbeat frame=7200 phase=2 scatters=12 stalls=0
+heartbeat frame=7800 phase=1 scatters=12 stalls=0
+scatter 13 started, stalls so far 0, frame 7964
+heartbeat frame=8400 phase=2 scatters=13 stalls=0
+scatter 14 started, stalls so far 0, frame 8752
+heartbeat frame=9000 phase=2 scatters=14 stalls=0
+scatter 15 started, stalls so far 0, frame 9395
+heartbeat frame=9600 phase=2 scatters=15 stalls=0
+heartbeat frame=10200 phase=2 scatters=15 stalls=0
+heartbeat frame=10800 phase=3 scatters=15 stalls=0
+scatter 16 started, stalls so far 0, frame 10876
+heartbeat frame=11400 phase=2 scatters=16 stalls=0
+scatter 17 started, stalls so far 0, frame 11574
+heartbeat frame=12000 phase=2 scatters=17 stalls=0
+NANTRACE first NaN at scatter=17 age=7.38 previous: pos=(654.8,373.5) vel=(222.7,705.9) in_flight=true freeze=false | last event: died team0 ATT with pass sandal carried=false
+heartbeat frame=12600 phase=2 scatters=17 stalls=0
+heartbeat frame=13200 phase=2 scatters=17 stalls=0
+heartbeat frame=13800 phase=2 scatters=17 stalls=0
+heartbeat frame=14400 phase=2 scatters=17 stalls=0
+heartbeat frame=15000 phase=2 scatters=17 stalls=0
+TIMEOUT-NOT-LOST STALL scatter=17 at=60.0s pass_sandal pos=(-nan,-nan) off_centre=-nan carried_by=nobody frozen=false in_flight=true speed=-nan near_wall=false outside_arena=false in_stack=false loose_listed=false closest_live_defender=-nan defenders=["alive=true d=-nan", "alive=true d=-nan", "alive=true d=-nan"] pickup_enabled=true | no bot | attackers=["A@(402,466) carry=false human=true", "Ax@(520,341) carry=false human=false", "Ax@(648,389) carry=false human=false"] | stack down=true placed=2 | loose=["(-nan,-nan)"]
+scatter 18 started, stalls so far 1, frame 15527
+heartbeat frame=15600 phase=2 scatters=18 stalls=1
+heartbeat frame=16200 phase=2 scatters=18 stalls=1
+scatter 19 started, stalls so far 1, frame 16386
+heartbeat frame=16800 phase=3 scatters=19 stalls=1
+scatter 20 started, stalls so far 1, frame 16818
+heartbeat frame=17400 phase=0 scatters=20 stalls=1
+scatter 21 started, stalls so far 1, frame 17585
+heartbeat frame=18000 phase=2 scatters=21 stalls=1
+scatter 22 started, stalls so far 1, frame 18482
+heartbeat frame=18600 phase=2 scatters=22 stalls=1
+scatter 23 started, stalls so far 1, frame 19106
+heartbeat frame=19200 phase=2 scatters=23 stalls=1
+heartbeat frame=19800 phase=1 scatters=23 stalls=1
+scatter 24 started, stalls so far 1, frame 19802
+heartbeat frame=20400 phase=1 scatters=24 stalls=1
+scatter 25 started, stalls so far 1, frame 20415
+heartbeat frame=21000 phase=2 scatters=25 stalls=1
+scatter 26 started, stalls so far 1, frame 21563
+heartbeat frame=21600 phase=2 scatters=26 stalls=1
+heartbeat frame=22200 phase=3 scatters=26 stalls=1
+scatter 27 started, stalls so far 1, frame 22411
+heartbeat frame=22800 phase=2 scatters=27 stalls=1
+scatter 28 started, stalls so far 1, frame 22927
+scatter 29 started, stalls so far 1, frame 23366
+heartbeat frame=23400 phase=2 scatters=29 stalls=1
+scatter 30 started, stalls so far 1, frame 23846
+heartbeat frame=24000 phase=2 scatters=30 stalls=1
+scatter 31 started, stalls so far 1, frame 24467
+heartbeat frame=24600 phase=2 scatters=31 stalls=1
+scatter 32 started, stalls so far 1, frame 25167
+heartbeat frame=25200 phase=2 scatters=32 stalls=1
+heartbeat frame=25800 phase=2 scatters=32 stalls=1
+scatter 33 started, stalls so far 1, frame 26042
+heartbeat frame=26400 phase=2 scatters=33 stalls=1
+scatter 34 started, stalls so far 1, frame 26673
+heartbeat frame=27000 phase=2 scatters=34 stalls=1
+heartbeat frame=27600 phase=1 scatters=34 stalls=1
+scatter 35 started, stalls so far 1, frame 27985
+heartbeat frame=28200 phase=2 scatters=35 stalls=1
+scatter 36 started, stalls so far 1, frame 28507
+heartbeat frame=28800 phase=2 scatters=36 stalls=1
+scatter 37 started, stalls so far 1, frame 29023
+heartbeat frame=29400 phase=1 scatters=37 stalls=1
+scatter 38 started, stalls so far 1, frame 29401
+heartbeat frame=30000 phase=3 scatters=38 stalls=1
+scatter 39 started, stalls so far 1, frame 30020
+heartbeat frame=30600 phase=2 scatters=39 stalls=1
+scatter 40 started, stalls so far 1, frame 30838
+heartbeat frame=31200 phase=2 scatters=40 stalls=1
+scatter 41 started, stalls so far 1, frame 31505
+heartbeat frame=31800 phase=3 scatters=41 stalls=1
+scatter 42 started, stalls so far 1, frame 31877
+scatter 43 started, stalls so far 1, frame 32327
+heartbeat frame=32400 phase=2 scatters=43 stalls=1
+heartbeat frame=33000 phase=1 scatters=43 stalls=1
+scatter 44 started, stalls so far 1, frame 33032
+heartbeat frame=33600 phase=3 scatters=44 stalls=1
+scatter 45 started, stalls so far 1, frame 34101
+heartbeat frame=34200 phase=2 scatters=45 stalls=1
+scatter 46 started, stalls so far 1, frame 34754
+heartbeat frame=34800 phase=2 scatters=46 stalls=1
+scatter 47 started, stalls so far 1, frame 35137
+heartbeat frame=35400 phase=2 scatters=47 stalls=1
+heartbeat frame=36000 phase=1 scatters=47 stalls=1
+scatter 48 started, stalls so far 1, frame 36211
+heartbeat frame=36600 phase=2 scatters=48 stalls=1
+heartbeat frame=37200 phase=2 scatters=48 stalls=1
+heartbeat frame=37800 phase=2 scatters=48 stalls=1
+heartbeat frame=38400 phase=2 scatters=48 stalls=1
+heartbeat frame=39000 phase=2 scatters=48 stalls=1
+heartbeat frame=39600 phase=2 scatters=48 stalls=1
+TIMEOUT-NOT-LOST STALL scatter=48 at=60.0s pass_sandal pos=(-nan,-nan) off_centre=-nan carried_by=nobody frozen=false in_flight=true speed=-nan near_wall=false outside_arena=false in_stack=false loose_listed=false closest_live_defender=-nan defenders=["alive=true d=-nan", "alive=true d=-nan", "alive=true d=-nan"] pickup_enabled=true | no bot | attackers=["A@(-nan,-nan) carry=false human=false", "Ax@(542,324) carry=false human=false", "A@(-nan,-nan) carry=true human=false"] | stack down=true placed=0 | loose=["(752,209)", "(317,399)"]
+scatter 49 started, stalls so far 2, frame 39928
+heartbeat frame=40200 phase=3 scatters=49 stalls=2
+scatter 50 started, stalls so far 2, frame 40303
+heartbeat frame=40800 phase=2 scatters=50 stalls=2
+scatter 51 started, stalls so far 2, frame 41309
+heartbeat frame=41400 phase=2 scatters=51 stalls=2
+heartbeat frame=42000 phase=2 scatters=51 stalls=2
+heartbeat frame=42600 phase=2 scatters=51 stalls=2
+heartbeat frame=43200 phase=2 scatters=51 stalls=2
+heartbeat frame=43800 phase=2 scatters=51 stalls=2
+heartbeat frame=44400 phase=2 scatters=51 stalls=2
+TIMEOUT-NOT-LOST STALL scatter=51 at=60.0s pass_sandal pos=(-nan,-nan) off_centre=-nan carried_by=nobody frozen=false in_flight=true speed=-nan near_wall=false outside_arena=false in_stack=false loose_listed=false closest_live_defender=-nan defenders=["alive=true d=-nan", "alive=true d=-nan", "alive=true d=-nan"] pickup_enabled=true | no bot | attackers=["A@(402,466) carry=false human=true", "A@(-nan,-nan) carry=true human=false", "Ax@(615,348) carry=false human=false"] | stack down=true placed=0 | loose=["(640,330)", "(730,219)"]
+heartbeat frame=45000 phase=3 scatters=51 stalls=3
+scatter 52 started, stalls so far 3, frame 45129
+heartbeat frame=45600 phase=2 scatters=52 stalls=3
+scatter 53 started, stalls so far 3, frame 45848
+heartbeat frame=46200 phase=1 scatters=53 stalls=3
+scatter 54 started, stalls so far 3, frame 46226
+heartbeat frame=46800 phase=3 scatters=54 stalls=3
+scatter 55 started, stalls so far 3, frame 46860
+heartbeat frame=47400 phase=2 scatters=55 stalls=3
+heartbeat frame=48000 phase=2 scatters=55 stalls=3
+STALL scatter=55 at=28.3s pass_sandal pos=(-nan,-nan) off_centre=-nan carried_by=nobody frozen=false in_flight=false speed=0.0 near_wall=false outside_arena=false in_stack=false loose_listed=true closest_live_defender=-nan defenders=["alive=true d=-nan", "alive=true d=-nan", "alive=true d=-nan"] pickup_enabled=true | no bot | attackers=["A@(402,466) carry=false human=true", "Ax@(655,384) carry=false human=false", "Ax@(667,372) carry=false human=false"] | stack down=true placed=2 | loose=["(-nan,-nan)", "(-nan,-nan)P"]
+heartbeat frame=48600 phase=2 scatters=55 stalls=4
+heartbeat frame=49200 phase=2 scatters=55 stalls=4
+heartbeat frame=49800 phase=2 scatters=55 stalls=4
+heartbeat frame=50400 phase=2 scatters=55 stalls=4
+scatter 56 started, stalls so far 4, frame 50680
+heartbeat frame=51000 phase=2 scatters=56 stalls=4
+scatter 57 started, stalls so far 4, frame 51440
+heartbeat frame=51600 phase=2 scatters=57 stalls=4
+scatter 58 started, stalls so far 4, frame 52010
+heartbeat frame=52200 phase=2 scatters=58 stalls=4
+scatter 59 started, stalls so far 4, frame 52407
+heartbeat frame=52800 phase=2 scatters=59 stalls=4
+heartbeat frame=53400 phase=0 scatters=59 stalls=4
+scatter 60 started, stalls so far 4, frame 53518
+heartbeat frame=54000 phase=2 scatters=60 stalls=4
+scatter 61 started, stalls so far 4, frame 54193
+heartbeat frame=54600 phase=2 scatters=61 stalls=4
+heartbeat frame=55200 phase=2 scatters=61 stalls=4
+heartbeat frame=55800 phase=1 scatters=61 stalls=4
+scatter 62 started, stalls so far 4, frame 56298
+heartbeat frame=56400 phase=2 scatters=62 stalls=4
+scatter 63 started, stalls so far 4, frame 56988
+heartbeat frame=57000 phase=2 scatters=63 stalls=4
+heartbeat frame=57600 phase=2 scatters=63 stalls=4
+scatter 64 started, stalls so far 4, frame 58033
+heartbeat frame=58200 phase=2 scatters=64 stalls=4
+scatter 65 started, stalls so far 4, frame 58535
+heartbeat frame=58800 phase=2 scatters=65 stalls=4
+scatter 66 started, stalls so far 4, frame 59133
+heartbeat frame=59400 phase=2 scatters=66 stalls=4
+scatter 67 started, stalls so far 4, frame 59850
+heartbeat frame=60000 phase=2 scatters=67 stalls=4
+scatter 68 started, stalls so far 4, frame 60502
+heartbeat frame=60600 phase=2 scatters=68 stalls=4
+heartbeat frame=61200 phase=2 scatters=68 stalls=4
+scatter 69 started, stalls so far 4, frame 61770
+heartbeat frame=61800 phase=2 scatters=69 stalls=4
+scatter 70 started, stalls so far 4, frame 62383
+heartbeat frame=62400 phase=2 scatters=70 stalls=4
+scatter 71 started, stalls so far 4, frame 62820
+heartbeat frame=63000 phase=2 scatters=71 stalls=4
+heartbeat frame=63600 phase=0 scatters=71 stalls=4
+scatter 72 started, stalls so far 4, frame 63694
+scatter 73 started, stalls so far 4, frame 64186
+heartbeat frame=64200 phase=2 scatters=73 stalls=4
+scatter 74 started, stalls so far 4, frame 64747
+heartbeat frame=64800 phase=2 scatters=74 stalls=4
+heartbeat frame=65400 phase=0 scatters=74 stalls=4
+scatter 75 started, stalls so far 4, frame 65471
+heartbeat frame=66000 phase=3 scatters=75 stalls=4
+scatter 76 started, stalls so far 4, frame 66078
+heartbeat frame=66600 phase=2 scatters=76 stalls=4
+heartbeat frame=67200 phase=2 scatters=76 stalls=4
+STALL scatter=76 at=25.6s pass_sandal pos=(-nan,-nan) off_centre=-nan carried_by=nobody frozen=false in_flight=false speed=0.0 near_wall=false outside_arena=false in_stack=false loose_listed=true closest_live_defender=-nan defenders=["alive=true d=-nan", "alive=true d=-nan", "alive=true d=-nan"] pickup_enabled=true | no bot | attackers=["A@(402,466) carry=false human=true", "A@(613,366) carry=false human=false", "Ax@(659,383) carry=false human=false"] | stack down=true placed=2 | loose=["(-nan,-nan)", "(-nan,-nan)P"]
+heartbeat frame=67800 phase=2 scatters=76 stalls=5
+heartbeat frame=68400 phase=2 scatters=76 stalls=5
+heartbeat frame=69000 phase=2 scatters=76 stalls=5
+heartbeat frame=69600 phase=2 scatters=76 stalls=5
+DONE mode=rebuild scatter_phases=76 stalls=5 ends={ "rebuilt": 56, "all_mati": 19, "timeout": 5 }
+TIMEOUT-NOT-LOST STALL scatter=17 at=60.0s pass_sandal pos=(-nan,-nan) off_centre=-nan carried_by=nobody frozen=false in_flight=true speed=-nan near_wall=false outside_arena=false in_stack=false loose_listed=false closest_live_defender=-nan defenders=["alive=true d=-nan", "alive=true d=-nan", "alive=true d=-nan"] pickup_enabled=true | no bot | attackers=["A@(402,466) carry=false human=true", "Ax@(520,341) carry=false human=false", "Ax@(648,389) carry=false human=false"] | stack down=true placed=2 | loose=["(-nan,-nan)"]
+TIMEOUT-NOT-LOST STALL scatter=48 at=60.0s pass_sandal pos=(-nan,-nan) off_centre=-nan carried_by=nobody frozen=false in_flight=true speed=-nan near_wall=false outside_arena=false in_stack=false loose_listed=false closest_live_defender=-nan defenders=["alive=true d=-nan", "alive=true d=-nan", "alive=true d=-nan"] pickup_enabled=true | no bot | attackers=["A@(-nan,-nan) carry=false human=false", "Ax@(542,324) carry=false human=false", "A@(-nan,-nan) carry=true human=false"] | stack down=true placed=0 | loose=["(752,209)", "(317,399)"]
+TIMEOUT-NOT-LOST STALL scatter=51 at=60.0s pass_sandal pos=(-nan,-nan) off_centre=-nan carried_by=nobody frozen=false in_flight=true speed=-nan near_wall=false outside_arena=false in_stack=false loose_listed=false closest_live_defender=-nan defenders=["alive=true d=-nan", "alive=true d=-nan", "alive=true d=-nan"] pickup_enabled=true | no bot | attackers=["A@(402,466) carry=false human=true", "A@(-nan,-nan) carry=true human=false", "Ax@(615,348) carry=false human=false"] | stack down=true placed=0 | loose=["(640,330)", "(730,219)"]
+STALL scatter=55 at=28.3s pass_sandal pos=(-nan,-nan) off_centre=-nan carried_by=nobody frozen=false in_flight=false speed=0.0 near_wall=false outside_arena=false in_stack=false loose_listed=true closest_live_defender=-nan defenders=["alive=true d=-nan", "alive=true d=-nan", "alive=true d=-nan"] pickup_enabled=true | no bot | attackers=["A@(402,466) carry=false human=true", "Ax@(655,384) carry=false human=false", "Ax@(667,372) carry=false human=false"] | stack down=true placed=2 | loose=["(-nan,-nan)", "(-nan,-nan)P"]
+STALL scatter=76 at=25.6s pass_sandal pos=(-nan,-nan) off_centre=-nan carried_by=nobody frozen=false in_flight=false speed=0.0 near_wall=false outside_arena=false in_stack=false loose_listed=true closest_live_defender=-nan defenders=["alive=true d=-nan", "alive=true d=-nan", "alive=true d=-nan"] pickup_enabled=true | no bot | attackers=["A@(402,466) carry=false human=true", "A@(613,366) carry=false human=false", "Ax@(659,383) carry=false human=false"] | stack down=true placed=2 | loose=["(-nan,-nan)", "(-nan,-nan)P"]

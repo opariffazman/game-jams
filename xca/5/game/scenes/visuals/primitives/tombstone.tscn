@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/core/primitive_skin_visual.gd" id="1"]
+
+[node name="TombstoneVisual" type="Node2D"]
+script = ExtResource("1")
+shape = 5
+color = Color(0.298, 0.788, 0.941, 0.9)
+radius = 18.0

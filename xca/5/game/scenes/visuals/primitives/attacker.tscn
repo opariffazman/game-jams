@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/core/primitive_skin_visual.gd" id="1"]
+
+[node name="AttackerVisual" type="Node2D"]
+script = ExtResource("1")
+shape = 0
+color = Color(0.251, 0.749, 1, 1)
+radius = 18.0

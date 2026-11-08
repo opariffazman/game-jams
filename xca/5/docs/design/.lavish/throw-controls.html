@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en" data-theme="night">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Baling Selipar - throw controls</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/daisyui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/themes.css">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.2.4/dist/index.global.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :where(.grid, .flex) > * { min-width: 0; }
+  :where(p, h1, h2, h3, li, legend, label, span, dd, dt, td, th) { overflow-wrap: anywhere; }
+  :root {
+    --bg: #0f1729; --panel: #172036; --line: #6b7a99; --ink: #e6ebf5; --muted: #b4bfd6;
+    --atk: #4cc9f0; --foe: #ff6b6b; --sand: #f4d58d;
+  }
+  body { background: var(--bg); color: var(--ink); margin: 0; font-family: system-ui, sans-serif; }
+  main { max-width: 1280px; margin: 0 auto; padding: 24px 16px 64px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  h1 { font-size: 1.9rem; font-weight: 800; margin: 0; }
+  h2 { font-size: 1.25rem; font-weight: 700; margin: 0 0 12px; }
+  h3 { font-size: 1.05rem; font-weight: 700; margin: 18px 0 8px; }
+  .lead { color: var(--muted); margin: 6px 0 0; max-width: 72ch; }
+  section { background: var(--panel); border: 1px solid #2c3a5a; border-radius: 16px; padding: 18px; }
+  .scroll { overflow-x: auto; }
+  .scroll > svg { min-width: 640px; }
+  svg.fig { width: 100%; height: auto; display: block; color: var(--ink); }
+  .node { fill: var(--bg); stroke: var(--line); stroke-width: 2.5; }
+  .node.good { stroke: var(--sand); }
+  .node.def-s { stroke: var(--atk); }
+  .field { fill: var(--bg); stroke: var(--line); stroke-width: 2.5; }
+  .lbl { font: 700 20px system-ui, sans-serif; fill: var(--ink); }
+  .sub { font: 500 16px system-ui, sans-serif; fill: var(--muted); }
+  .tag { font: 600 15px system-ui, sans-serif; fill: var(--muted); }
+  .edge { fill: none; stroke: var(--ink); stroke-width: 3; }
+  .qedge { stroke-dasharray: 8 6; }
+  .mk-ink { fill: var(--ink); } .mk-atk { fill: var(--atk); } .mk-foe { fill: var(--foe); } .mk-sand { fill: var(--sand); }
+  .qdot { fill: var(--sand); } .qmark { font: 800 18px system-ui; fill: #0b1220; }
+  .ring { fill: none; stroke: var(--sand); stroke-width: 3; }
+  .holder { fill: none; stroke: var(--sand); stroke-width: 3; }
+  .range { fill: none; stroke: var(--muted); stroke-width: 2.5; stroke-dasharray: 3 7; }
+  .range.thick { stroke: var(--sand); stroke-dasharray: none; stroke-width: 6; stroke-linecap: round; }
+  .atk-line { fill: none; stroke: var(--sand); stroke-width: 4; stroke-linecap: round; }
+  .atk-line.dash { stroke-dasharray: 10 8; }
+  .atk-line.fade { opacity: 0.35; }
+  .atk-line.dotted, .dotted { stroke-dasharray: 3 8; }
+  .push { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+  .pull { stroke: var(--muted); stroke-width: 3; stroke-dasharray: 5 6; fill: none; }
+  .finger { fill: none; stroke: var(--ink); stroke-width: 3; }
+  .finger.fill { fill: var(--ink); stroke: none; }
+  .pad { fill: none; stroke: var(--line); stroke-width: 3; }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 12px; color: var(--muted); font-size: .95rem; }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .sw-c, .sw-s { width: 18px; height: 18px; display: inline-block; }
+  .sw-c { border-radius: 50%; background: var(--atk); }
+  .sw-s { border-radius: 4px; background: var(--foe); }
+  .cap { color: var(--muted); margin: 8px 0 0; font-size: .95rem; }
+  .duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  @media (max-width: 860px) { .duo { grid-template-columns: minmax(0, 1fr); } }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 12px; margin-bottom: 14px; }
+  .card2 { border: 1px solid #2c3a5a; border-radius: 14px; padding: 12px 14px; background: var(--bg); }
+  .card2.best { border-color: var(--sand); }
+  .chead { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .letter { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 8px; background: var(--sand); color: #0b1220; font-weight: 800; }
+  .cname { font-weight: 700; }
+  dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; }
+  dt { color: var(--muted); } dd { margin: 0; }
+  table.cmp th, table.cmp td { vertical-align: top; min-width: 130px; }
+  table.cmp thead th { color: var(--ink); }
+  table.cmp tbody th { color: var(--muted); font-weight: 600; min-width: 170px; }
+  fieldset.q { border: 1px solid #2c3a5a; border-radius: 12px; padding: 10px 14px 12px; margin: 0; min-width: 0; }
+  fieldset.q legend { font-weight: 700; padding: 0 6px; }
+  .opt { display: flex; align-items: center; gap: 10px; padding: 8px 0; min-height: 44px; cursor: pointer; }
+  .qgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 14px; }
+  .actions { margin-top: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .facts { margin: 0; padding-left: 1.2rem; display: grid; gap: 6px; color: var(--ink); }
+  footer { color: var(--muted); font-size: .85rem; }
+  a { color: var(--atk); text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-sandal" viewBox="0 0 512 512"><path d="M31.93 17.5c14.09 36.4 23.83 78.53 28.84 122.8C102.6 126.7 140 108.6 177.7 85c1.5-22.21 4-44.45 7.6-66.72zm171.47.87c-3 18.12-5.2 36.25-6.7 54.37 8.1-5.47 16.4-11.22 24.7-17.22 2.2-14.63 4.9-27.27 7.8-37.02zm19.9 57.78C168.5 114.7 116.2 142.5 54.47 161c-2.32 10-4.96 19.8-4.01 29.4C109.5 173 159.2 144.9 215 104.5c6-9.05 8.3-18.4 8.3-28.35zm-8.2 50.45c-7 4.9-14 9.7-20.9 14.2.2 15.7.7 31.4 1.7 47.1 6.7-5.3 13.1-10.8 19.3-16.6-.6-15.2-.6-30.2-.1-44.7zm-38.7 25.7c-36.2 22.5-72 40.1-111.75 52.7.14 16.2-.36 32.5-1.49 48.6 47.14-14.2 84.34-31.6 115.54-53.1-1.2-16-2-32.1-2.3-48.2zm48.9 34c-42.5 38.7-95.5 67.5-169.98 88.3-5.68 9.4-8.78 19.3-8.04 29.4 60.82-25 122.42-42.3 173.02-86.9 3.7-11.6 5.6-21.3 5-30.8zm-3.4 53c-6.4 5.1-13 9.9-19.8 14.4 3 23.4 6.7 46.9 11 70.3 9.6-7 18-14.8 25.2-23.5-7.3-18.6-12.6-39.4-16.4-61.2zm-36.5 24.8c-42.4 24.6-87.81 38.7-130.87 56.4-5.06 17.2-3.29 28.5 1.53 45.1 57.64-1.1 105.34-11.4 140.74-31.2-4.3-23.4-8.2-46.8-11.4-70.3zm68.9 45c-37.9 48.4-105.4 71.8-192.04 74.3 3.19 8 6.9 16.1 10.9 24C147 397.2 238.8 386.2 286.7 332c-7.7-11.2-20.6-18.4-32.4-22.9zm42.4 38.8c-10.8 11.7-23.5 21.6-37.6 29.8-17.4 27-39.6 51.4-63.8 74.8l49.1.4c33-32.5 54.5-57.3 69.5-90.5-4.9-6.1-10.4-11.1-17.2-14.5zM38.74 370.4c-8.8 23.5-15.25 59-4.74 80.7l43.7.4c-15.34-23.7-30.81-52.5-38.96-81.1zm287.56 8c-13.9 27.3-32.2 49.7-56.7 74.8l66.5.6c13.2-14.8 34.5-31.5 38.9-50.3zm-101.1 15.5c-46 17.4-97.5 25.1-142.86 30.4 5.6 9.8 11.44 19.1 17.09 27.4l70.07.6c20.3-19 39.4-38.2 55.7-58.4zM394.1 410c-10.9 17.1-19.6 30.6-33 44l36 .3c7.2-13.8 13-26.6 12.7-37.7-3.8-4-9.3-6.4-15.7-6.6zm33.5 14.4c-1.2 10.6-5.4 20.6-10.1 30.1l65.7.6c-14.3-22.5-35.8-32.4-55.6-30.7zM30.68 469c-9.13 10.2-3.51 13.2 5.81 18.5H479.7c6.3-3.6 10.5-8.1 8.5-14.5z" fill="currentColor"/></symbol><symbol id="i-stack" viewBox="0 0 512 512"><path d="M256 18.365L50.14 136 256 253.635 461.86 136 256 18.365zm-154 168L50.14 216 256 333.635 461.86 216 410 186.365l-154 88-154-88zm0 80L50.14 296 256 413.635 461.86 296 410 266.365l-154 88-154-88zm0 80L50.14 376 256 493.635 461.86 376 410 346.365l-154 88-154-88z" fill="currentColor"/></symbol><symbol id="i-ball" viewBox="0 0 512 512"><path d="M222.4 21.66c-2.3 0-4.5.35-6.7 1-8.9 2.62-16 10.11-20.4 21.67-4.4 11.52-5.4 26.73-1.6 42.27 3.8 15.5 11.6 28.1 20.6 35.6 9 7.6 18.6 10.1 27.4 7.5 8.8-2.6 16-10.1 20.3-21.7 4.4-11.45 5.4-26.66 1.7-42.21-3.8-15.55-11.6-28.13-20.6-35.65-6.8-5.69-13.9-8.52-20.7-8.48zM94.28 28.94c-21.65 0-39 17.35-39 39s17.35 38.96 39 38.96c21.72 0 39.02-17.31 39.02-38.96 0-21.65-17.3-39-39.02-39zm-54.27 56.4l-21.49 8.71C29.24 138.8 65.03 188 108.1 208.9c33.3-2.4 51.3-11 87.5-27.5 24.8 68.1 32.5 116.5 4.8 192.7l-108.26 64-7.29 52.2 157.45-78c22.2-32.3 38-55.9 48.1-92.2l91.3 23.5c20.7 45.5 27.4 84.3 32.3 137.3l43.1-36.3c-7.5-51.6-17.6-92.5-36.8-142.1-31.3-18.9-75-37.8-105.5-48 8.7-40.6 3.9-70.9-8-110.2 65.2-3.1 100.7 5.5 163.8 23.3l22.9-23.4c-39.1-18.2-131.6-47.85-211.9-40.4-.9 3.5-1.9 6.9-3.1 10.2-5.9 15.7-17.2 28.6-32.5 33.2-15.4 4.5-31.1-.4-43.2-10.7-3-2.5-5.8-5.3-8.5-8.4-32.8 13.5-64.9 29.7-80.7 40-24.29-10.7-37.35-30.1-47.34-50.6-12.33-7-21.83-18.45-26.25-32.16z" fill="currentColor"/></symbol><symbol id="i-bullseye" viewBox="0 0 512 512"><path d="M311.133 257.95a15.074 15.074 0 0 1-12.845 17.026l-147.248 20.61-21.33 32.522-82.637 11.57 21.33-32.568-24.547 3.44c-.278 0-.555.12-.843.165a15.218 15.218 0 0 1-2.108.144 15.074 15.074 0 0 1-2.074-30.016c.29 0 .567 0 .855-.078l24.547-3.438-29.45-25.512 82.582-11.547 29.45 25.51 147.26-20.608a15.196 15.196 0 0 1 2.107-.145 15.085 15.085 0 0 1 14.953 12.923zm-36.704-38.546a32.4 32.4 0 0 1 10.847-10.326 23.427 23.427 0 0 1 13.422-3.04 27.875 27.875 0 0 1 13.542 5.047 44.557 44.557 0 0 1 11.924 12.59 66.342 66.342 0 0 1 8.386 19.134 77.48 77.48 0 0 1 2.562 21.995 67.895 67.895 0 0 1-3.494 19.966 46.132 46.132 0 0 1-8.54 15.352 28.163 28.163 0 0 1-12.402 8.552 23.382 23.382 0 0 1-13.765.255 32.012 32.012 0 0 1-12.512-7.122 45.478 45.478 0 0 1-5.734-6.2l-32.278 4.514a131.154 131.154 0 0 0 7.1 15.973 104.566 104.566 0 0 0 18.656 25.512 69.016 69.016 0 0 0 23.893 15.806 48.373 48.373 0 0 0 27.597 2.22 53.43 53.43 0 0 0 26.31-14.876c7.898-7.853 14.42-18.258 19.112-30.514a131.997 131.997 0 0 0 8.32-41.995 153.26 153.26 0 0 0-5.48-46.92 128.758 128.758 0 0 0-18.49-39.932c-7.6-10.726-16.417-18.946-25.78-24.403a52.998 52.998 0 0 0-27.962-7.62 48.573 48.573 0 0 0-26.278 8.718 69.88 69.88 0 0 0-20.165 21.897 107.505 107.505 0 0 0-11.99 29.516A137.144 137.144 0 0 0 237.68 235l31.192-4.37a49.172 49.172 0 0 1 5.557-11.226zm198.305-34.984c-10.926-35.274-27.287-64.757-46.842-87.374-18.557-21.518-39.544-36.26-61.118-44.213-20.155-7.41-40.564-8.74-59.953-4.248-18.058 4.204-35.196 13.466-50.603 27.62-14.42 13.21-26.09 29.626-35.185 47.807a233.224 233.224 0 0 0-19.29 56.57 286.023 286.023 0 0 0-5.856 60.674l22.582-3.16a209.143 209.143 0 0 1 5.047-40.344 166.26 166.26 0 0 1 15.972-42.926c7.365-13.4 16.716-25.124 27.997-34.087 11.89-9.44 24.88-14.986 38.3-16.64 14.165-1.774 28.773.744 42.938 7.51 14.863 7.1 29.084 18.78 41.485 34.774 12.856 16.572 23.515 37.46 30.66 61.917a225.515 225.515 0 0 1 8.74 74.65c-1.254 24.05-6.4 46.422-14.72 65.656-8.042 18.58-18.857 33.887-31.824 44.88-12.313 10.47-26.345 16.915-41.463 18.656a76.226 76.226 0 0 1-41.163-7.1c-12.313-5.722-23.826-14.485-34.03-25.51a162.212 162.212 0 0 1-25.724-37.637 204.584 204.584 0 0 1-14.542-38.578l-22.484 3.106a280.965 280.965 0 0 0 19.966 57.823 228.2 228.2 0 0 0 32.168 50.092c12.99 15.186 27.82 27.83 43.914 36.793 17.18 9.574 36.027 15.064 55.705 14.865 21.263-.21 41.44-7.022 59.52-19.778 19.356-13.654 36.005-33.897 48.617-59.432 13.244-26.82 21.697-58.788 24.048-93.64a300.742 300.742 0 0 0-12.856-108.76z" fill="currentColor"/></symbol><symbol id="i-cross" viewBox="0 0 512 512"><path d="M105.367 18.328c23.14 15.444 46.098 31.27 68.55 47.572-45.055-20.895-94.51-35.918-149.37-44.246 46.697 26.72 91.596 55.58 135.705 85.524-37.203-18.033-77.48-32.22-121.602-41.37 58.218 34.322 109.368 72.465 154.71 114.206C136.02 227.227 86.295 284.717 45.79 354.18c27.11-24.29 54.91-47.545 82.868-70.68C81.942 339.36 45.05 405.01 20.2 482.135c20.36-24.62 40.988-48.203 61.905-70.817 44.7-67.485 89.567-147.11 148.856-170.418-29.61 30.708-63.36 75.164-98.25 118.145 40.99-40.437 83.09-77.46 126.415-111.512 61.598 70.49 110.757 149.38 152.145 235.873-6.738-44.794-16.796-87.384-30.03-127.666l46.444 65.53s-26.037-72.69-43.66-101.987c40.76 55.91 78.208 114.428 112.328 175.205-18.674-89.454-50.512-169.772-98.893-238.224 34.906 34.69 68.637 71.1 100.93 109.045C465.048 288.827 423.58 221.82 372.214 167c40.224-25.887 81.48-49.73 123.863-71.783-32.025 5.56-62.49 12.92-92.006 21.934 21.836-16.173 44.41-32.124 67.024-47.523-37.987 11.91-74.633 25.775-109.067 41.433 42.668-27.673 86.32-53.668 131.004-78.602h-.003c-67.47 18.055-130.83 42.19-188.998 73.548-56.294-41.79-122.01-71.787-198.663-87.68z" fill="currentColor"/></symbol><symbol id="i-hand" viewBox="0 0 512 512"><path d="M18.465 20.182v192.9c38.45 80.782 55.772 134.822 150.726 221.098l.167.15.16.158c3.06 3.06 5.89 3.828 10.14 3.455 4.247-.373 9.65-2.494 14.738-5.912 9.313-6.256 16.457-17.503 17.67-22.266l-56.06-56.065 13.214-13.216 62.94 62.944c1.316 1.316 2.67 1.804 6.508 1.115 3.838-.69 9.267-3.1 14.61-6.78 10.098-6.954 19.75-18.663 22.835-26.454l-56.02-56.02 13.216-13.216 63.667 63.67c19.495-3.225 35.412-16.64 41.65-32.52l.756.296-71.514-71.516 13.214-13.215L447.81 415.52c7.58 7.58 14.7 9.95 21.032 9.853 6.33-.096 12.216-2.88 16.62-7.41 8.805-9.06 12.096-23.49-2.255-37.84L259.97 156.88l13.214-13.214 33.08 33.08c46.988-3.724 84.773-17.932 102.148-33.6 8.914-8.04 12.147-15.414 11.424-22.306-.644-6.142-5.172-13.675-15.865-21.79-52.33 22.22-109.035 19.23-162.685 2.538-54.338-16.908-105.852-47.735-148.47-81.406h-74.35z" fill="currentColor"/></symbol><symbol id="i-slingshot" viewBox="0 0 512 512"><path d="M157.54 15.78c-2.838.003-5.676.125-8.5.365-22.6 1.92-44.724 11.21-61.347 26.587-16.32 15.096-27.204 36.473-26.69 61.45 3.875-.13 9.014-.284 14.847-.397 1.073-.02 2.088-.027 3.146-.043-.402-19.627 7.798-35.656 20.92-47.795 13.38-12.377 32-20.283 50.647-21.867 18.517-1.573 36.767 2.965 50.646 14.524 5.373-3.043 11.074-4.81 16.602-5.51 1.072-.136 2.135-.228 3.192-.297-2.48-2.79-5.112-5.37-7.89-7.715-15.842-13.365-35.714-19.31-55.575-19.3zm68.077 44.282c-2.986.057-5.93.6-8.842 1.477-1.104.257-2.187.577-3.25.972.026.04.05.082.075.12-3.47 1.38-6.817 3.335-9.692 6.35-3.5 3.673-6.077 9.9-4.693 15.998l.094.413.045.144c11.863-10.083 27.67-14.763 42.444-14.64.3.002.596.024.895.03l-.068-.868-.592-1.374c-2.704-6.274-8.677-8.048-13.11-8.49-1.107-.11-2.21-.154-3.308-.133zM277.66 81.3c-6.248.09-12.4.574-18.474 1.378l-.582.54 4.716 17.102c4.68-.57 9.39-.928 14.133-1.015 1.6-.03 3.207-.03 4.817 0 36.413.658 76.09 16.07 122.072 59.433l15.937-9.623c-49.936-48.12-95.313-67.04-137.684-67.806-1.652-.03-3.297-.035-4.936-.01zm-52.29 10.595c-6.7 2.283-12.923 5.844-17.354 10.447l2.01 10.578c4.8-7.386 9.9-14.41 15.345-21.025zm18.597 5.953c-4.65 5.218-9.075 10.81-13.297 16.738 5.564-1.297 11.307-1.985 17.088-2.13-.102-.656-.203-1.312-.3-1.958l-3.49-12.65zM190.2 105c-10.62 5.178-21.06 10.89-31.368 16.828l14.736 8.645-.23-.047c.64.353 1.372.707 1.754 1.027.528.443.905.83 1.213 1.19 5.797-3.22 11.592-6.312 17.392-9.227L190.2 105zM80.692 121.756c-1.61.018-2.815-.007-4.496.025-8.207.16-14.15.39-16.605.478-2.228 1.913-6.242 5.488-11.158 11.178-6.63 7.67-12.168 17.598-12.092 23.324.095 7.15 3.73 19.28 9.736 30.228 6.007 10.948 14.408 20.872 21.87 25.426.002 0 2.58.932 6.513 1.07 3.934.138 9.176-.22 15.04-1.04 11.728-1.64 25.992-5.075 39.117-9.215 8.666-2.735 16.262-5.755 22.9-8.71-17.423-3.064-34.79-11.906-48.413-23.3-9.947-8.318-17.986-18.11-21.704-29.304-2.12-6.388-2.42-13.417-.707-20.16zm170.13 8.596c-13.804-.118-26.667 3.534-35.956 11.37.29 1.234.584 2.44.873 3.696 7.614 33.128 13.767 73.212 9.864 97.246-5.603 34.496-31.537 84.64-56.23 125.106-14.89 24.398-29.136 45.285-38.177 58.144 10.07-.018 20.817 2.73 31.086 7.26 11.084 4.89 21.573 11.887 29.23 20.914 1.466 1.73 2.83 3.565 4.06 5.488 1.36-3.347 2.576-6.353 4.36-10.703 5.542-13.528 13.064-31.452 21.98-50.63 17.835-38.352 41.727-81.852 64.653-103.98 25.013-24.14 74.933-49.443 118.108-67.835 6.416-2.733 12.653-5.304 18.676-7.735-4.533-14.565-13.66-26.322-24.893-37.757-.622.35-1.232.7-1.86 1.052-35.47 19.846-79.24 38.213-106.96 35.963-3.385-.274-8.838-3.985-12.028-8.44-11.913-16.64-21.224-49.812-26.786-79.158zM144.48 134.28c-.125.142-.195.26-.324.406-3.408 3.85-7.99 8.477-12.875 13.076-4.585 4.317-9.376 8.534-13.716 11.965 14.612 11.06 34.845 18.494 49.54 17.9.08-3.49-.12-7.653-.57-11.81-.688-6.327-1.887-12.74-3.016-17.247-.44-1.752-.807-2.837-1.13-3.79l-17.908-10.5zm322.356 5.2c-2.163.02-4.4.502-6.305 1.614l-.428.252-.4.297s-2.87 2.124-7.9 5.642c14.61 14.434 22.734 32.15 28.22 50.262l4.314-1.457-.045.012c3.98-1.237 7.185-4.906 8.28-7.91 1.197-3.282 1.194-6.115.98-8.954-.425-5.676-2.144-11.535-4.497-17.277-2.354-5.742-5.26-11.186-9.092-15.605-1.915-2.21-4.043-4.27-7.263-5.73-1.61-.73-3.7-1.168-5.86-1.146zm-37.348 25.102l-13.875 8.377c5.383 5.814 10.47 12.035 14.83 18.9 1.41-8.554 1.554-17.292-.955-27.278zm19.405 7.455c1.144 12.08-.52 22.994-2.93 33.05l15.717-5.33c-3.235-10.06-7.23-19.383-12.787-27.72zM130.95 443.914c-.444 0-.878.012-1.3.03-6.752.316-9.117 1.857-10.17 4.693l-2.212 5.965c.133 4.11 1.153 8.13 2.834 11.68 3.7 7.818 10.09 14.155 17.732 18.603 7.642 4.448 16.732 7.043 26.115 5.9 7.178-.874 14.383-4.265 20.183-10.12.164-4.882-1.947-9.743-6.35-14.935-5.278-6.223-13.748-12.11-22.765-16.087-8.454-3.73-17.418-5.75-24.07-5.73z" fill="currentColor"/></symbol><symbol id="i-joystick" viewBox="0 0 512 512"><path d="M307.723 39.623c-25.627-.292-48.63 17.365-54.246 43.44-6.418 29.8 12.39 58.93 42.19 65.347 29.798 6.417 58.927-12.39 65.345-42.19 6.417-29.798-12.39-58.928-42.188-65.345-3.725-.802-7.44-1.21-11.1-1.252zm-37.543 117.88L237.123 311h47.055l30.97-143.81c-7.584.836-15.418.507-23.27-1.184-7.854-1.69-15.13-4.617-21.698-8.502zM198.486 329l-10 30h135.028l-10-30H198.486zM73 377v30h30v-30H73zm93.486 0l-10 30h199.028l-10-30H166.486zM409 377v30h30v-30h-30zM57 425v62h398v-62H57z" fill="currentColor"/></symbol><symbol id="i-dash" viewBox="0 0 512 512"><path d="M273.857 21.904c-24.193.012-51.198 5.552-81.1 17.467 143.7 12.608 150.35 129.263 84.032 132.814-85.27 4.565-53.232-57.217-133.34-103.03C200.445 201.48 94.44 190.33 21.054 59.23c12.805 85.755 24.28 116.942 78.26 153.596C261.996 323.294 94.618 347.8 36.82 245.53c14.568 93.454 68.364 132.803 131.707 139.93-42.753 24.49-99.452 32.49-143.01 25.556 51.025 42.317 131.606 40.94 193.515 8.576-37.137 36.123-97.446 70.644-116.803 74.728H276.36C517 405.563 530.305 232.45 454.827 124.492c-2.433 26.21-10.08 49.507-25.545 70.23-18.48-102.394-69.02-172.86-155.426-172.818zm2.82 184.666l141.384 52.155c.286-3.207.86-6.495 1.747-9.807 5.62-20.973 21.605-34.913 35.705-31.135 14.1 3.778 20.973 23.842 15.353 44.815-5.62 20.974-21.603 34.914-35.703 31.136-.725-.194-1.427-.442-2.113-.72l-60.58 49.394 70.637 19.584-140.023 84.71 65.848-68.866-31.32-7.006-150.335 122.58 158.06-196.89-137.39-41.137 137.006 5.654-68.275-54.467z" fill="currentColor"/></symbol><symbol id="i-vibrate" viewBox="0 0 512 512"><path d="M297.87 24.322c-40.38.374-80.665 13.623-114.077 39.72 73.64-37.01 166.104-24.977 227.547 36.464 61.442 61.44 73.013 153.443 36.002 227.084 57.598-73.738 53.068-180.48-14.77-248.317-37.098-37.098-85.97-55.4-134.703-54.95zm-27.25 63.123c-37.16.42-74.186 14.305-102.975 41.67 60.11-36.405 139.642-28.35 191.54 23.545 51.897 51.898 59.488 130.976 23.08 191.086 56.502-59.44 56.012-153.534-2.31-211.855C349.883 101.82 310.177 87 270.62 87.446zm-16.61 59.54c-28.304 0-56.606 10.797-78.2 32.392-43.19 43.19-43.19 113.214 0 156.404 43.188 43.19 113.21 43.19 156.4 0 43.19-43.19 43.19-113.213 0-156.403-21.594-21.595-49.897-32.393-78.2-32.393zm-132.635 28.4c-56.503 59.44-55.552 153.995 2.77 212.316 58.32 58.323 152.416 58.81 211.855 2.308-60.112 36.41-139.186 28.822-191.084-23.078-51.898-51.9-59.95-131.435-23.54-191.545zM56.297 191.54C-1.3 265.276 3.69 372.48 71.527 440.317c67.838 67.838 174.58 72.366 248.32 14.77-73.642 37.01-165.647 25.44-227.087-36.002-61.44-61.442-73.474-153.908-36.463-227.547z" fill="currentColor"/></symbol><symbol id="i-phone" viewBox="0 0 512 512"><path d="M134.5 30.5v451h243v-451zm100.68 20h41.6a8 8 0 0 1 0 16h-41.6a8 8 0 1 1 0-16zm20.32 420.51a19.26 19.26 0 1 1 19.26-19.26 19.26 19.26 0 0 1-19.26 19.26zm105-44.51h-211v-343h211z" fill="currentColor"/></symbol><symbol id="i-stopwatch" viewBox="0 0 512 512"><path d="M179.594 20.688v41.406h143.25V20.687h-143.25zM256.03 82C143.04 82 51.25 173.727 51.25 286.656c0 112.93 91.788 204.656 204.78 204.656 112.994 0 204.75-91.728 204.75-204.656C460.78 173.73 369.025 82 256.03 82zm0 35.625c93.42 0 169.126 75.665 169.126 169.03 0 93.368-75.706 169.564-169.125 169.564-93.417 0-169.155-76.197-169.155-169.564 0-93.366 75.736-169.03 169.156-169.03zm76.19 20.28l-72.47 107.5c10.67 1.036 20.516 6.045 27.625 13.814l44.844-121.314zm-85.533 1.064v45.31c3.077-.275 6.196-.405 9.344-.405 3.155 0 6.263.13 9.345.406v-45.31h-18.688zm-88.53 36.655l-13.22 13.22L177 220.874c3.992-4.784 8.432-9.198 13.22-13.188l-32.064-32.062zm195.75 0l-32.063 32.063c4.786 3.99 9.196 8.403 13.187 13.187l32.064-32.03-13.188-13.22zm-98.344 81.22c-2.08.01-4.195.243-6.313.686-16.948 3.544-27.7 20.005-24.156 36.94 3.544 16.932 20.02 27.698 36.97 24.155 16.946-3.543 27.7-20.004 24.155-36.938-3.102-14.816-16.104-24.925-30.658-24.843zM108.28 277.31V296h45.314c-.278-3.08-.406-6.192-.406-9.344 0-3.146.13-6.27.406-9.344H108.28zm250.157 0c.277 3.075.438 6.197.438 9.344 0 3.153-.16 6.264-.438 9.344h45.344v-18.688H358.44zm-60.062 6.72c.993 10.522-1.968 20.742-7.813 28.937l124 19.092-116.187-48.03zM176.97 352.405l-32.032 32.03 13.218 13.22 32.063-32.03c-4.798-4-9.253-8.424-13.25-13.22zm158.093 0c-4 4.796-8.423 9.22-13.22 13.22l32.063 32.03 13.188-13.22-32.03-32.03zM246.688 389v45.313h18.687V389c-3.082.278-6.19.438-9.344.438-3.147 0-6.266-.16-9.342-.438z" fill="currentColor"/></symbol>
+    <marker id="m-ink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-ink"/></marker>
+    <marker id="m-atk" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-atk"/></marker>
+    <marker id="m-foe" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-foe"/></marker>
+    <marker id="m-sand" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-sand"/></marker>
+  </defs>
+</svg>
+
+<main>
+  <header>
+    <h1>Throw controls - research</h1>
+    <p class="lead">You said the throw feels unintuitive. This board shows why, compares four schemes, and recommends one. Annotate anything that is wrong, then answer the three questions at the bottom.</p>
+  </header>
+
+  <section id="today">
+    <h2>Why it feels unintuitive today</h2>
+    <div class="scroll">
+<svg viewBox="0 0 900 282" role="img" aria-labelledby="cur-t" class="fig">
+  <title id="cur-t">Today: the aim line starts at the thumb and the target is chosen silently on release</title>
+  <rect x="10" y="10" width="880" height="230" rx="22" class="node"/>
+  <g id="cur-thrower"><title>Thrower</title><circle cx="120" cy="150" r="16" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" /></g>
+  <g id="cur-targets"><title>Possible targets, none marked</title>
+    <rect x="416" y="66" width="28" height="28" rx="5" fill="var(--foe)" stroke="var(--bg)" stroke-width="3" /><rect x="416" y="186" width="28" height="28" rx="5" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" />
+  </g>
+  <g id="cur-thumb"><title>Thumb starts a drag anywhere on the right half</title>
+    <circle cx="700" cy="170" r="12" class="finger"/>
+    <path d="M700 170L740 200" class="pull"/>
+    <circle cx="740" cy="200" r="12" class="finger fill"/>
+  </g>
+  <path id="cur-line" d="M700 170L612 108" class="atk-line dash" marker-end="url(#m-sand)"><title>Aim line begins at the thumb, not at the thrower</title></path>
+  <g id="cur-q1"><title>Question: what will this hit</title>
+    <circle cx="560" cy="86" r="16" class="qdot"/><text x="560" y="92" text-anchor="middle" class="qmark">?</text></g>
+  <g id="cur-q2"><title>Question: pass or hit</title>
+    <circle cx="300" cy="150" r="16" class="qdot"/><text x="300" y="156" text-anchor="middle" class="qmark">?</text></g>
+  <path d="M138 150H280" class="edge qedge" marker-end="url(#m-ink)"/>
+  <text x="450" y="268" text-anchor="middle" class="sub">The drag points away from the target. The pass or hit is picked after release.</text>
+</svg></div>
+    <ul class="facts">
+      <li>The aim line starts at the thumb, so it never touches the thrower. (<code>throw_pad.gd:79</code>)</li>
+      <li>The throw goes opposite to the drag, so the player reverses it in their head. (<code>throw_pad.gd:146</code>)</li>
+      <li>The target is picked silently on release. One drag can pass, hit, or miss. (<code>character.gd:208-219</code>)</li>
+      <li>No cancel area is drawn, so a player cannot tell how to back out.</li>
+    </ul>
+    <p class="cap">All four come from reading the code. One playtest note exists: "a bit unintuitive". Other causes are unconfirmed.</p>
+  </section>
+
+  <section id="schemes">
+    <h2>Four schemes</h2>
+    <div class="cards"><div class="card2 best"><div class="chead"><span class="letter">D</span><span class="cname">Lock and fire</span><span class="badge badge-success badge-soft">Recommended</span></div><dl><dt>Access</dt><dd>4.5 / 5</dd><dt>Build</dt><dd>9 h</dd><dt>Risk</dt><dd>Two roles in one control confuse until the ghost hand teaches it.</dd></dl></div><div class="card2"><div class="chead"><span class="letter">C</span><span class="cname">Auto-aim with nudge</span></div><dl><dt>Access</dt><dd>4.0 / 5</dd><dt>Build</dt><dd>6 h</dd><dt>Risk</dt><dd>Weak control over pass versus hit.</dd></dl></div><div class="card2"><div class="chead"><span class="letter">A</span><span class="cname">Aim stick, preview arc</span></div><dl><dt>Access</dt><dd>2.5 / 5</dd><dt>Build</dt><dd>5 h</dd><dt>Risk</dt><dd>Window is 6 to 13 degrees. Fails WCAG 2.5.7.</dd></dl></div><div class="card2"><div class="chead"><span class="letter">B</span><span class="cname">Tap to target</span></div><dl><dt>Access</dt><dd>3.0 / 5</dd><dt>Build</dt><dd>8 h</dd><dt>Risk</dt><dd>Moving targets of 22 to 29 px. A stray tap fires.</dd></dl></div></div>
+
+    <h3>A. Aim stick with preview arc</h3>
+    <div class="scroll">
+<svg viewBox="0 0 900 282" role="img" aria-labelledby="sa-t" class="fig">
+  <title id="sa-t">Scheme A: aim stick with a preview arc and drag-back cancel</title>
+  <rect x="10" y="10" width="880" height="230" rx="22" class="node"/>
+  <g id="sa-thrower"><title>Thrower</title><circle cx="110" cy="125" r="16" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" /></g>
+  <g id="sa-stack"><title>Stack</title><use href="#i-sandal" x="380" y="115.2" width="43.4" height="43.4" color="var(--sand)" /><use href="#i-sandal" x="388.4" y="102.6" width="43.4" height="43.4" color="var(--sand)" /><use href="#i-sandal" x="396.8" y="90" width="43.4" height="43.4" color="var(--sand)" /></g>
+  <path id="sa-arc" d="M128 125H362" class="atk-line dash" marker-end="url(#m-sand)"><title>Preview arc to fixed range</title></path>
+  <circle cx="418" cy="125" r="52" class="ring"/>
+  <g id="sa-stick"><title>Aim stick on the right</title>
+    <circle cx="700" cy="125" r="64" class="pad"/>
+    <circle cx="748" cy="96" r="14" class="finger fill"/>
+    <path d="M700 125L748 96" class="pull"/>
+  </g>
+  <g id="sa-cancel"><title>Drag back to the centre to cancel</title>
+    <circle cx="700" cy="125" r="18" class="ring" stroke="var(--muted)"/>
+    <use href="#i-cross" x="686" y="111" width="28" height="28" color="var(--muted)" />
+  </g>
+  <g id="sa-fail"><title>Window for a hit is narrow</title>
+    <path d="M128 125L362 62M128 125L362 188" class="range"/>
+    <text x="250" y="50" text-anchor="middle" class="tag">window about 13 degrees</text>
+  </g>
+  <text x="450" y="268" text-anchor="middle" class="sub">Needs a drag every time. A 4 px thumb error uses a third of the window.</text>
+</svg></div>
+    <h3>B. Tap to target</h3>
+    <div class="scroll">
+<svg viewBox="0 0 900 282" role="img" aria-labelledby="sb-t" class="fig">
+  <title id="sb-t">Scheme B: tap a target, then hold to confirm</title>
+  <rect x="10" y="10" width="880" height="230" rx="22" class="node"/>
+  <g id="sb-thrower"><title>Thrower</title><circle cx="110" cy="125" r="16" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" /></g>
+  <g id="sb-targets"><title>Moving targets, 22 to 29 px wide</title>
+    <rect x="386" y="56" width="28" height="28" rx="5" fill="var(--foe)" stroke="var(--bg)" stroke-width="3" /><rect x="456" y="176" width="28" height="28" rx="5" fill="var(--foe)" stroke="var(--bg)" stroke-width="3" /><rect x="316" y="176" width="28" height="28" rx="5" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" />
+  </g>
+  <path id="sb-orbit" d="M424 70H470M496 190H542" class="push dotted" marker-end="url(#m-ink)"><title>Targets keep moving</title></path>
+  <g id="sb-tap"><title>Finger taps a small moving target</title>
+    <circle cx="400" cy="70" r="26" class="ring" stroke="var(--sand)"/>
+    <use href="#i-hand" x="432" y="84" width="44" height="44" color="var(--ink)" />
+  </g>
+  <g id="sb-hold"><title>Hold to confirm</title>
+    <circle cx="700" cy="125" r="46" class="pad"/>
+    <path d="M700 79A46 46 0 1 1 667 157" class="range thick"/>
+    <use href="#i-stopwatch" x="680" y="105" width="40" height="40" color="var(--sand)" />
+  </g>
+  <path d="M128 125H300" class="atk-line dash" marker-end="url(#m-sand)"/>
+  <text x="450" y="268" text-anchor="middle" class="sub">Slow to learn. A stray tap fires. Moving targets need a precise tap.</text>
+</svg></div>
+    <h3>C. Auto-aim with nudge</h3>
+    <div class="scroll">
+<svg viewBox="0 0 900 282" role="img" aria-labelledby="sc-t" class="fig">
+  <title id="sc-t">Scheme C: auto lock with a small nudge</title>
+  <rect x="10" y="10" width="880" height="230" rx="22" class="node"/>
+  <g id="sc-thrower"><title>Thrower</title><circle cx="110" cy="125" r="16" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" /></g>
+  <g id="sc-locked"><title>Locked target</title><rect x="416" y="66" width="28" height="28" rx="5" fill="var(--foe)" stroke="var(--bg)" stroke-width="3" /><circle cx="430" cy="80" r="28" class="ring" stroke="var(--foe)"/></g>
+  <g id="sc-other"><title>Other target</title><rect x="416" y="176" width="28" height="28" rx="5" fill="var(--foe)" stroke="var(--bg)" stroke-width="3" /></g>
+  <path id="sc-line" d="M128 120L402 84" class="atk-line dash" marker-end="url(#m-sand)"><title>Auto aim line</title></path>
+  <g id="sc-nudge"><title>Small nudge on the stick</title>
+    <circle cx="700" cy="125" r="64" class="pad"/>
+    <circle cx="716" cy="140" r="18" class="finger fill"/>
+    <path d="M700 125L716 140" class="pull"/>
+  </g>
+  <path d="M470 100L470 168" class="push" marker-end="url(#m-ink)"><title>Nudge moves the lock</title></path>
+  <text x="450" y="268" text-anchor="middle" class="sub">Easy to start. The player has little say over pass versus hit.</text>
+</svg></div>
+    <h3>D. Lock and fire (recommended)</h3>
+    <div class="scroll">
+<svg viewBox="0 0 900 470" role="img" aria-labelledby="sd-t" class="fig">
+  <title id="sd-t">Scheme D: lock and fire. A tap fires at the lock. A drag moves the lock. Dragging back cancels</title>
+
+  <g id="sd-tap"><title>Step one: tap fires at the default lock</title>
+    <rect x="10" y="10" width="285" height="210" rx="20" class="node good"/>
+    <circle cx="50" cy="125" r="14" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" />
+    <use href="#i-sandal" x="190" y="110.32" width="38.44" height="38.44" color="var(--sand)" /><use href="#i-sandal" x="197.44" y="99.16" width="38.44" height="38.44" color="var(--sand)" /><use href="#i-sandal" x="204.88" y="88" width="38.44" height="38.44" color="var(--sand)" />
+    <circle cx="214" cy="118" r="42" class="ring" stroke="var(--sand)"/>
+    <path d="M68 125H168" class="atk-line dash" marker-end="url(#m-sand)"/>
+    <circle cx="236" cy="190" r="22" class="pad" stroke="var(--sand)"/><use href="#i-ball" x="218" y="172" width="36" height="36" color="var(--ink)" />
+    <text x="152" y="238" text-anchor="middle" class="lbl">Tap</text>
+  </g>
+
+  <g id="sd-drag"><title>Step two: drag moves the lock to another target</title>
+    <rect x="308" y="10" width="285" height="210" rx="20" class="node good"/>
+    <circle cx="340" cy="150" r="14" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" />
+    <rect x="436" y="46" width="28" height="28" rx="5" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" /><rect x="526" y="116" width="28" height="28" rx="5" fill="var(--foe)" stroke="var(--bg)" stroke-width="3" />
+    <circle cx="450" cy="60" r="26" class="ring" stroke="var(--atk)"/>
+    <path d="M358 140L428 70" class="atk-line dash" marker-end="url(#m-sand)"/>
+    <circle cx="520" cy="178" r="20" class="pad"/>
+    <circle cx="520" cy="178" r="8" class="finger fill"/>
+    <path d="M520 178L540 156" class="pull"/>
+    <circle cx="540" cy="156" r="8" class="finger fill"/>
+    <text x="450" y="238" text-anchor="middle" class="lbl">Drag</text>
+  </g>
+
+  <g id="sd-cancel"><title>Step three: drag back to the button and release to cancel</title>
+    <rect x="606" y="10" width="285" height="210" rx="20" class="node good"/>
+    <circle cx="650" cy="125" r="14" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" />
+    <rect x="766" y="56" width="28" height="28" rx="5" fill="var(--foe)" stroke="var(--bg)" stroke-width="3" />
+    <path d="M668 118L750 78" class="atk-line dash fade"/>
+    <circle cx="780" cy="170" r="26" class="pad" stroke="var(--muted)"/><use href="#i-cross" x="762" y="152" width="36" height="36" color="var(--muted)" />
+    <path d="M806 150L788 164" class="pull"/>
+    <text x="748" y="238" text-anchor="middle" class="lbl">Back, release</text>
+  </g>
+
+  <g id="sd-pass"><title>Defender pass: the lock shows a bent path to a teammate</title>
+    <rect x="10" y="256" width="425" height="200" rx="20" class="node def-s"/>
+    <rect x="46" y="366" width="28" height="28" rx="5" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" /><circle cx="60" cy="380" r="24" class="holder"/>
+    <rect x="197" y="327" width="26" height="26" rx="5" fill="var(--foe)" stroke="var(--bg)" stroke-width="3" />
+    <rect x="366" y="286" width="28" height="28" rx="5" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" /><circle cx="380" cy="300" r="26" class="ring" stroke="var(--atk)"/>
+    <path id="sd-bent" d="M80 372Q200 410 215 372Q240 330 354 304" class="atk-line dash" marker-end="url(#m-sand)"><title>Pass bends around the foe</title></path>
+    <use href="#i-sandal" x="150" y="396" width="30" height="30" color="var(--sand)" />
+    <text x="222" y="440" text-anchor="middle" class="lbl">Pass</text>
+  </g>
+
+  <g id="sd-hit"><title>Defender hit: the lock shows the lead point</title>
+    <rect x="466" y="256" width="425" height="200" rx="20" class="node def-s"/>
+    <rect x="496" y="366" width="28" height="28" rx="5" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" /><circle cx="510" cy="380" r="24" class="holder"/>
+    <circle cx="700" cy="330" r="14" fill="var(--foe)" opacity="0.25"/>
+    <circle cx="745" cy="312" r="14" fill="var(--foe)" opacity="0.5"/>
+    <rect x="776" y="282" width="28" height="28" rx="5" fill="var(--foe)" stroke="var(--bg)" stroke-width="3" /><circle cx="790" cy="296" r="26" class="ring" stroke="var(--foe)"/>
+    <use href="#i-bullseye" x="836" y="270" width="36" height="36" color="var(--sand)" />
+    <path d="M530 372Q700 330 826 290" class="atk-line dash" marker-end="url(#m-sand)"><title>Throw aims at the lead point</title></path>
+    <text x="680" y="440" text-anchor="middle" class="lbl">Hit</text>
+  </g>
+</svg></div>
+    <p class="cap">Tap fires at the lock. Drag moves the lock. Dragging back to the button cancels. The preview line is drawn from the thrower, so the thumb never covers it.</p>
+  </section>
+
+  <section id="compare">
+    <h2>Comparison</h2>
+    <div class="overflow-x-auto"><table class="table table-sm cmp"><thead><tr><th></th><th>D Lock and fire</th><th>C Auto-aim</th><th>A Aim stick</th><th>B Tap to target</th></tr></thead><tbody><tr><th scope="row">Attacker throw</th><td>Tap fires at the stack lock. Drag does nothing.</td><td>Always locks the stack.</td><td>Drag aims. Arc shows fixed range.</td><td>Tap the stack, hold to confirm.</td></tr><tr><th scope="row">Defender pass</th><td>Drag moves the lock to a teammate. Release fires.</td><td>Lock picks a teammate. A nudge changes it.</td><td>Drag toward a teammate.</td><td>Tap a teammate.</td></tr><tr><th scope="row">Defender hit</th><td>Default lock on the best foe. Release fires at the lead point.</td><td>Lock picks a foe.</td><td>Drag toward a foe.</td><td>Tap a foe.</td></tr><tr><th scope="row">Single pointer, no drag (2.5.7)</th><td>Pass</td><td>Pass</td><td>Fail</td><td>Pass</td></tr><tr><th scope="row">Target size (2.5.8)</th><td>Pass</td><td>Pass</td><td>Pass</td><td>Partial</td></tr><tr><th scope="row">Cancel</th><td>Drag back, release</td><td>Partial</td><td>Drag back to centre</td><td>Partial</td></tr><tr><th scope="row">Build hours (unconfirmed)</th><td>9</td><td>6</td><td>5</td><td>8</td></tr><tr><th scope="row">Top risk</th><td>Two roles, one control</td><td>Weak control</td><td>Narrow window</td><td>Moving small targets</td></tr></tbody></table></div>
+    <p class="cap">Hours are an estimate and are unconfirmed. The scoring rubric is in <code>docs/research/throw-controls.md</code>.</p>
+  </section>
+
+  <section id="layout">
+    <h2>Recommended phone layout</h2>
+    <div class="scroll">
+<svg viewBox="0 0 900 300" role="img" aria-labelledby="ph-t" class="fig">
+  <title id="ph-t">Phone layout in landscape for scheme D</title>
+  <rect x="10" y="10" width="880" height="280" rx="30" class="node"/>
+  <g id="ph-arena"><title>Arena stays clear of thumbs</title>
+    <rect x="34" y="30" width="832" height="196" rx="16" class="field"/>
+    <circle cx="450" cy="128" r="62" class="range"/>
+    <circle cx="250" cy="128" r="13" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" />
+    <use href="#i-sandal" x="424" y="112.72" width="32.24" height="32.24" color="var(--sand)" /><use href="#i-sandal" x="430.24" y="103.36" width="32.24" height="32.24" color="var(--sand)" /><use href="#i-sandal" x="436.48" y="94" width="32.24" height="32.24" color="var(--sand)" />
+    <rect x="381" y="71" width="22" height="22" rx="5" fill="var(--foe)" stroke="var(--bg)" stroke-width="3" /><rect x="501" y="165" width="22" height="22" rx="5" fill="var(--foe)" stroke="var(--bg)" stroke-width="3" />
+    <path d="M268 128L400 128" class="atk-line dash" marker-end="url(#m-sand)"/>
+  </g>
+  <g id="ph-stick"><title>Move stick, left</title>
+    <circle cx="130" cy="214" r="52" class="pad"/>
+    <use href="#i-joystick" x="106" y="190" width="48" height="48" color="var(--muted)" />
+  </g>
+  <g id="ph-fire"><title>Fire button, at least 72 px</title>
+    <circle cx="690" cy="206" r="50" class="pad" stroke="var(--sand)" stroke-width="5"/>
+    <use href="#i-ball" x="666" y="182" width="48" height="48" color="var(--sand)" />
+  </g>
+  <g id="ph-ghost"><title>Ghost hand shows the tap to first-time players</title>
+    <circle cx="690" cy="206" r="66" class="ring" opacity="0.5"/>
+    <use href="#i-hand" x="700" y="214" width="46" height="46" color="var(--ink)" opacity="0.9"/>
+  </g>
+  <g id="ph-dash"><title>Dash button, at least 56 px</title>
+    <circle cx="812" cy="224" r="38" class="pad" stroke="var(--ink)"/>
+    <use href="#i-dash" x="788" y="200" width="48" height="48" color="var(--ink)" />
+  </g>
+  <g id="ph-gap"><title>Gap of at least 24 px between the buttons</title>
+    <path d="M756 262H774" class="push"/>
+    <path d="M756 256V268M774 256V268" class="push"/>
+    <text x="765" y="284" text-anchor="middle" class="tag">24+</text>
+  </g>
+  <g id="ph-vibe"><title>Haptic pulse on lock change and fire, Chrome for Android only</title>
+    <use href="#i-vibrate" x="790" y="40" width="40" height="40" color="var(--muted)" />
+    <text x="810" y="98" text-anchor="middle" class="tag">Chrome Android</text>
+  </g>
+</svg></div>
+    <ul class="facts">
+      <li>Fire button at least 72 px. Dash button at least 56 px. At least 24 px between them.</li>
+      <li>Drag slop 16 px. Lock cone 40 degrees. A new target must beat the old one by 8 degrees. These values are unconfirmed on a device.</li>
+      <li>A ghost hand taps the fire button the first time. It replays after 8 seconds idle, up to 3 times.</li>
+      <li>Haptic pulse on lock change and fire, on Chrome for Android only. Safari does not support it.</li>
+      <li>Desktop: click fires. Hold and move to pick. Right click or Escape cancels. Q and E cycle, F fires.</li>
+    </ul>
+  </section>
+
+  <section id="colour">
+    <h2>Friend and foe cues</h2>
+    <div class="scroll">
+<svg viewBox="0 0 900 190" role="img" aria-labelledby="cu-t" class="fig">
+  <title id="cu-t">Colour and shape cues: friends blue, foes red, shape marks the role</title>
+  <rect x="10" y="10" width="880" height="170" rx="20" class="node"/>
+  <g id="cue-friend-a"><title>Friendly attacker, blue circle</title><circle cx="90" cy="95" r="22" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" /></g>
+  <g id="cue-friend-d"><title>Friendly defender, blue square</title><rect x="158" y="73" width="44" height="44" rx="5" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" /></g>
+  <g id="cue-foe-a"><title>Enemy attacker, red circle</title><circle cx="310" cy="95" r="22" fill="var(--foe)" stroke="var(--bg)" stroke-width="3"/></g>
+  <g id="cue-foe-d"><title>Enemy defender, red square</title><rect x="378" y="73" width="44" height="44" rx="5" fill="var(--foe)" stroke="var(--bg)" stroke-width="3" /></g>
+  <g id="cue-ring-friend"><title>Friend lock ring is blue</title><rect x="506" y="81" width="28" height="28" rx="5" fill="var(--atk)" stroke="var(--bg)" stroke-width="3" /><circle cx="520" cy="95" r="30" class="ring" stroke="var(--atk)"/></g>
+  <g id="cue-ring-foe"><title>Foe lock ring is red</title><rect x="586" y="81" width="28" height="28" rx="5" fill="var(--foe)" stroke="var(--bg)" stroke-width="3" /><circle cx="600" cy="95" r="30" class="ring" stroke="var(--foe)"/></g>
+  <g id="cue-ring-stack"><title>Stack lock ring is sand</title><use href="#i-sandal" x="650" y="84.32" width="38.44" height="38.44" color="var(--sand)" /><use href="#i-sandal" x="657.44" y="73.16" width="38.44" height="38.44" color="var(--sand)" /><use href="#i-sandal" x="664.88" y="62" width="38.44" height="38.44" color="var(--sand)" /><circle cx="682" cy="95" r="38" class="ring" stroke="var(--sand)"/></g>
+  <g id="cue-blocked"><title>Blocked lane is dotted with a cross</title>
+    <path d="M770 95H840" class="atk-line dotted"/>
+    <use href="#i-cross" x="790" y="70" width="40" height="40" color="var(--foe)" />
+  </g>
+  <g id="cue-labels">
+    <text x="90" y="152" text-anchor="middle" class="tag">blue circle</text>
+    <text x="180" y="152" text-anchor="middle" class="tag">blue square</text>
+    <text x="310" y="152" text-anchor="middle" class="tag">red circle</text>
+    <text x="400" y="152" text-anchor="middle" class="tag">red square</text>
+    <text x="520" y="152" text-anchor="middle" class="tag">friend lock</text>
+    <text x="600" y="152" text-anchor="middle" class="tag">foe lock</text>
+    <text x="682" y="152" text-anchor="middle" class="tag">stack lock</text>
+    <text x="805" y="152" text-anchor="middle" class="tag">blocked</text>
+  </g>
+</svg></div>
+    <div class="legend">
+      <span><i class="sw-c"></i> Friends: blue, 8.3 to 1 on the floor</span>
+      <span><i class="sw-s"></i> Foes: red, 5.8 to 1 on the floor</span>
+    </div>
+    <p class="cap">Blue and red differ by only 1.4 to 1 in brightness, so shape and ring style carry the side too. A blocked lane uses a cross icon, so colour is never the only cue.</p>
+  </section>
+
+  <section id="rules">
+    <h2>Accessibility rules checked</h2>
+    <ul class="facts">
+      <li><strong>WCAG 2.5.7 Dragging Movements (AA):</strong> a dragged function needs a way to work without dragging. Scheme D passes with a tap. <a href="https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html">W3C</a></li>
+      <li><strong>WCAG 2.5.1 Pointer Gestures (A):</strong> does not apply, because a drag in any direction is not path-based. <a href="https://www.w3.org/WAI/WCAG22/Understanding/pointer-gestures.html">W3C</a></li>
+      <li><strong>WCAG 2.5.8 Target Size (AA):</strong> 24 by 24 px minimum. <a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html">W3C</a></li>
+      <li><strong>Game Accessibility Guidelines:</strong> large virtual controls, a simpler alternative, assist modes such as auto-aim. <a href="https://gameaccessibilityguidelines.com/full-list/">Full list</a></li>
+      <li><strong>Xbox Accessibility Guideline 107:</strong> alternative input with the same function. <a href="https://learn.microsoft.com/en-us/xbox/accessibility/xbox-accessibility-guidelines/107">Microsoft</a></li>
+    </ul>
+  </section>
+
+  <section id="questions">
+    <h2>Decisions I need</h2>
+    <form data-lavish-question="throw-decisions" onsubmit="event.preventDefault(); const f = event.currentTarget; const answers = [...f.querySelectorAll('input[type=radio]:checked')].map(i => ({ question: i.dataset.q, answer: i.value })); window.lavish.queuePrompt('Apply these throw control decisions. The first option of each question is the recommendation.', { tag: 'throw-decisions', text: answers.length + ' throw control answers', element: f, data: { items: answers } });">
+      <div class="qgrid"><fieldset class="q"><legend>Which scheme do we build?</legend><label class="opt"><input type="radio" class="radio radio-sm" name="scheme" value="D. Lock and fire (recommended)" data-q="Which scheme do we build?" checked> <span>D. Lock and fire (recommended)</span></label><label class="opt"><input type="radio" class="radio radio-sm" name="scheme" value="C. Auto-aim with nudge" data-q="Which scheme do we build?"> <span>C. Auto-aim with nudge</span></label><label class="opt"><input type="radio" class="radio radio-sm" name="scheme" value="A. Aim stick with preview arc" data-q="Which scheme do we build?"> <span>A. Aim stick with preview arc</span></label><label class="opt"><input type="radio" class="radio radio-sm" name="scheme" value="B. Tap to target" data-q="Which scheme do we build?"> <span>B. Tap to target</span></label></fieldset><fieldset class="q"><legend>How much aim skill for attackers?</legend><label class="opt"><input type="radio" class="radio radio-sm" name="skill" value="Lock only. Timing against the orbit is the skill." data-q="How much aim skill for attackers?" checked> <span>Lock only. Timing against the orbit is the skill.</span></label><label class="opt"><input type="radio" class="radio radio-sm" name="skill" value="Lock, plus a drag offset inside the stack width" data-q="How much aim skill for attackers?"> <span>Lock, plus a drag offset inside the stack width</span></label><label class="opt"><input type="radio" class="radio radio-sm" name="skill" value="Free aim" data-q="How much aim skill for attackers?"> <span>Free aim</span></label></fieldset><fieldset class="q"><legend>How does a player cancel a throw?</legend><label class="opt"><input type="radio" class="radio radio-sm" name="cancel" value="Drag back to the button and release" data-q="How does a player cancel a throw?" checked> <span>Drag back to the button and release</span></label><label class="opt"><input type="radio" class="radio radio-sm" name="cancel" value="A separate cancel button" data-q="How does a player cancel a throw?"> <span>A separate cancel button</span></label><label class="opt"><input type="radio" class="radio radio-sm" name="cancel" value="No cancel" data-q="How does a player cancel a throw?"> <span>No cancel</span></label></fieldset></div>
+      <div class="actions">
+        <button type="submit" class="btn btn-primary">Queue answers</button>
+        <span class="cap">The first option in each group is my recommendation.</span>
+      </div>
+    </form>
+  </section>
+
+  <footer>Icons from game-icons.net, licensed CC BY 3.0. Authors: Delapouite, Lorc, Skoll. Sources and the unconfirmed list are in docs/research/throw-controls.md.</footer>
+</main>
+</body>
+</html>

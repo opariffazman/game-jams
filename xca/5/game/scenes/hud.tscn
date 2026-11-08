@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
+[ext_resource type="Resource" path="res://assets/skins/hud_icons_default.tres" id="2_icons"]
+
+[node name="Hud" type="CanvasLayer"]
+script = ExtResource("1_hud")
+icons = ExtResource("2_icons")

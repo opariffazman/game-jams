@@ -1,0 +1,11 @@
+class_name Tuning
+extends Resource
+## Fake tuning for the bot test.
+
+var team_size: int = 3
+var throws_per_attacker: int = 1
+var topple_distance: float = 40.0
+var bot_difficulty: float = 0.5
+var build_zone_radius: float = 90.0
+var build_step_seconds: float = 1.2
+var bot_build_slowdown: float = 1.25

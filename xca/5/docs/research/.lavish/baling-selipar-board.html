@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Baling Selipar - research and concepts</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{--bg:#faf6ec;--card:#fff;--ink:#1f2328;--mute:#4a525c;--line:#d9d2c0;--accent:#8a2b0f;--green:#1d5c2e;--blue:#1b4b8a;--gold:#fff1c2}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif}
+header,main{max-width:1100px;margin:0 auto;padding:16px}
+h1{font-size:1.8rem;margin:.2em 0}
+h2{font-size:1.3rem;margin:1.6em 0 .5em;border-bottom:3px solid var(--accent);padding-bottom:.2em}
+h3{margin:.2em 0 .4em;font-size:1.1rem}
+p,li{overflow-wrap:anywhere}
+.grid{display:grid;gap:12px}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:800px){.g3,.g2{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
+.card.rec{border:3px solid var(--green)}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:.8rem;font-weight:700;background:var(--gold);color:#5a3b00}
+.tag.g{background:#d6f0dc;color:var(--green)}
+.tag.r{background:#fbe0d8;color:#8a1f0a}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#efe7d2}
+svg{width:100%;height:auto;display:block;background:#e9dcb8;border-radius:8px}
+svg text{font:600 13px system-ui,sans-serif}
+ul{padding-left:1.2em;margin:.3em 0}
+a{color:var(--blue)}
+.small{color:var(--mute);font-size:.88rem}
+.pill{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+</style>
+</head>
+<body>
+<header>
+<h1>Baling Selipar - research and gamification</h1>
+<p class="small">48-hour jam. Godot 4.6 web build for GamePix. Landscape. Top-down. Solo vs bots, 3v3. Primitive shapes only.</p>
+</header>
+<main>
+
+<section id="research">
+<h2>1. Research summary</h2>
+<div class="grid g2">
+<div class="card" id="rules"><h3>Traditional rules</h3>
+<ul>
+<li>3 slippers stand upright in a triangle. One more slipper is thrown.</li>
+<li>Two sides: throwers and defenders. Size varies, often 4-6.</li>
+<li>Each thrower gets 3 throws. A miss passes the turn.</li>
+<li>A knock-down flips roles. Throwers now hit defenders. A hit defender is "mati" (out).</li>
+<li>Defenders rebuild the stack. Win rules conflict between sources.</li>
+<li>Distance is not standard. One group used 3 m, then 4 m.</li>
+<li>Fouls: stay behind the line, no body contact, no chasing with a slipper.</li>
+</ul>
+<p class="small">Confidence is medium. Sources are blogs and student papers.</p></div>
+<div class="card" id="culture"><h3>Culture and names</h3>
+<ul>
+<li>Also called tuju selipar and susun selipar.</li>
+<li>Kampung childhood play. Needs only a yard and a chalk line.</li>
+<li>Revived at traditional-games events and campus culture days.</li>
+<li>Close cousin: baling tin. Ball plus 15 tins. A rebuild scores 1 point.</li>
+<li>Batu seremban adds only one idea: levels of rising difficulty.</li>
+</ul>
+<h3>Must stay for recognition</h3>
+<div class="pill"><span class="tag g">Sandal as projectile</span><span class="tag g">Stack of 3</span><span class="tag g">Knock down, then flip</span><span class="tag g">Rebuild under fire</span><span class="tag g">Mati</span><span class="tag g">3 throws</span><span class="tag g">Chalk line</span></div></div>
+</div>
+<p class="small">Full notes and URLs: docs/research/baling-selipar.md</p>
+</section>
+
+<section id="concepts">
+<h2>2. Concepts side by side</h2>
+<div class="grid g3">
+<article class="card rec" id="concept-a">
+<span class="tag g">Recommended</span>
+<h3>A. Susun Tumbang (stack siege)</h3>
+<p><b>Loop.</b> Each team guards a 3-sandal stack. Throw to topple the enemy stack. A topple scores. The owner rebuilds. A hit rebuilder is mati.</p>
+<p><b>Round.</b> 3 min, 3v3. 3 sandals per player. Pick fallen sandals up by walking over them.</p>
+<p><b>Win.</b> Most topples at the buzzer. First to 5 ends early. Tie goes to sudden death.</p>
+<p><b>Powers.</b></p>
+<ul>
+<li>Angin Kencang - curve throw, 10 s</li>
+<li>Selipar Kembar - 3-sandal fan, 14 s</li>
+<li>Tapak Besi - block one hit, 18 s</li>
+<li>Larian Kilat - sprint, 8 s</li>
+<li>Pulang - recall all sandals, 20 s</li>
+<li>Tin Palsu - decoy stack, 25 s</li>
+</ul>
+<p><b>AI.</b> Roles: striker, guard, rebuilder. Aim error and reaction delay set the difficulty.</p>
+<p><b>Mobile feel.</b> Aim line shows the reverse direction. Length is power. Haptic tick on release.</p>
+<p><b>First 30 s.</b> You throw, a stack topples, a bot runs to rebuild.</p>
+<p><b>Risks.</b> Topple feel. Slow rebuild pacing.</p>
+</article>
+
+<article class="card" id="concept-b">
+<h3>B. Pasar Malam Mati (tag-out)</h3>
+<p><b>Loop.</b> No stack. Hit enemies to mark them mati. Ammo piles respawn mid-field.</p>
+<p><b>Round.</b> 2 min, 2v2.</p>
+<p><b>Win.</b> Most mati hits.</p>
+<p><b>Powers.</b> Same pool as A, minus Tin Palsu.</p>
+<p><b>AI.</b> Chase the nearest enemy, throw in range.</p>
+<p><b>Mobile feel.</b> Same drag throw.</p>
+<p><b>First 30 s.</b> Instant hits.</p>
+<p><b>Risks.</b> Looks like generic dodgeball. Loses the stack, so recognition drops.</p>
+</article>
+
+<article class="card" id="concept-c">
+<h3>C. Tendang Tin (stylized soccer)</h3>
+<p><b>Loop.</b> A heavy tin sits mid-field. Sandal hits push it. Push it into the enemy gate.</p>
+<p><b>Round.</b> 3 min, 3v3.</p>
+<p><b>Win.</b> Most goals.</p>
+<p><b>Powers.</b> Same pool plus magnet.</p>
+<p><b>AI.</b> Push the tin toward the gate. Defend the gate.</p>
+<p><b>Mobile feel.</b> Drag throw becomes a push shot.</p>
+<p><b>First 30 s.</b> Readable at once.</p>
+<p><b>Risks.</b> Tin physics on web. Sandals stop being a knock-down game.</p>
+</article>
+</div>
+</section>
+
+<section id="arena">
+<h2>3. Arena and mobile controls (concept A)</h2>
+<div class="card">
+<svg viewBox="0 0 800 400" role="img" aria-labelledby="arena-t arena-d">
+<title id="arena-t">Top-down arena with mobile controls</title>
+<desc id="arena-d">Landscape arena. Blue team stack on the left, red team stack on the right, chalk line in the middle, left joystick, right drag-back throw zone.</desc>
+<rect id="field" x="10" y="10" width="780" height="380" rx="10" fill="#dcc98f" stroke="#5a4a22" stroke-width="3"><title>Arena field</title></rect>
+<line id="chalk" x1="400" y1="10" x2="400" y2="390" stroke="#ffffff" stroke-width="4" stroke-dasharray="14 10"><title>Chalk centre line</title></line>
+<g id="stack-blue"><title>Blue stack of 3 sandals</title>
+<circle cx="70" cy="190" r="12" fill="#1b4b8a"/><circle cx="70" cy="214" r="12" fill="#1b4b8a"/><circle cx="90" cy="202" r="12" fill="#1b4b8a"/></g>
+<g id="stack-red"><title>Red stack of 3 sandals</title>
+<circle cx="730" cy="190" r="12" fill="#a32a12"/><circle cx="730" cy="214" r="12" fill="#a32a12"/><circle cx="710" cy="202" r="12" fill="#a32a12"/></g>
+<circle id="player" cx="220" cy="200" r="16" fill="#1b4b8a" stroke="#fff" stroke-width="3"><title>You</title></circle>
+<circle cx="170" cy="120" r="14" fill="#1b4b8a"/><circle cx="170" cy="290" r="14" fill="#1b4b8a"/>
+<circle cx="580" cy="130" r="14" fill="#a32a12"/><circle cx="600" cy="230" r="14" fill="#a32a12"/><circle cx="560" cy="300" r="14" fill="#a32a12"/>
+<g id="aim"><title>Aim line, reverse of drag</title>
+<line x1="220" y1="200" x2="330" y2="160" stroke="#1d5c2e" stroke-width="4" stroke-dasharray="6 6"/>
+<polygon points="330,160 316,160 322,172" fill="#1d5c2e"/></g>
+<g id="joystick"><title>Left virtual joystick, move</title>
+<circle cx="110" cy="330" r="42" fill="#ffffff" fill-opacity=".75" stroke="#1f2328" stroke-width="3"/>
+<circle cx="120" cy="322" r="16" fill="#1f2328"/>
+<text x="62" y="392" fill="#1f2328">Left thumb: move</text></g>
+<g id="dragzone"><title>Right drag-back throw zone</title>
+<rect x="470" y="270" width="300" height="115" rx="12" fill="#ffffff" fill-opacity=".55" stroke="#1f2328" stroke-width="3" stroke-dasharray="8 6"/>
+<circle cx="650" cy="320" r="10" fill="#1f2328"/><circle cx="700" cy="350" r="14" fill="#fff" stroke="#1f2328" stroke-width="3"/>
+<line x1="650" y1="320" x2="700" y2="350" stroke="#1f2328" stroke-width="3"/>
+<text x="480" y="292" fill="#1f2328">Right thumb: drag back, release</text></g>
+<text x="40" y="40" fill="#10305c">Blue base</text><text x="690" y="40" fill="#6a1a0a">Red base</text>
+<text x="330" y="40" fill="#1f2328">Chalk line</text>
+</svg>
+<ul>
+<li>Left joystick moves. Right thumb drags back from any point in the zone.</li>
+<li>Drag length sets power. The throw goes the opposite way. The dotted line previews it.</li>
+<li>Desktop: WASD moves. Mouse drag from the player does the same pull.</li>
+<li>Each team has a base and a stack. The chalk line marks the limit for rebuilders.</li>
+</ul>
+</div>
+</section>
+
+<section id="recommend">
+<h2>4. Recommendation</h2>
+<div class="card rec">
+<p><b>Build concept A, Susun Tumbang.</b> It keeps the stack, the three throws, the rebuild and mati, so Malaysian players recognise the game at once. It fits 3v3 and short rounds.</p>
+<p><span class="tag g">Feasibility 7 of 10 for 48 h</span> Rules are simple. Touch polish and AI take the time.</p>
+</div>
+</section>
+
+<section id="scope">
+<h2>5. Scope</h2>
+<div class="grid g2">
+<div class="card"><h3>Build first (core loop)</h3>
+<ol>
+<li>Arena, chalk line, 2 stacks of 3 sandals.</li>
+<li>Move with joystick or WASD.</li>
+<li>Drag-back throw with aim line.</li>
+<li>Topple check, score, timer, win screen.</li>
+<li>Pickup and 3-sandal ammo belt.</li>
+<li>Bots: one thrower, one rebuilder.</li>
+<li>2 powers, after the loop is fun.</li>
+</ol></div>
+<div class="card"><h3>Cut</h3>
+<ul>
+<li>Powers beyond 2</li>
+<li>Online play</li>
+<li>Extra maps and skins</li>
+<li>Custom art and layered music</li>
+<li>Tutorial beyond one text card</li>
+<li>2v2 and 3v3 toggle</li>
+</ul></div>
+</div>
+<h3>Technical risks (Godot web, mobile)</h3>
+<div class="scroll"><table>
+<tr><th>Risk</th><th>Action</th></tr>
+<tr><td>Joystick and drag at the same time</td><td>Use touch events with a finger index per control. Do not use mouse emulation.</td></tr>
+<tr><td>Web audio blocked until a tap</td><td>Start sound after the first tap on the start screen.</td></tr>
+<tr><td>Threaded export needs special headers</td><td>Use single-thread export. Check the GamePix rules (unconfirmed).</td></tr>
+<tr><td>Physics cost on low-end phones</td><td>Keep under 30 bodies. Use circles.</td></tr>
+<tr><td>Page scroll and zoom during drag</td><td>Set <code>touch-action: none</code> in the HTML shell.</td></tr>
+<tr><td>Landscape and safe areas</td><td>Use stretch mode <code>canvas_items</code> with aspect <code>expand</code>.</td></tr>
+<tr><td>Build size</td><td>No art assets. Disable unused modules.</td></tr>
+</table></div>
+</section>
+
+<section id="questions">
+<h2>6. Open questions</h2>
+<div class="card"><ol>
+<li>Does a stack topple by physics or by one hit?</li>
+<li>Does a hit player drop their sandals?</li>
+<li>Is mati a respawn (about 4 s) or out for the round?</li>
+<li>Is Malay UI text (Baling, Mati, Susun) fine, with English subtitles?</li>
+<li>Kampung yard theme or neutral arena?</li>
+<li>Does GamePix require single-thread export?</li>
+</ol></div>
+</section>
+
+<section id="sources">
+<h2>Sources</h2>
+<ul class="small">
+<li><a href="https://ms.wikipedia.org/wiki/Baling_selipar">ms.wikipedia.org - Baling selipar</a></li>
+<li><a href="https://permainantradisionalmas.blogspot.com/2016/02/baling-selipar.html">permainantradisionalmas blog</a></li>
+<li><a href="https://www.scribd.com/doc/92355077/Peraturan-Permainan-Tradisional-Tuju-Selipar">Scribd - Tuju Selipar rules</a></li>
+<li><a href="https://www.studocu.com/my/document/universiti-teknologi-mara/leisure-studies/group-2-baling-selipar-traditional-game/22051135">Studocu - UiTM case study</a></li>
+<li><a href="https://www.fairusmamat.com/2011/03/cara-bermain-permainan-baling-tin.html">Baling tin rules</a></li>
+<li><a href="https://www.scribd.com/doc/162219204/Peraturan-Permainan-Batu-Seremban">Scribd - Batu Seremban</a></li>
+</ul>
+</section>
+</main>
+</body>
+</html>

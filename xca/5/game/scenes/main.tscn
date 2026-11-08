@@ -1,0 +1,34 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/arena.tscn" id="1"]
+[ext_resource type="Script" path="res://scripts/round/round_manager.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/restart.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/settings.tscn" id="5"]
+[ext_resource type="Script" path="res://scripts/fx/fx_layer.gd" id="6"]
+[ext_resource type="Script" path="res://ui/title/title_screen.gd" id="7"]
+
+[node name="Main" type="Node2D"]
+
+[node name="Arena" parent="." instance=ExtResource("1")]
+
+[node name="FxLayer" type="Node2D" parent="."]
+script = ExtResource("6")
+
+[node name="Camera" type="Camera2D" parent="."]
+position = Vector2(640, 360)
+
+[node name="RoundManager" type="Node" parent="."]
+script = ExtResource("2")
+arena = NodePath("../Arena")
+camera = NodePath("../Camera")
+
+[node name="Hud" parent="." instance=ExtResource("3")]
+
+[node name="Restart" parent="." instance=ExtResource("4")]
+round_manager = NodePath("../RoundManager")
+
+[node name="Settings" parent="." instance=ExtResource("5")]
+
+[node name="Title" type="CanvasLayer" parent="."]
+script = ExtResource("7")

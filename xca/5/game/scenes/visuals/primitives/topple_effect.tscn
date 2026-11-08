@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/core/primitive_skin_visual.gd" id="1"]
+
+[node name="ToppleEffectVisual" type="Node2D"]
+script = ExtResource("1")
+shape = 6
+color = Color(0.957, 0.835, 0.553, 0.9)
+radius = 40.0

@@ -1,0 +1,13 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+PART A: topple by aim error (degrees), no defenders, ring angles 0, 90, 180 (each side of zero)
+ring   0: ......#########################......   (columns -18..+18 deg, # = topple)   window -12..12 deg
+ring  90: ............#############............   (columns -18..+18 deg, # = topple)   window -6..6 deg
+ring 180: ......#########################......   (columns -18..+18 deg, # = topple)   window -12..12 deg
+ring 156: ........#######################......   (columns -18..+18 deg, # = topple)   window -10..12 deg
+ring 204: ......#######################........   (columns -18..+18 deg, # = topple)   window -12..10 deg
+PART B: orbiting defenders, ring slot angle 156 (the human slot, queue position 0), 40 phases each
+aim error +0 deg with 3 orbiting defenders: topple 25 of 40 (62 percent)
+aim error +4 deg with 3 orbiting defenders: topple 28 of 40 (70 percent)
+aim error +8 deg with 3 orbiting defenders: topple 27 of 40 (68 percent)
+aim error +12 deg with 3 orbiting defenders: topple 33 of 40 (82 percent)

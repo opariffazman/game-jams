@@ -1,0 +1,43 @@
+
+scatter t= 0s attacking=0 pass_sandal holder=team1 DEF alive=true pos=(646,463) speed=0 flight=false frozen=true loose=false
+    chars: t0A@(402,466) t0A@(380,360) t0A@(402,254) t1D@(667,456) t1D@(543,335) t1D@(710,289)
+scatter t= 2s attacking=0 pass_sandal holder=nobody pos=(633,427) speed=305 flight=true frozen=false loose=false
+    chars: t0A@(402,466) t0A@(532,477) t0A@(617,545) t1D@(678,452) t1D@(714,298) t1D@(726,405)
+scatter t= 4s attacking=0 pass_sandal holder=team1 DEF alive=true pos=(690,435) speed=0 flight=false frozen=true loose=false
+    chars: t0A@(402,466) t0A@(657,356) t0A@(645,566) t1D@(539,409) t1D@(738,254) t1D@(702,454)
+scatter t= 6s attacking=0 pass_sandal holder=team1 DEF alive=true pos=(477,591) speed=0 flight=false frozen=true loose=false
+    chars: t0A@(402,466) t0A@(488,189) t0Ax@(636,537) t1D@(488,572) t1D@(758,341) t1D@(650,392)
+scatter t= 8s attacking=0 pass_sandal holder=team1 DEF alive=true pos=(628,503) speed=0 flight=false frozen=true loose=false
+    chars: t0A@(402,466) t0A@(617,336) t0Ax@(636,537) t1D@(626,525) t1D@(838,457) t1D@(727,448)
+scatter t=10s attacking=0 pass_sandal holder=team1 DEF alive=true pos=(641,598) speed=0 flight=false frozen=true loose=false
+    chars: t0A@(402,466) t0A@(889,444) t0Ax@(636,537) t1D@(632,532) t1D@(788,598) t1D@(644,576)
+scatter t=12s attacking=0 pass_sandal holder=nobody pos=(1042,522) speed=11 flight=false frozen=false loose=true
+    chars: t0A@(402,466) t0A@(982,492) t0Ax@(636,537) t1D@(636,459) t1D@(921,504) t1D@(642,457)
+scatter t=14s attacking=0 pass_sandal holder=nobody pos=(321,460) speed=68 flight=false frozen=false loose=true
+    chars: t0Ax@(402,466) t0A@(732,394) t0Ax@(636,537) t1D@(698,439) t1D@(779,420) t1D@(643,446)
+scatter t=16s attacking=1 pass_sandal holder=team0 DEF alive=true pos=(553,414) speed=0 flight=false frozen=true loose=false
+    chars: t0D@(568,430) t0D@(690,312) t0D@(792,426) t1A@(489,499) t1A@(505,331) t1A@(562,273)
+scatter t=18s attacking=1 pass_sandal holder=team0 DEF alive=true pos=(553,414) speed=0 flight=false frozen=true loose=false
+    chars: t0D@(568,430) t0D@(612,239) t0D@(792,426) t1A@(690,457) t1A@(861,264) t1A@(893,258)
+scatter t=20s attacking=1 pass_sandal holder=team0 DEF alive=true pos=(553,414) speed=0 flight=false frozen=true loose=false
+    chars: t0D@(568,430) t0D@(572,203) t0D@(733,588) t1A@(666,343) t1A@(1027,184) t1A@(948,216)
+scatter t=22s attacking=1 pass_sandal holder=team0 DEF alive=true pos=(553,414) speed=0 flight=false frozen=true loose=false
+    chars: t0D@(568,430) t0D@(572,203) t0D@(733,588) t1A@(662,339) t1A@(775,298) t1A@(701,331)
+scatter t=24s attacking=1 pass_sandal holder=team0 DEF alive=true pos=(553,414) speed=0 flight=false frozen=true loose=false
+    chars: t0D@(568,430) t0D@(572,203) t0D@(733,588) t1A@(661,340) t1A@(662,341) t1A@(662,339)
+scatter t=26s attacking=1 pass_sandal holder=team0 DEF alive=true pos=(553,414) speed=0 flight=false frozen=true loose=false
+    chars: t0D@(568,430) t0D@(572,203) t0D@(733,588) t1A@(661,339) t1A@(662,339) t1A@(661,340)
+scatter t=28s attacking=1 pass_sandal holder=team0 DEF alive=true pos=(553,414) speed=0 flight=false frozen=true loose=false
+    chars: t0D@(568,430) t0D@(572,203) t0D@(733,588) t1A@(661,340) t1A@(661,340) t1A@(662,339)
+scatter t=30s attacking=1 pass_sandal holder=team0 DEF alive=true pos=(553,414) speed=0 flight=false frozen=true loose=false
+    chars: t0D@(568,430) t0D@(572,203) t0D@(733,588) t1A@(662,339) t1A@(662,339) t1A@(661,340)
+scatter t=32s attacking=1 pass_sandal holder=team0 DEF alive=true pos=(553,414) speed=0 flight=false frozen=true loose=false
+    chars: t0D@(568,430) t0D@(572,203) t0D@(733,588) t1A@(661,340) t1A@(661,339) t1A@(662,339)
+scatter t=34s attacking=1 pass_sandal holder=team0 DEF alive=true pos=(553,414) speed=0 flight=false frozen=true loose=false
+    chars: t0D@(568,430) t0D@(572,203) t0D@(733,588) t1A@(662,339) t1A@(662,339) t1A@(661,339)
+scatter t=36s attacking=1 pass_sandal holder=team0 DEF alive=true pos=(553,414) speed=0 flight=false frozen=true loose=false
+    chars: t0D@(568,430) t0D@(572,203) t0D@(733,588) t1A@(661,340) t1A@(661,339) t1A@(662,339)
+scatter t=38s attacking=1 pass_sandal holder=team0 DEF alive=true pos=(553,414) speed=0 flight=false frozen=true loose=false
+    chars: t0D@(568,430) t0D@(572,203) t0D@(733,588) t1A@(662,339) t1A@(662,339) t1A@(661,339)
+scatter t=40s attacking=1 pass_sandal holder=team0 DEF alive=true pos=(553,414) speed=0 flight=false frozen=true loose=false
+    chars: t0D@(568,430) t0D@(572,203) t0D@(733,588) t1A@(661,340) t1A@(661,339) t1A@(662,339)

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="HudIconSet" format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/hud_icon_set.gd" id="1_set"]
+[ext_resource type="Texture2D" path="res://assets/icons/hud_pip.svg" id="2_pip"]
+[ext_resource type="Texture2D" path="res://assets/icons/hud_crosshair.svg" id="3_attack"]
+[ext_resource type="Texture2D" path="res://assets/icons/hud_shield.svg" id="4_defend"]
+[ext_resource type="Texture2D" path="res://assets/icons/hud_sandal.svg" id="5_sandal"]
+[ext_resource type="Texture2D" path="res://assets/icons/hud_stack.svg" id="6_stack"]
+[ext_resource type="Texture2D" path="res://assets/icons/hud_tombstone.svg" id="7_tomb"]
+[ext_resource type="Texture2D" path="res://assets/icons/hud_coin.svg" id="8_coin"]
+[ext_resource type="Texture2D" path="res://assets/icons/hud_trophy.svg" id="9_trophy"]
+
+[resource]
+script = ExtResource("1_set")
+score_pip = ExtResource("2_pip")
+role_attack = ExtResource("3_attack")
+role_defend = ExtResource("4_defend")
+throw_sandal = ExtResource("5_sandal")
+stack_ring = ExtResource("6_stack")
+tombstone = ExtResource("7_tomb")
+coin_flip = ExtResource("8_coin")
+match_trophy = ExtResource("9_trophy")

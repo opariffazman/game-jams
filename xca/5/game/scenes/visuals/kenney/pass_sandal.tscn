@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/view3d/depth_visual.gd" id="1"]
+
+[node name="PassSandalDepth" type="Node2D"]
+script = ExtResource("1")
+kind = 3
+radius = 14.0
+lift = 2.0

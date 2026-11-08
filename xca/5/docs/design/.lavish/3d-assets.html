@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en" data-theme="night">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Baling Selipar - 3D assets</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/daisyui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/themes.css">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.2.4/dist/index.global.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :where(.grid, .flex) > * { min-width: 0; }
+  :where(p, h1, h2, h3, li, legend, label, span) { overflow-wrap: anywhere; }
+  :root {
+    --bg: #0f1729; --panel: #172036; --line: #6b7a99; --ink: #e6ebf5; --muted: #b4bfd6;
+    --atk: #4cc9f0; --def: #ff9f4a; --sand: #f4d58d; --good: #7be3a3; --bad: #ff8a8a;
+  }
+  body { background: var(--bg); color: var(--ink); margin: 0; font-family: system-ui, sans-serif; }
+  main { max-width: 1280px; margin: 0 auto; padding: 24px 16px 64px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  h1 { font-size: 1.9rem; font-weight: 800; margin: 0; }
+  h2 { font-size: 1.25rem; font-weight: 700; margin: 0 0 12px; }
+  h3 { font-size: 1.05rem; font-weight: 700; margin: 18px 0 8px; }
+  .lead { color: var(--muted); margin: 6px 0 0; max-width: 72ch; }
+  section { background: var(--panel); border: 1px solid #2c3a5a; border-radius: 16px; padding: 18px; }
+  .cap { color: var(--muted); margin: 8px 0 0; font-size: .95rem; }
+  .answer { border-color: var(--atk); }
+  .answer ul, ul.cap { margin: 8px 0 0; padding-left: 1.2rem; list-style: disc; }
+  .answer li { margin: 4px 0; }
+  .scroll { overflow-x: auto; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  @media (max-width: 980px) { .grid3, .grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 700px) { .grid2, .grid3, .grid4 { grid-template-columns: minmax(0, 1fr); } }
+  figure { margin: 0; }
+  figure img { width: 100%; height: auto; display: block; border-radius: 10px; background: #0b1220; }
+  figcaption { color: var(--muted); font-size: .9rem; margin-top: 6px; }
+  .card { background: var(--bg); border: 1px solid #2c3a5a; border-radius: 12px; padding: 12px 14px; }
+  .card.pick { border-color: var(--atk); border-width: 2px; }
+  .card h3 { margin-top: 0; }
+  .tag { display: inline-block; font-size: .78rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; }
+  .tag.good { color: var(--good); } .tag.bad { color: var(--bad); } .tag.mid { color: var(--sand); }
+  table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: .92rem; }
+  .scroll { -webkit-overflow-scrolling: touch; }
+  .grid4 figure img { max-height: 150px; width: auto; max-width: 100%; margin: 0 auto; object-fit: contain; }
+  @media (max-width: 700px) { .grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid #2c3a5a; vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  svg.fig { width: 100%; height: auto; display: block; color: var(--ink); }
+  .node { fill: var(--bg); stroke: var(--line); stroke-width: 2.5; }
+  .nodeA { fill: var(--bg); stroke: var(--atk); stroke-width: 2.5; }
+  .nodeD { fill: var(--bg); stroke: var(--def); stroke-width: 2.5; }
+  .lbl { font: 700 19px system-ui, sans-serif; fill: var(--ink); }
+  .sub { font: 500 15px system-ui, sans-serif; fill: var(--muted); }
+  .edge { fill: none; stroke: var(--ink); stroke-width: 3; }
+  .dash { stroke-dasharray: 8 6; }
+  .mk { fill: var(--ink); }
+  .sw { display: inline-block; width: 16px; height: 16px; border-radius: 4px; vertical-align: -3px; margin-right: 6px; border: 1px solid #fff4; }
+  fieldset.q { border: 1px solid #2c3a5a; border-radius: 12px; padding: 10px 14px 12px; margin: 0; min-width: 0; }
+  fieldset.q legend { font-weight: 700; padding: 0 6px; }
+  .opt { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; min-height: 44px; cursor: pointer; }
+  .qgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 14px; }
+  .actions { margin-top: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  footer { color: var(--muted); font-size: .85rem; }
+  a { color: var(--atk); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Baling Selipar - 3D assets</h1>
+    <p class="lead">What the three Kenney packs give us, what is missing, and how to show 3D art on top of the 2D physics. No game code changed. Annotate any claim you doubt.</p>
+  </header>
+
+  <section id="answer" class="answer">
+    <h2>The answer</h2>
+    <ul>
+      <li><strong>Use the packs:</strong> characters, arena and scenery. All three are CC0.</li>
+      <li><strong>Build the sandal from primitives.</strong> No pack has one. A flat sole and two straps read as a sandal. The character's own foot does not.</li>
+      <li><strong>Integration:</strong> one shared SubViewport with an angled orthographic camera, built after the 2D game is stable. Keep pre-rendered sprites as the fallback.</li>
+      <li><strong>Problem to fix first:</strong> the Kenney floor is light peach. Blue measures 1.09:1 on it and red 1.69:1. The floor must go dark or team colour fails.</li>
+      <li><strong>Cost of 3D, measured:</strong> about 2.2 times the frame time of the 2D build in headless Chrome. One shadowed light doubles it again. This is not a phone number.</li>
+    </ul>
+  </section>
+
+  <section id="packs">
+    <h2>The three packs</h2>
+    <div class="grid3">
+      <figure><img src="assets3d/characters-preview.png" alt="Mini Characters pack preview"><figcaption>Mini Characters: 20 rigged characters, 32 animations each, 686 to 947 triangles.</figcaption></figure>
+      <figure><img src="assets3d/arena-preview.png" alt="Mini Arena pack preview"><figcaption>Mini Arena: floor, border, walls, columns, stairs, block, trophy, banner, statue.</figcaption></figure>
+      <figure><img src="assets3d/forest-preview.png" alt="Mini Forest pack preview"><figcaption>Mini Forest: trees, rocks, fence, tent, flag, grass patches, target.</figcaption></figure>
+    </div>
+    <p class="cap">Each pack has its own 512 by 512 colormap, so models from different packs cannot share a texture. The GLB files total 5.5 MB, 540 KB and 860 KB.</p>
+  </section>
+
+  <section id="map">
+    <h2>What maps to our game</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>Game part</th><th>Asset</th><th class="num">Triangles</th><th>Fit</th></tr></thead>
+      <tbody>
+        <tr><td>Attackers and defenders</td><td><code>character-*</code> (20 models)</td><td class="num">686 to 947</td><td><span class="tag good">fits</span> 7 joints, 32 clips</td></tr>
+        <tr><td>Arena floor</td><td><code>floor</code> and <code>floor-detail</code></td><td class="num">2 and 50</td><td><span class="tag mid">recolour</span> peach fails contrast</td></tr>
+        <tr><td>Arena edge</td><td><code>border-straight</code> and <code>border-corner</code></td><td class="num">60 and 122</td><td><span class="tag good">fits</span></td></tr>
+        <tr><td>Stack plinth</td><td><code>block</code> (or <code>column</code>)</td><td class="num">12 (168)</td><td><span class="tag good">fits</span></td></tr>
+        <tr><td>Match end reward</td><td><code>trophy</code></td><td class="num">244</td><td><span class="tag good">fits</span></td></tr>
+        <tr><td>Scenery outside the field</td><td>forest <code>tree</code>, <code>rocks-*</code>, <code>fence</code>, <code>flag</code>, <code>patch-grass</code></td><td class="num">108 to 342</td><td><span class="tag good">fits</span></td></tr>
+        <tr><td>Sandal</td><td>none in any pack</td><td class="num">-</td><td><span class="tag bad">gap</span></td></tr>
+        <tr><td>Ball-like throwable</td><td>none. The sandal is the throwable.</td><td class="num">-</td><td><span class="tag bad">gap</span></td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid4" style="margin-top:14px">
+      <figure><img src="assets3d/character-male-a.png" alt="character-male-a"><figcaption>character-male-a</figcaption></figure>
+      <figure><img src="assets3d/arena-block.png" alt="block"><figcaption>block: stack plinth</figcaption></figure>
+      <figure><img src="assets3d/arena-border-straight.png" alt="border-straight"><figcaption>border-straight</figcaption></figure>
+      <figure><img src="assets3d/arena-trophy.png" alt="trophy"><figcaption>trophy: match end</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="sandal">
+    <h2>The gap: a sandal</h2>
+    <p class="lead">I tested four ways. The picture shows, left to right, the cut foot of soldier and robot, a primitive sandal, and the CC0 slippers. The male-a foot is measured but not in the picture.</p>
+    <figure style="margin-top:12px"><img src="assets3d/feet-compare.png" alt="Cut character feet, a primitive sandal and a CC0 slipper rendered side by side"><figcaption>Left to right: soldier foot cut, robot foot cut, primitive sandal (brown sole, tan straps), CC0 slippers (two). The scratch sandal used a 3456-triangle capsule.</figcaption></figure>
+    <div class="scroll" style="margin-top:12px"><table>
+      <thead><tr><th>Rank</th><th>Option</th><th class="num">Triangles</th><th>Licence</th><th>Reads as a sandal</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Primitive: flat sole plus two strap boxes</td><td class="num">96 + 24</td><td>none</td><td><span class="tag good">yes</span></td></tr>
+        <tr><td>2</td><td>Slippers by Isa Lousberg</td><td class="num">360</td><td>CC0</td><td><span class="tag mid">a slipper</span></td></tr>
+        <tr><td>3</td><td>Sandal by jeremy, Slippers by J-Toastie, Flip flops by Poly by Google</td><td class="num">388 to 2032</td><td>CC BY, credit needed</td><td><span class="tag mid">not rendered</span></td></tr>
+        <tr><td>4</td><td>Cut the character's foot</td><td class="num">54 to 78</td><td>CC0</td><td><span class="tag bad">no</span> blunt stump, open at the cut</td></tr>
+      </tbody>
+    </table></div>
+    <p class="cap">The sole brown <code>(144,87,65)</code> and strap tan <code>(230,185,110)</code> come from the characters' own colormap. A flat colour of the same value matches the style. The scratch test used a capsule with 3456 triangles. A 16-sided cylinder sole costs 96.</p>
+  </section>
+
+  <section id="integration">
+    <h2>How to show 3D on 2D physics</h2>
+    <div class="grid3">
+      <div class="card pick">
+        <h3>A. Shared SubViewport <span class="tag good">recommended</span></h3>
+        <svg class="fig" viewBox="0 0 400 250" role="img" aria-labelledby="ia-t">
+          <title id="ia-t">Approach A: 2D bodies drive 3D visuals inside a SubViewport drawn under the HUD</title>
+          <rect x="10" y="10" width="180" height="90" rx="12" class="node"/><text x="100" y="48" text-anchor="middle" class="lbl">2D bodies</text><text x="100" y="72" text-anchor="middle" class="sub">physics, input</text>
+          <rect x="210" y="10" width="180" height="90" rx="12" class="nodeA"/><text x="300" y="48" text-anchor="middle" class="lbl">Node3D visuals</text><text x="300" y="72" text-anchor="middle" class="sub">follow each body</text>
+          <path d="M190 55H206" class="edge" marker-end="url(#mk)"/>
+          <rect x="210" y="130" width="180" height="50" rx="12" class="nodeA"/><text x="300" y="162" text-anchor="middle" class="lbl">SubViewport</text>
+          <path d="M300 100V126" class="edge" marker-end="url(#mk)"/>
+          <rect x="10" y="130" width="180" height="50" rx="12" class="node"/><text x="100" y="162" text-anchor="middle" class="lbl">HUD, touch</text>
+          <rect x="10" y="200" width="380" height="40" rx="12" class="node dash"/><text x="200" y="226" text-anchor="middle" class="sub">screen: 3D texture, then 2D HUD on top</text>
+        </svg>
+        <p class="cap"><strong>Hours:</strong> 14 to 20 (estimate). <strong>Swap contract:</strong> kept. A 2D proxy copies each body transform. <strong>Touch and HUD:</strong> unchanged. <strong>Risk:</strong> aim line and rings must go through the camera projection.</p>
+      </div>
+      <div class="card">
+        <h3>B. Full 3D scene</h3>
+        <svg class="fig" viewBox="0 0 400 250" role="img" aria-labelledby="ib-t">
+          <title id="ib-t">Approach B: gameplay runs on 3D bodies locked to a plane</title>
+          <rect x="10" y="10" width="380" height="90" rx="12" class="node"/><text x="200" y="48" text-anchor="middle" class="lbl">3D bodies on a plane</text><text x="200" y="72" text-anchor="middle" class="sub">physics and art together</text>
+          <rect x="10" y="130" width="180" height="50" rx="12" class="node"/><text x="100" y="162" text-anchor="middle" class="lbl">Ray cast input</text>
+          <rect x="210" y="130" width="180" height="50" rx="12" class="node"/><text x="300" y="162" text-anchor="middle" class="lbl">CanvasLayer HUD</text>
+          <path d="M100 100V126M300 100V126" class="edge" marker-end="url(#mk)"/>
+          <rect x="10" y="200" width="380" height="40" rx="12" class="node dash"/><text x="200" y="226" text-anchor="middle" class="sub">rewrites physics, scripts and every test</text>
+        </svg>
+        <p class="cap"><strong>Hours:</strong> 30 or more. <strong>Swap contract:</strong> broken. <strong>Touch:</strong> needs a ray cast. <strong>Risk:</strong> highest.</p>
+      </div>
+      <div class="card">
+        <h3>C. Pre-rendered sprites <span class="tag mid">fallback</span></h3>
+        <svg class="fig" viewBox="0 0 400 250" role="img" aria-labelledby="ic-t">
+          <title id="ic-t">Approach C: render the 3D models to sprite sheets and keep the game pure 2D</title>
+          <rect x="10" y="10" width="180" height="90" rx="12" class="node"/><text x="100" y="48" text-anchor="middle" class="lbl">3D models</text><text x="100" y="72" text-anchor="middle" class="sub">offline render</text>
+          <rect x="210" y="10" width="180" height="90" rx="12" class="nodeD"/><text x="300" y="48" text-anchor="middle" class="lbl">Sprite sheets</text><text x="300" y="72" text-anchor="middle" class="sub">AnimatedSprite2D</text>
+          <path d="M190 55H206" class="edge" marker-end="url(#mk)"/>
+          <rect x="210" y="130" width="180" height="50" rx="12" class="node"/><text x="300" y="162" text-anchor="middle" class="lbl">EntityVisual</text>
+          <path d="M300 100V126" class="edge" marker-end="url(#mk)"/>
+          <rect x="10" y="130" width="180" height="50" rx="12" class="node"/><text x="100" y="162" text-anchor="middle" class="lbl">Game unchanged</text>
+          <rect x="10" y="200" width="380" height="40" rx="12" class="node dash"/><text x="200" y="226" text-anchor="middle" class="sub">cheapest at runtime, large atlases</text>
+        </svg>
+        <p class="cap"><strong>Hours:</strong> 10 to 16 plus a render per skin. <strong>Swap contract:</strong> kept. <strong>Touch and HUD:</strong> unchanged. <strong>Risk:</strong> 8 facing directions per clip, big atlases.</p>
+      </div>
+    </div>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><marker id="mk" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs></svg>
+    <p class="cap">All hours are my estimates and are unconfirmed.</p>
+  </section>
+
+  <section id="cost">
+    <h2>What 3D costs, measured</h2>
+    <p class="lead">Scratch scene: animated Kenney characters, arena floor and border and 3 slippers in an orthographic SubViewport at 50 degrees. Headless Chrome, software GL, 844 by 390, three repeat runs. The machine was busy (load 15 to 21), so read the ratio, not the milliseconds.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Build</th><th class="num">Mean frame</th><th class="num">p95</th><th class="num">Draw calls</th><th class="num">Primitives</th></tr></thead>
+      <tbody>
+        <tr><td>2D baseline, 6 shapes</td><td class="num">16.6 ms</td><td class="num">16.8 ms</td><td class="num">7</td><td class="num">-</td></tr>
+        <tr><td>Real 2D game</td><td class="num">16.6 ms</td><td class="num">16.8 ms</td><td class="num">-</td><td class="num">-</td></tr>
+        <tr><td>3D, 6 characters</td><td class="num">35 to 39 ms</td><td class="num">50 ms</td><td class="num">38</td><td class="num">7529</td></tr>
+        <tr><td>3D, 12 characters</td><td class="num">43 to 44 ms</td><td class="num">50 ms</td><td class="num">50</td><td class="num">12541</td></tr>
+        <tr><td>3D, 6 characters, one shadowed light</td><td class="num">75 to 78 ms</td><td class="num">83 ms</td><td class="num">74</td><td class="num">11366</td></tr>
+      </tbody>
+    </table></div>
+    <p class="cap">16.6 ms is the display refresh cap, so the real 2D cost is lower and the 3D ratio is a lower bound. The pck grows by 0.7 MB. The 37.7 MB wasm is identical in both builds and dominates the load. A phone test is required before anyone commits to 3D.</p>
+    <figure style="margin-top:12px"><img src="assets3d/scratch-3d-6.png" alt="Scratch scene: six Kenney characters on the arena floor with a stack of slippers in the centre"><figcaption>The scratch scene at 50 degrees: six characters, the Kenney floor and border, and a stack of three slippers.</figcaption></figure>
+  </section>
+
+  <section id="camera">
+    <h2>Camera angle</h2>
+    <figure><img src="assets3d/pitch-sheet.png" alt="The scratch arena at 90, 65, 50 and 35 degrees"><figcaption>Top left 90 degrees, top right 65, bottom left 50, bottom right 35.</figcaption></figure>
+    <div class="scroll" style="margin-top:12px"><table>
+      <thead><tr><th>Pitch</th><th>View</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr><td>90 degrees</td><td>Only heads and shoulders. Animation barely reads.</td><td><span class="tag bad">worst</span></td></tr>
+        <tr><td>65 degrees</td><td>Faces show. The field still reads as a field.</td><td><span class="tag good">good</span></td></tr>
+        <tr><td>50 degrees</td><td>Full figures, clear faces, border and floor read well.</td><td><span class="tag good">best</span></td></tr>
+        <tr><td>35 degrees</td><td>Models look best, but they hide each other and the far side shrinks.</td><td><span class="tag mid">too flat</span></td></tr>
+      </tbody>
+    </table></div>
+    <p class="cap">Below 90 degrees the ground axis away from the camera shrinks by sin(pitch), 0.77 at 50 degrees. A 2D circle becomes an ellipse on screen. Aim line, target ring, throw ring and orbit ring must go through <code>Camera3D.unproject_position</code>, or be drawn in the 3D world. This is the main extra cost of approach A.</p>
+  </section>
+
+  <section id="colour">
+    <h2>Team colour on models that keep their palette</h2>
+    <div class="grid2">
+      <div>
+        <h3>Contrast of team colours on the floor</h3>
+        <div class="scroll"><table>
+          <thead><tr><th>Floor</th><th class="num">Blue #40bfff</th><th class="num">Red #ff5230</th></tr></thead>
+          <tbody>
+            <tr><td><span class="sw" style="background:#172138"></span>Current navy</td><td class="num">7.71:1</td><td class="num">4.96:1</td></tr>
+            <tr><td><span class="sw" style="background:#ecae8a"></span>Kenney peach</td><td class="num" style="color:var(--bad)">1.09:1</td><td class="num" style="color:var(--bad)">1.69:1</td></tr>
+          </tbody>
+        </table></div>
+        <p class="cap">Under red-green colour blindness (Machado simulation) blue and red differ by 2.42:1 in luminance for protanopia and 1.21:1 for deuteranopia on navy. Red on navy falls to 3.49:1 under protanopia. Shape must carry the team there, as it does today.</p>
+      </div>
+      <div>
+        <h3>Options</h3>
+        <div class="scroll"><table>
+          <thead><tr><th>Option</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td>Disc under each character, circle for attackers, square for defenders</td><td><span class="tag good">pick</span> works with any outfit, 1 draw call</td></tr>
+            <tr><td>Rim or outline shader</td><td><span class="tag bad">no</span> fights the outfit, 2 passes</td></tr>
+            <tr><td>Coloured armband mesh</td><td><span class="tag bad">no</span> bone attachment per model, tiny</td></tr>
+            <tr><td>material_overlay tint</td><td><span class="tag bad">no</span> muddies the palette</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+    <h3>Characters that clash least</h3>
+    <p class="cap">Share of each model's surface that uses blue or red colormap cells (rough heuristic). Low is good.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Model</th><th class="num">Blue</th><th class="num">Red</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td>male-e</td><td class="num">0.5%</td><td class="num">5.4%</td><td><span class="tag good">yes</span></td></tr>
+        <tr><td>female-e</td><td class="num">7.3%</td><td class="num">0.5%</td><td><span class="tag good">yes</span></td></tr>
+        <tr><td>raider</td><td class="num">3.7%</td><td class="num">17.7%</td><td><span class="tag good">yes</span></td></tr>
+        <tr><td>zombie</td><td class="num">9.2%</td><td class="num">9.1%</td><td><span class="tag good">yes</span></td></tr>
+        <tr><td>knight, robot, alien</td><td class="num">39 to 46%</td><td class="num">0 to 12%</td><td><span class="tag bad">avoid</span></td></tr>
+        <tr><td>female-c, male-b, male-f</td><td class="num">0 to 24%</td><td class="num">43 to 47%</td><td><span class="tag bad">avoid</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="anim">
+    <h2>Animation map</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>Visual state</th><th>Kenney clip</th><th class="num">Length</th></tr></thead>
+      <tbody>
+        <tr><td><code>idle</code></td><td>idle, loop</td><td class="num">1.33 s</td></tr>
+        <tr><td><code>run</code></td><td>walk and sprint, blend by speed</td><td class="num">0.67 and 0.50 s</td></tr>
+        <tr><td><code>carry</code></td><td>holding-right or holding-both, a pose</td><td class="num">0.17 s</td></tr>
+        <tr><td><code>throw</code></td><td>holding-right-shoot or attack-melee-right</td><td class="num">0.20 or 0.42 s</td></tr>
+        <tr><td><code>dash</code></td><td>sprint at faster speed</td><td class="num">0.50 s</td></tr>
+        <tr><td><code>die</code></td><td>die, hold the last frame</td><td class="num">0.33 s</td></tr>
+        <tr><td><code>hit</code></td><td>fall or crouch</td><td class="num">0.33 or 0.17 s</td></tr>
+        <tr><td>kick away</td><td>attack-kick-right</td><td class="num">0.53 s</td></tr>
+        <tr><td>pick up</td><td>pick-up</td><td class="num">0.33 s</td></tr>
+      </tbody>
+    </table></div>
+    <p class="cap">The skeleton has 7 joints, which keeps skinning cheap. Keep each pack in its own folder with its own colormap file, so the importer stores one texture per pack.</p>
+  </section>
+
+  <section id="decide">
+    <h2>Decisions</h2>
+    <form data-lavish-question="3d-decisions" onsubmit="event.preventDefault(); const f = event.currentTarget; const answers = [...f.querySelectorAll('input[type=radio]:checked')].map(i => ({ question: i.dataset.q, answer: i.value })); window.lavish.queuePrompt('Apply these 3D decisions. The first option of each question is the research recommendation.', { tag: '3d-decisions', text: answers.length + ' 3D answers', element: f, data: { items: answers } });">
+      <div class="qgrid">
+        <fieldset class="q"><legend>How do we show 3D?</legend>
+          <label class="opt"><input type="radio" class="radio radio-sm" name="path" value="A: shared SubViewport, after 2D is stable" data-q="How do we show 3D?" checked> <span>A: shared SubViewport, after the 2D game is stable</span></label>
+          <label class="opt"><input type="radio" class="radio radio-sm" name="path" value="C: pre-rendered sprites" data-q="How do we show 3D?"> <span>C: pre-rendered sprites, pure 2D game</span></label>
+          <label class="opt"><input type="radio" class="radio radio-sm" name="path" value="Stay 2D" data-q="How do we show 3D?"> <span>Stay 2D, skip 3D</span></label>
+        </fieldset>
+        <fieldset class="q"><legend>Which sandal?</legend>
+          <label class="opt"><input type="radio" class="radio radio-sm" name="sandal" value="Primitive sandal" data-q="Which sandal?" checked> <span>Primitive: flat sole and straps, no licence</span></label>
+          <label class="opt"><input type="radio" class="radio radio-sm" name="sandal" value="CC0 slippers by Isa Lousberg" data-q="Which sandal?"> <span>CC0 slippers by Isa Lousberg</span></label>
+          <label class="opt"><input type="radio" class="radio radio-sm" name="sandal" value="A CC BY model, with credits" data-q="Which sandal?"> <span>A CC BY model, with a credit line</span></label>
+        </fieldset>
+        <fieldset class="q"><legend>Camera pitch</legend>
+          <label class="opt"><input type="radio" class="radio radio-sm" name="pitch" value="50 degrees" data-q="Camera pitch" checked> <span>50 degrees</span></label>
+          <label class="opt"><input type="radio" class="radio radio-sm" name="pitch" value="65 degrees" data-q="Camera pitch"> <span>65 degrees</span></label>
+          <label class="opt"><input type="radio" class="radio radio-sm" name="pitch" value="35 degrees" data-q="Camera pitch"> <span>35 degrees</span></label>
+        </fieldset>
+        <fieldset class="q"><legend>The peach floor fails contrast. What do we do?</legend>
+          <label class="opt"><input type="radio" class="radio radio-sm" name="floor" value="Dark flat floor" data-q="The peach floor fails contrast. What do we do?" checked> <span>Dark flat floor, keep today's measured contrast</span></label>
+          <label class="opt"><input type="radio" class="radio radio-sm" name="floor" value="Keep peach, dark outline on every disc" data-q="The peach floor fails contrast. What do we do?"> <span>Keep peach, add a dark outline to every disc</span></label>
+        </fieldset>
+        <fieldset class="q"><legend>Which characters?</legend>
+          <label class="opt"><input type="radio" class="radio radio-sm" name="chars" value="Low clash set" data-q="Which characters?" checked> <span>Low clash: male-e, female-e, raider, zombie</span></label>
+          <label class="opt"><input type="radio" class="radio radio-sm" name="chars" value="Any character" data-q="Which characters?"> <span>Any character, the disc carries the team</span></label>
+        </fieldset>
+      </div>
+      <div class="actions"><button type="submit" class="btn btn-primary">Queue answers</button><span class="cap">The first option in each group is the research recommendation.</span></div>
+    </form>
+  </section>
+
+  <section id="credits">
+    <h2>Licences and credits</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>Source</th><th>Licence</th><th>Credit line</th></tr></thead>
+      <tbody>
+        <tr><td>Kenney Mini Characters, Mini Arena, Mini Forest</td><td>CC0</td><td>None needed. Optional: Kenney (www.kenney.nl).</td></tr>
+        <tr><td>Primitive sandal</td><td>none</td><td>None</td></tr>
+        <tr><td>Slippers by Isa Lousberg, <a href="https://poly.pizza/m/XV1WqNYen3">poly.pizza</a></td><td>CC0</td><td>None needed. Log the row in ASSETS.md.</td></tr>
+        <tr><td>jeremy, J-Toastie, Poly by Google (poly.pizza)</td><td>CC BY (3.0, version unconfirmed)</td><td>"title" by author, poly.pizza link, licensed under CC BY 3.0.</td></tr>
+      </tbody>
+    </table></div>
+    <h3>Unconfirmed</h3>
+    <ul class="cap">
+      <li>Frame rate of 3D on a real Android phone.</li>
+      <li>Whether Kenney's other 3D packs hold a sandal. I read only page 1 of 14 of the catalogue.</li>
+      <li>The CC BY version number and the look of the jeremy and J-Toastie models.</li>
+      <li>Every hour estimate.</li>
+      <li>Whether the glTF importer sets loop flags on Kenney clips.</li>
+      <li>The blue and red clothing shares. The heuristic depends on how I classified colormap cells.</li>
+    </ul>
+  </section>
+
+  <footer>Full notes: docs/research/3d-assets.md. Models and previews by Kenney, CC0. Scratch renders by this research.</footer>
+</main>
+</body>
+</html>

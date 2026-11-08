@@ -1,0 +1,17 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+driver attached: true owner_probe set: true
+scatter 1 started, stalls so far 0, frame 374
+heartbeat frame=600 phase=2 scatters=1 stalls=0
+scatter 2 started, stalls so far 0, frame 750
+heartbeat frame=1200 phase=1 scatters=2 stalls=0
+scatter 3 started, stalls so far 0, frame 1216
+heartbeat frame=1800 phase=2 scatters=3 stalls=0
+heartbeat frame=2400 phase=2 scatters=3 stalls=0
+heartbeat frame=3000 phase=2 scatters=3 stalls=0
+heartbeat frame=3600 phase=2 scatters=3 stalls=0
+heartbeat frame=4200 phase=2 scatters=3 stalls=0
+heartbeat frame=4800 phase=2 scatters=3 stalls=0
+TIMEOUT-NOT-LOST STALL scatter=3 at=60.0s pass_sandal pos=(713,262) off_centre=122 carried_by=team 1 defender alive=true frozen=true in_flight=false speed=0.0 near_wall=false outside_arena=false in_stack=false loose_listed=false closest_live_defender=22 defenders=["alive=true d=179", "alive=true d=22", "alive=true d=193"] pickup_enabled=true | bot attached=true processing=true hold_timer=0.2 next_decision=57.0 clock=60.3 reaction=0.50 phase_seen=2 move_intent=(0.0, 0.0) is_human_body=false in_human_group=false | attackers=["A@(402,466) carry=true human=true", "Ax@(611,355) carry=false human=false", "A@(642,391) carry=false human=false"] | stack down=true placed=2 | loose=[]
+DONE mode=idle scatter_phases=3 stalls=1 ends={ "rebuilt": 2, "all_mati": 0, "timeout": 1 }
+TIMEOUT-NOT-LOST STALL scatter=3 at=60.0s pass_sandal pos=(713,262) off_centre=122 carried_by=team 1 defender alive=true frozen=true in_flight=false speed=0.0 near_wall=false outside_arena=false in_stack=false loose_listed=false closest_live_defender=22 defenders=["alive=true d=179", "alive=true d=22", "alive=true d=193"] pickup_enabled=true | bot attached=true processing=true hold_timer=0.2 next_decision=57.0 clock=60.3 reaction=0.50 phase_seen=2 move_intent=(0.0, 0.0) is_human_body=false in_human_group=false | attackers=["A@(402,466) carry=true human=true", "Ax@(611,355) carry=false human=false", "A@(642,391) carry=false human=false"] | stack down=true placed=2 | loose=[]

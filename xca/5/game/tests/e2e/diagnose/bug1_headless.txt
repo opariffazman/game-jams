@@ -1,0 +1,33 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+geometry: throw_radius=260 hand_offset=30 ranged_distance=230 stack_sandal_radius=14 stack_gap=2 topple_distance=40
+stack spots (y offsets from centre): -30, 0, 30 ; sandal reaches centre ring at 230 px from thrower start
+aim error +0 deg: topple 12 of 12
+  angle   0 toppled=true contact_f=14 v_contact=90 halted_f=15 halted_at=20 min_dist=0 disp=[0,30,355] end=16
+  angle  29 toppled=true contact_f=14 v_contact=103 halted_f=15 halted_at=21 min_dist=16 disp=[0,51,363] end=22
+  angle  59 toppled=true contact_f=13 v_contact=644 halted_f=52 halted_at=161 min_dist=22 disp=[0,76,94] end=207
+  angle  90 toppled=true contact_f=12 v_contact=90 halted_f=13 halted_at=50 min_dist=19 disp=[0,286,71] end=19
+  angle 119 toppled=true contact_f=13 v_contact=644 halted_f=52 halted_at=161 min_dist=22 disp=[0,76,94] end=207
+  angle 150 toppled=true contact_f=14 v_contact=103 halted_f=15 halted_at=21 min_dist=16 disp=[0,51,363] end=22
+  angle 180 toppled=true contact_f=14 v_contact=90 halted_f=15 halted_at=20 min_dist=0 disp=[0,30,355] end=16
+  angle 210 toppled=true contact_f=14 v_contact=103 halted_f=15 halted_at=21 min_dist=16 disp=[0,60,333] end=22
+  angle 239 toppled=true contact_f=13 v_contact=644 halted_f=52 halted_at=161 min_dist=22 disp=[0,186,78] end=207
+  angle 270 toppled=true contact_f=12 v_contact=90 halted_f=13 halted_at=50 min_dist=19 disp=[0,30,30] end=19
+  angle 300 toppled=true contact_f=13 v_contact=644 halted_f=52 halted_at=161 min_dist=22 disp=[0,186,78] end=207
+  angle 330 toppled=true contact_f=14 v_contact=103 halted_f=15 halted_at=21 min_dist=16 disp=[0,60,333] end=22
+aim error +3 deg: topple 12 of 12
+aim error +6 deg: topple 12 of 12
+aim error +10 deg: topple 6 of 12
+  angle   0 toppled=true contact_f=14 v_contact=450 halted_f=49 halted_at=173 min_dist=48 disp=[0,278,30] end=219
+  angle  29 toppled=false contact_f=16 v_contact=0 halted_f=16 halted_at=46 min_dist=45 disp=[0,30,30] end=46
+  angle  59 toppled=false contact_f=-1 v_contact=-1 halted_f=16 halted_at=45 min_dist=45 disp=[0,30,30] end=45
+  angle  90 toppled=false contact_f=-1 v_contact=-1 halted_f=16 halted_at=45 min_dist=45 disp=[0,30,30] end=45
+  angle 119 toppled=true contact_f=13 v_contact=716 halted_f=60 halted_at=251 min_dist=52 disp=[0,125,50] end=296
+  angle 150 toppled=true contact_f=13 v_contact=479 halted_f=50 halted_at=177 min_dist=55 disp=[0,148,48] end=222
+  angle 180 toppled=true contact_f=14 v_contact=450 halted_f=49 halted_at=173 min_dist=48 disp=[0,30,30] end=219
+  angle 210 toppled=false contact_f=16 v_contact=0 halted_f=16 halted_at=46 min_dist=45 disp=[0,30,30] end=46
+  angle 239 toppled=false contact_f=-1 v_contact=-1 halted_f=16 halted_at=45 min_dist=45 disp=[0,30,30] end=45
+  angle 270 toppled=false contact_f=-1 v_contact=-1 halted_f=16 halted_at=45 min_dist=45 disp=[0,30,30] end=45
+  angle 300 toppled=true contact_f=13 v_contact=716 halted_f=60 halted_at=251 min_dist=52 disp=[0,30,30] end=296
+  angle 330 toppled=true contact_f=13 v_contact=479 halted_f=50 halted_at=177 min_dist=55 disp=[0,198,30] end=222
+aim error +15 deg: topple 0 of 12

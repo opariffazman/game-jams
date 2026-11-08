@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="theme-color" content="#000000">
+		<title>$GODOT_PROJECT_NAME</title>
+		<style>
+html, body {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	width: 100%;
+	height: 100%;
+	height: 100dvh;
+	background-color: #000;
+	color: #fff;
+	overflow: hidden;
+	overscroll-behavior: none;
+	touch-action: none;
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-touch-callout: none;
+	-webkit-tap-highlight-color: transparent;
+	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#canvas {
+	position: fixed;
+	inset: 0;
+	display: block;
+	width: 100%;
+	height: 100dvh;
+	outline: none;
+	touch-action: none;
+}
+
+.overlay {
+	position: fixed;
+	inset: 0;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 1.25rem;
+	padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+	background-color: #000;
+	text-align: center;
+}
+
+#start {
+	z-index: 20;
+	cursor: pointer;
+}
+
+#start-button {
+	font-size: clamp(1.5rem, 6vmin, 3rem);
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	padding: 0.6em 1.4em;
+	border: 3px solid #fff;
+	border-radius: 0.5em;
+}
+
+#start-hint {
+	margin: 0;
+	font-size: clamp(0.9rem, 3vmin, 1.25rem);
+	color: #c8c8c8;
+}
+
+#status {
+	z-index: 10;
+	display: none;
+}
+
+#status-percent {
+	font-size: clamp(1.5rem, 7vmin, 3rem);
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0.05em;
+}
+
+#status-track {
+	position: relative;
+	width: min(70%, 28rem);
+	height: clamp(0.9rem, 3.5vmin, 1.5rem);
+	background-color: #2a2a2a;
+	border: 2px solid #fff;
+	border-radius: 999px;
+	overflow: hidden;
+}
+
+#status-fill {
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 0;
+	background-color: #4cc9f0;
+	border-radius: 999px;
+	transition: width 0.15s linear;
+}
+
+#status-track.indeterminate #status-fill {
+	width: 35%;
+	transition: none;
+	animation: status-slide 1s ease-in-out infinite alternate;
+}
+
+@keyframes status-slide {
+	from { transform: translateX(0); }
+	to { transform: translateX(186%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#status-track.indeterminate #status-fill {
+		width: 100%;
+		animation: none;
+	}
+}
+
+#status-notice {
+	display: none;
+	max-width: 90%;
+	background-color: #5b3943;
+	border: 1px solid #9b3943;
+	border-radius: 0.5rem;
+	color: #fff;
+	line-height: 1.3;
+	padding: 1rem;
+}
+
+#rotate {
+	z-index: 30;
+	display: none;
+	font-size: clamp(1.25rem, 5vmin, 2rem);
+}
+
+@media (orientation: portrait) {
+	body.started #rotate {
+		display: flex;
+	}
+}
+		</style>
+		$GODOT_HEAD_INCLUDE
+	</head>
+	<body>
+		<canvas id="canvas">
+			Your browser does not support the canvas tag.
+		</canvas>
+
+		<noscript>
+			<div class="overlay" style="z-index: 40;">Your browser does not support JavaScript.</div>
+		</noscript>
+
+		<div id="start" class="overlay" role="button" tabindex="0" aria-label="Tap to play">
+			<div id="start-button">TAP TO PLAY</div>
+			<p id="start-hint">Best played in landscape</p>
+		</div>
+
+		<div id="status" class="overlay">
+			<img id="status-splash" class="$GODOT_SPLASH_CLASSES" src="$GODOT_SPLASH" alt="" hidden>
+			<div id="status-percent" aria-hidden="true">0%</div>
+			<div id="status-track" class="indeterminate" role="progressbar" aria-label="Loading" aria-valuemin="0" aria-valuemax="100">
+				<div id="status-fill"></div>
+			</div>
+			<div id="status-notice" role="alert"></div>
+		</div>
+
+		<div id="rotate" class="overlay" role="alert">Rotate your phone to landscape</div>
+
+		<script src="$GODOT_URL"></script>
+		<script>
+const GODOT_CONFIG = $GODOT_CONFIG;
+const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
+const engine = new Engine(GODOT_CONFIG);
+
+(function () {
+	const startOverlay = document.getElementById('start');
+	const startButton = document.getElementById('start-button');
+	const statusOverlay = document.getElementById('status');
+	const statusTrack = document.getElementById('status-track');
+	const statusFill = document.getElementById('status-fill');
+	const statusPercent = document.getElementById('status-percent');
+	const statusNotice = document.getElementById('status-notice');
+	const FULLSCREEN_TIMEOUT_MS = 1500;
+	const ORIENTATION_TIMEOUT_MS = 1000;
+
+	let started = false;
+
+	function showNotice(text) {
+		console.error(text);
+		statusNotice.textContent = text;
+		statusNotice.style.whiteSpace = 'pre-line';
+		statusTrack.style.display = 'none';
+		statusPercent.style.display = 'none';
+		statusNotice.style.display = 'block';
+		statusOverlay.style.display = 'flex';
+		startOverlay.style.display = 'none';
+	}
+
+	function hasWebGL2() {
+		try {
+			return !!document.createElement('canvas').getContext('webgl2');
+		} catch (err) {
+			return false;
+		}
+	}
+
+	async function enterFullscreen() {
+		const root = document.documentElement;
+		const request = root.requestFullscreen || root.webkitRequestFullscreen;
+		if (!request) {
+			return;
+		}
+		try {
+			// Safari wraps the call in a callback API and returns undefined.
+			const result = request.call(root, { navigationUI: 'hide' });
+			if (result && typeof result.then === 'function') {
+				await Promise.race([result, new Promise((resolve) => setTimeout(resolve, FULLSCREEN_TIMEOUT_MS))]);
+			}
+		} catch (err) {
+			console.warn('Fullscreen unavailable:', err);
+		}
+	}
+
+	async function lockLandscape() {
+		try {
+			// Android Chrome can leave this promise pending when the phone is in portrait, so the engine must not wait on it.
+			await Promise.race([
+				screen.orientation.lock('landscape'),
+				new Promise((resolve) => setTimeout(resolve, ORIENTATION_TIMEOUT_MS)),
+			]);
+		} catch (err) {
+			console.warn('Orientation lock unavailable:', err);
+		}
+	}
+
+	// Only with ?debug=1: a phone has no console, so progress and errors go to the dev server log.
+	const debugging = new URLSearchParams(location.search).has('debug');
+	let lastBytes = 0;
+	let lastTotal = 0;
+	function report(message) {
+		if (debugging) {
+			fetch('/__log?' + encodeURIComponent(message), { cache: 'no-store' }).catch(() => {});
+		}
+	}
+	if (debugging) {
+		report('page ' + navigator.userAgent + ' secure=' + window.isSecureContext + ' size=' + innerWidth + 'x' + innerHeight + ' dpr=' + devicePixelRatio);
+		window.addEventListener('error', (event) => report('error ' + event.message));
+		window.addEventListener('unhandledrejection', (event) => report('rejection ' + event.reason));
+		setInterval(() => report('heartbeat bytes=' + lastBytes + ' total=' + lastTotal), 2000);
+	}
+
+	// Compressed downloads can report more bytes than the declared size, so the ratio is clamped.
+	function showProgress(current, total) {
+		lastBytes = current;
+		lastTotal = total;
+		if (!(current > 0 && total > 0)) {
+			statusTrack.classList.add('indeterminate');
+			statusPercent.textContent = '';
+			return;
+		}
+		const percent = Math.min(100, Math.floor((current / total) * 100));
+		statusTrack.classList.remove('indeterminate');
+		statusFill.style.width = percent + '%';
+		statusPercent.textContent = percent + '%';
+		statusTrack.setAttribute('aria-valuenow', String(percent));
+		// At 100% the engine still compiles the wasm, so the bar returns to motion until the first frame.
+		if (percent >= 100) {
+			statusTrack.classList.add('indeterminate');
+			statusPercent.textContent = '';
+		}
+	}
+
+	function startEngine() {
+		engine.startGame({
+			'onProgress': showProgress,
+		}).then(() => {
+			report('engine started');
+			statusOverlay.remove();
+		}, (err) => {
+			report('engine failed ' + (err instanceof Error ? err.message : String(err)));
+			showNotice(err instanceof Error ? err.message : String(err));
+		});
+	}
+
+	async function onStart(event) {
+		event.preventDefault();
+		if (started) {
+			return;
+		}
+		started = true;
+		report('tap');
+		startOverlay.style.display = 'none';
+		// The loading bar shows before the fullscreen and orientation waits, so the screen never goes blank.
+		statusOverlay.style.display = 'flex';
+		document.body.classList.add('started');
+		// Fullscreen and orientation lock need the user gesture, so they run before the slow engine load.
+		await enterFullscreen();
+		report('fullscreen done');
+		await lockLandscape();
+		report('orientation done, starting engine');
+		startEngine();
+	}
+
+	if (!hasWebGL2()) {
+		showNotice('WebGL2 is not available.\nUpdate your browser or enable hardware acceleration.');
+		return;
+	}
+
+	const missing = Engine.getMissingFeatures({ threads: GODOT_THREADS_ENABLED });
+	if (missing.length !== 0) {
+		showNotice('The following features required to run this game are missing:\n' + missing.join('\n'));
+		return;
+	}
+
+	startOverlay.addEventListener('click', onStart);
+	startOverlay.addEventListener('keydown', (event) => {
+		if (event.key === 'Enter' || event.key === ' ') {
+			onStart(event);
+		}
+	});
+	startButton.focus();
+	document.addEventListener('contextmenu', (event) => event.preventDefault());
+}());
+		</script>
+	</body>
+</html>

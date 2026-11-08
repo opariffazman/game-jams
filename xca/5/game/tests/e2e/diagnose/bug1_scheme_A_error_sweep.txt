@@ -1,0 +1,38 @@
+attempt 0 scheme A err 0deg: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 0x0 grey ring 54 px => stood
+attempt 1 scheme A err 4deg: ring (277,259) bearing (0.941,-0.339) stack bbox 18x46 -> 0x0 grey ring 0 px => stood
+attempt 2 scheme A err 8deg: ring (277,259) bearing (0.962,-0.273) stack bbox 18x46 -> 0x0 grey ring 54 px => stood
+attempt 3 scheme A err 12deg: ring (277,259) bearing (0.979,-0.205) stack bbox 18x46 -> 0x0 grey ring 0 px => stood
+attempt 4 scheme A err 16deg: ring (277,259) bearing (0.991,-0.135) stack bbox 18x46 -> 0x0 grey ring 41 px => stood
+attempt 5 scheme A err 20deg: ring (277,259) bearing (0.998,-0.065) stack bbox 18x46 -> 0x0 grey ring 38 px => stood
+attempt 6 scheme A err 0deg: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 0x0 grey ring 27 px => stood
+attempt 7 scheme A err 4deg: ring (277,259) bearing (0.942,-0.335) stack bbox 18x46 -> 0x0 grey ring 30 px => stood
+attempt 8 scheme A err 8deg: ring (277,259) bearing (0.963,-0.269) stack bbox 18x46 -> 0x0 grey ring 0 px => stood
+attempt 9 scheme A err 12deg: ring (277,259) bearing (0.979,-0.205) stack bbox 18x46 -> 0x0 grey ring 57 px => stood
+attempt 10 scheme A err 16deg: ring (277,259) bearing (0.991,-0.132) stack bbox 18x46 -> 0x0 grey ring 48 px => stood
+attempt 11 scheme A err 20deg: ring (276,259) bearing (0.998,-0.064) stack bbox 18x46 -> 0x0 grey ring 61 px => stood
+attempt 12 scheme A err 0deg: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 0x0 grey ring 0 px => stood
+attempt 13 scheme A err 4deg: ring (277,259) bearing (0.941,-0.339) stack bbox 18x46 -> 0x0 grey ring 1882 px => TOPPLED
+attempt 14 scheme A err 8deg: ring (277,259) bearing (0.962,-0.271) stack bbox 18x46 -> 0x0 grey ring 0 px => stood
+attempt 15 scheme A err 12deg: ring (277,259) bearing (0.979,-0.205) stack bbox 18x46 -> 0x0 grey ring 31 px => stood
+attempt 16 scheme A err 16deg: ring (277,259) bearing (0.991,-0.135) stack bbox 18x46 -> 0x0 grey ring 56 px => stood
+attempt 17 scheme A err 20deg: ring (277,259) bearing (0.998,-0.067) stack bbox 18x46 -> 0x0 grey ring 41 px => stood
+attempt 18 scheme A err 0deg: ring (277,259) bearing (0.915,-0.404) stack bbox 18x46 -> 0x0 grey ring 0 px => stood
+attempt 19 scheme A err 4deg: ring (277,259) bearing (0.941,-0.339) stack bbox 18x46 -> 0x0 grey ring 59 px => stood
+attempt 20 scheme A err 8deg: ring (276,259) bearing (0.963,-0.270) stack bbox 18x46 -> 0x0 grey ring 28 px => stood
+attempt 21 scheme A err 12deg: ring (279,259) bearing (0.978,-0.209) stack bbox 18x46 -> 0x0 grey ring 43 px => stood
+attempt 22 scheme A err 16deg: ring (277,259) bearing (0.991,-0.136) stack bbox 18x46 -> 0x0 grey ring 23 px => stood
+attempt 23 scheme A err 20deg: ring (277,259) bearing (0.998,-0.062) stack bbox 18x46 -> 0x0 grey ring 7 px => stood
+attempt 24 scheme A err 0deg: ring (277,259) bearing (0.915,-0.403) stack bbox 18x46 -> 0x0 grey ring 0 px => stood
+attempt 25 scheme A err 4deg: ring (277,259) bearing (0.941,-0.339) stack bbox 18x46 -> 0x0 grey ring 2 px => stood
+attempt 26 scheme A err 8deg: ring (277,259) bearing (0.962,-0.273) stack bbox 18x46 -> 0x0 grey ring 48 px => stood
+attempt 27 scheme A err 12deg: ring (277,259) bearing (0.980,-0.201) stack bbox 18x46 -> 0x0 grey ring 33 px => stood
+attempt 28 scheme A err 16deg: ring (277,259) bearing (0.991,-0.132) stack bbox 18x46 -> 0x0 grey ring 64 px => stood
+attempt 29 scheme A err 20deg: ring (277,259) bearing (0.998,-0.062) stack bbox 18x46 -> 0x0 grey ring 0 px => stood
+
+SCHEME A: topple 1 of 30 (3 percent)
+  error 0 deg: 0 of 5
+  error 4 deg: 1 of 5
+  error 8 deg: 0 of 5
+  error 12 deg: 0 of 5
+  error 16 deg: 0 of 5
+  error 20 deg: 0 of 5

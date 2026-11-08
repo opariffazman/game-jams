@@ -1,0 +1,23 @@
+class_name Sandal
+extends RigidBody2D
+## Fake sandal for the bot test.
+
+signal hit_character(character: Character)
+
+const NO_OWNER: int = -1
+
+var in_flight: bool = false
+var owner_team: int = NO_OWNER
+var is_pass_sandal: bool = false
+var last_range: float = -1.0
+
+
+func launch(direction: Vector2, power: float) -> void:
+	linear_velocity = direction * 700.0 * power
+	in_flight = true
+
+
+func launch_ranged(direction: Vector2, distance: float, _speed_power: float = 1.0) -> void:
+	last_range = distance
+	linear_velocity = direction * 900.0
+	in_flight = true
