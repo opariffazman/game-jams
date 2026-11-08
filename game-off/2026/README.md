@@ -24,6 +24,7 @@ Tap a gunman to shift places with him. The hero strikes the nearest gunman, and 
 
 - Built and smoke-tested: the run, boss, Locker, boons, shield and knife gunmen, turn events, undo, dead-end banner, and the 3D replay, death reel, and best-chain recap.
 - Cover blocks are off (`Rooms.COVER_ENABLED`) until they get one consistent rule.
-- Not tried: play on a real phone, the web clipboard and `?seed=` start, and the CI export on Godot 4.6.3. The game was built on 4.7.2.
+- Godot 4.6.3 (the CI version): import, a headless run, and `--smoke` pass on a fresh copy. The game was built on 4.7.2.
+- Not tried: play on a real phone, the web clipboard and `?seed=` start, and the web export with the 4.6.3 templates (needs a CI run).
 - Not built: heat, barrel, shotgun, ricochet, assist mode, the itch.io page.
 - Floors 1 and 2 measure close in difficulty (random-tap win rate 0.33 and 0.29).
