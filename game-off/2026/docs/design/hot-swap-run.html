@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en" data-theme="black">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hot Swap - roguelite run proposal</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/daisyui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/themes.css">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.2.4/dist/index.global.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :where(.grid, .flex) > * { min-width: 0; }
+  :where(p, h1, h2, h3, h4, li, dd, td, th, .badge) { overflow-wrap: anywhere; }
+  :where(svg) { max-width: 100%; height: auto; }
+  :root {
+    --bg: #08080c; --panel: #13131a; --line: #2c2c3a; --ink: #f6f6f8; --mute: #bcbccb;
+    --mag: #ff2e88; --cy: #19e3ff; --amber: #ffb020;
+  }
+  html, body { background: var(--bg); color: var(--ink); }
+  body { font-family: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; line-height: 1.55; }
+  h1, h2, h3 { font-family: "Arial Black", "Helvetica Neue", Impact, sans-serif; letter-spacing: -0.02em; text-transform: uppercase; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+  .eyebrow { color: var(--amber); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+  .chip { display: inline-block; border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; font-size: 12px; background: var(--panel); }
+  .chip.hot { border-color: var(--mag); color: var(--mag); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 22px; }
+  .muted { color: var(--mute); }
+  .mag { color: var(--mag); } .cy { color: var(--cy); } .amber { color: var(--amber); }
+  a { color: var(--cy); text-decoration: underline; text-underline-offset: 3px; }
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 16px; }
+  .three { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 14px; }
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  @media (max-width: 820px) { .split { grid-template-columns: minmax(0, 1fr); } }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--mute); font-weight: 600; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
+  .tablewrap { overflow-x: auto; }
+  dl.spec { display: grid; grid-template-columns: minmax(0, 110px) minmax(0, 1fr); gap: 8px 14px; font-size: 14px; margin: 0; }
+  dl.spec dt { color: var(--amber); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; padding-top: 2px; }
+  dl.spec dd { margin: 0; }
+  .tag { display: inline-block; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; border: 1px solid var(--line); border-radius: 6px; padding: 1px 8px; margin-right: 6px; color: var(--mute); }
+  fieldset.q { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin: 0 0 12px; }
+  fieldset.q legend { padding: 0 8px; font-weight: 700; }
+  .opt { display: flex; align-items: flex-start; gap: 10px; margin: 4px 0; min-height: 44px; cursor: pointer; }
+  .opt input { width: 22px; height: 22px; margin-top: 2px; accent-color: var(--mag); flex: none; }
+  textarea { width: 100%; background: #0d0d14; color: var(--ink); border: 1px solid var(--mute); border-radius: 10px; padding: 10px 12px; font: inherit; }
+  .go { background: var(--mag); color: #08080c; font-weight: 800; border: 0; border-radius: 12px; padding: 14px 22px; min-height: 48px; cursor: pointer; font-family: inherit; }
+  .go:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid var(--cy); outline-offset: 2px; }
+  .status { margin-left: 12px; color: var(--amber); }
+</style>
+</head>
+<body>
+
+<header class="wrap" style="padding-top:48px;padding-bottom:12px">
+  <p class="eyebrow">Game Off 2026 / SHIFT / Hot Swap / direction proposal</p>
+  <h1 style="font-size:clamp(34px,6vw,64px);line-height:1;margin:8px 0 14px">Clock in.<br><span class="mag">Climb. Clock out.</span></h1>
+  <p class="muted" style="max-width:760px;font-size:16px">Decision: lock the overall shape of Hot Swap. Each night shift is one run up a tower, built from generated rooms that get harder floor by floor. Lose all hearts and the shift ends. You start again at the bottom and keep what you earned. Hades is the model for the loop. The swap puzzle is the combat.</p>
+  <p style="margin-top:14px">
+    <span class="chip hot">Run: about 10 minutes</span>
+    <span class="chip hot">Fail = lose a heart, not the run</span>
+    <span class="chip">0 hearts = back to the lobby</span>
+    <span class="chip">Meta upgrades persist</span>
+    <span class="chip">Turn-based, no timer</span>
+    <span class="chip">Replay reel per run</span>
+  </p>
+</header>
+
+<main class="wrap" style="display:grid;gap:40px;padding-top:24px;padding-bottom:80px">
+
+<!-- 01 PICTURE -->
+<section aria-labelledby="map">
+  <p class="eyebrow">01 / The run in one picture</p>
+  <h2 id="map" style="font-size:28px;margin:4px 0 16px">A tower. Two doors per room.</h2>
+  <div class="card split">
+    <figure style="margin:0">
+      <svg viewBox="0 0 520 560" role="img" aria-labelledby="map-t" width="100%" style="color:var(--mute)">
+        <title id="map-t">A tower map. The run starts at the lobby at the bottom and climbs four floors of door choices to a boss at the top. A dashed arrow from any room back to the lobby shows that losing all hearts restarts the run.</title>
+        <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#ff2e88"/></marker></defs>
+        <g font-family="ui-monospace,monospace" font-size="11">
+          <rect id="m-boss" x="185" y="14" width="150" height="40" rx="12" fill="#1c1c28" stroke="#ff2e88" stroke-width="2"/>
+          <text x="260" y="38" text-anchor="middle" fill="#f6f6f8" font-weight="700">BOSS: THE MANAGER</text>
+          <g stroke="#2c2c3a" stroke-width="2" fill="none">
+            <path d="M200 54 L150 90"/><path d="M320 54 L370 90"/>
+            <path d="M150 128 L150 146"/><path d="M370 128 L370 146"/>
+            <path d="M150 168 L150 186"/><path d="M370 168 L370 186"/>
+          </g>
+          <g id="m-f4" fill="#1c1c28" stroke="#bcbccb">
+            <rect x="90" y="90" width="120" height="38" rx="10"/><rect x="310" y="90" width="120" height="38" rx="10"/>
+          </g>
+          <g fill="#f6f6f8" text-anchor="middle"><text x="150" y="113">ELITE</text><text x="370" y="113">BOON</text></g>
+          <g id="m-f3" fill="#1c1c28" stroke="#bcbccb">
+            <rect x="90" y="190" width="120" height="38" rx="10"/><rect x="310" y="190" width="120" height="38" rx="10"/>
+          </g>
+          <g fill="#f6f6f8" text-anchor="middle"><text x="150" y="213">HEART</text><text x="370" y="213">TIPS</text></g>
+          <g stroke="#2c2c3a" stroke-width="2" fill="none">
+            <path d="M150 228 L150 246"/><path d="M370 228 L370 246"/><path d="M150 268 L150 286"/><path d="M370 268 L370 286"/>
+            <path d="M150 328 L150 346"/><path d="M370 328 L370 346"/><path d="M150 388 L150 406"/><path d="M370 388 L370 406"/>
+          </g>
+          <g id="m-f2" fill="#1c1c28" stroke="#bcbccb">
+            <rect x="90" y="290" width="120" height="38" rx="10"/><rect x="310" y="290" width="120" height="38" rx="10"/>
+          </g>
+          <g fill="#f6f6f8" text-anchor="middle"><text x="150" y="313">BOON</text><text x="370" y="313">ELITE</text></g>
+          <g id="m-f1" fill="#1c1c28" stroke="#bcbccb">
+            <rect x="90" y="350" width="120" height="38" rx="10"/><rect x="310" y="350" width="120" height="38" rx="10"/>
+          </g>
+          <g fill="#f6f6f8" text-anchor="middle"><text x="150" y="373">TIPS</text><text x="370" y="373">HEART</text></g>
+          <g stroke="#2c2c3a" stroke-width="2" fill="none"><path d="M200 506 L150 388"/><path d="M320 506 L370 388"/></g>
+          <rect id="m-start" x="185" y="480" width="150" height="40" rx="12" fill="#1c1c28" stroke="#19e3ff" stroke-width="2"/>
+          <text x="260" y="504" text-anchor="middle" fill="#f6f6f8" font-weight="700">LOBBY: CLOCK IN</text>
+          <text x="260" y="545" text-anchor="middle" fill="#bcbccb">Locker: spend tips, pick heat</text>
+        </g>
+        <g font-family="ui-monospace,monospace" font-size="10" fill="#bcbccb">
+          <text x="445" y="112">FLOOR 4</text><text x="445" y="212">FLOOR 3</text><text x="445" y="312">FLOOR 2</text><text x="445" y="372">FLOOR 1</text>
+        </g>
+        <path id="m-fail" d="M70 130 C20 250 20 420 180 498" fill="none" stroke="#ff2e88" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arr)"/>
+        <g font-family="ui-monospace,monospace" font-size="10" fill="#ff2e88"><text x="8" y="250">0 HEARTS:</text><text x="8" y="263">SHIFT ENDS</text></g>
+      </svg>
+      <figcaption class="muted" style="font-size:12px;margin-top:6px">Each tower is a different seed. Door labels show the reward, so you choose a route.</figcaption>
+    </figure>
+    <div>
+      <dl class="spec">
+        <dt>Rooms</dt><dd>12 per run: 4 floors of 3 rooms, then a boss. Each room is a Hot Swap puzzle generated from the run seed, floor, and heat.</dd>
+        <dt>Doors</dt><dd>After each room, pick one of two doors. The door shows its reward: a boon, a heart, tips, or an elite room that pays more and is harder.</dd>
+        <dt>Hearts</dt><dd>Start with 3. Fail a room by getting shot or by running out of swaps and you lose one heart and retry that room. Zero hearts ends the run.</dd>
+        <dt>Death</dt><dd>You wake in the lobby. You keep tips and unlocks, lose boons and hearts, and the tower is a new seed. A death reel replays your last swaps in 3D.</dd>
+        <dt>Win</dt><dd>Beat the boss and get a run recap reel with the best chain kills, a share code, and a new heat tier.</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- 02 LOOPS -->
+<section aria-labelledby="loops">
+  <p class="eyebrow">02 / Loops</p>
+  <h2 id="loops" style="font-size:28px;margin:4px 0 16px">Four loops, each with a reason to continue</h2>
+  <div class="card tablewrap" style="padding:8px">
+    <table>
+      <thead><tr><th scope="col">Loop</th><th scope="col">Length</th><th scope="col">What the player does</th><th scope="col">What pulls them on</th></tr></thead>
+      <tbody>
+        <tr><th scope="row" class="mag">Swap</th><td>10 to 30 s</td><td>Read shot lines, tap a gunman, watch the slow-motion resolution.</td><td>The satisfying chain kill. The par target.</td></tr>
+        <tr><th scope="row" class="cy">Room</th><td>about 1 min</td><td>Clear the room within the swap budget, pick a door.</td><td>Route choice and the reward on each door.</td></tr>
+        <tr><th scope="row" class="amber">Run</th><td>about 10 min</td><td>Climb 12 rooms, build a set of boons, manage hearts.</td><td>A boss at the top. Each run feels different because the seed, doors and boons differ.</td></tr>
+        <tr><th scope="row">Meta</th><td>across runs</td><td>Spend tips in the locker. Raise heat for more reward.</td><td>Permanent upgrades, new boons and gunman types, new palettes, heat tiers, and a share code.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 03 WHY EASY -->
+<section aria-labelledby="easy">
+  <p class="eyebrow">03 / The problem we measured</p>
+  <h2 id="easy" style="font-size:28px;margin:4px 0 16px">Random tapping wins about three rooms in four</h2>
+  <div class="two">
+    <article class="card">
+      <p>I ran 300 random-tap games on each of the 63 current rooms. Win rate was 67 to 79 percent in every tier. Tier 5 was no harder than tier 1. Par was 2 swaps in 40 of the 48 generated rooms in tiers 1 to 4.</p>
+      <p class="muted">Cause: unlimited swaps, free retries, one gunman type, uniform random placement, and a difficulty score that counts gunmen instead of decisions.</p>
+    </article>
+    <article class="card">
+      <h3 style="font-size:16px" class="amber">What changes</h3>
+      <ul style="padding-left:18px;margin:0">
+        <li><b>Swap budget:</b> par plus a small slack that shrinks by floor. Overrunning it fails the room.</li>
+        <li><b>Hearts:</b> a failed room costs a heart, so trial and error has a price.</li>
+        <li><b>Metrics:</b> the generator rejects a room when random tapping wins too often.</li>
+        <li><b>Variety:</b> more gunman types and turn events, shown next.</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<!-- 04 DIFFICULTY -->
+<section aria-labelledby="curve">
+  <p class="eyebrow">04 / Difficulty by generator gate</p>
+  <h2 id="curve" style="font-size:28px;margin:4px 0 8px">Harder and harder, checked by the solver</h2>
+  <p class="muted" style="max-width:760px">Every room must pass its floor's gates before it is offered. Win rates are measured with the swap budget on. The generator tries new seeds until a room passes.</p>
+  <div class="card split" style="margin-top:16px">
+    <figure style="margin:0">
+      <svg viewBox="0 0 520 230" role="img" aria-labelledby="c-t" width="100%">
+        <title id="c-t">Line chart. Today random tapping wins about seventy two percent of rooms at every position. The target falls from sixty percent in room one to six percent in room twelve across four floors.</title>
+        <g stroke="#2c2c3a"><path d="M50 20 V180 H500"/><path d="M50 100 H500" stroke-dasharray="3 5"/></g>
+        <g stroke="#2c2c3a" stroke-dasharray="2 6"><path d="M110 20 V180"/><path d="M230 20 V180"/><path d="M350 20 V180"/><path d="M470 20 V180"/></g>
+        <path id="c-today" d="M50 64.8 H490" stroke="#bcbccb" stroke-width="2" stroke-dasharray="5 4" fill="none"/>
+        <polyline id="c-target" points="50,84 90,92 130,100 170,112.8 210,122.4 250,132 290,141.6 330,148 370,154.4 410,160.8 450,164 490,170.4" fill="none" stroke="#ff2e88" stroke-width="3"/>
+        <g fill="#ff2e88"><circle cx="50" cy="84" r="4"/><circle cx="490" cy="170.4" r="4"/></g>
+        <g font-family="ui-monospace,monospace" font-size="11" fill="#f6f6f8">
+          <text x="44" y="24" text-anchor="end">100%</text><text x="44" y="104" text-anchor="end">50%</text><text x="44" y="184" text-anchor="end">0%</text>
+          <text x="80" y="38" text-anchor="middle" fill="#bcbccb">F1</text><text x="170" y="38" text-anchor="middle" fill="#bcbccb">F2</text><text x="290" y="38" text-anchor="middle" fill="#bcbccb">F3</text><text x="410" y="38" text-anchor="middle" fill="#bcbccb">F4</text><text x="490" y="38" text-anchor="middle" fill="#bcbccb">BOSS</text>
+          <text x="300" y="58" fill="#bcbccb">today: flat 67 to 79%</text>
+          <text x="330" y="200" fill="#ff2e88">target: random-tap win rate</text>
+          <text x="50" y="208" fill="#bcbccb">room 1</text><text x="470" y="208" fill="#bcbccb">room 12</text>
+        </g>
+      </svg>
+    </figure>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th scope="col">Floor</th><th scope="col">Random win cap</th><th scope="col">Best solutions</th><th scope="col">Greedy trap</th><th scope="col">Swap slack</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">1 Lobby</th><td>60%</td><td>any</td><td>no</td><td>+2</td></tr>
+          <tr><th scope="row">2 Offices</th><td>40%</td><td>3 or fewer</td><td>1 room in 3</td><td>+1</td></tr>
+          <tr><th scope="row">3 Kitchen</th><td>25%</td><td>2 or fewer</td><td>most rooms</td><td>+1</td></tr>
+          <tr><th scope="row">4 Penthouse</th><td>15%</td><td>1 or 2</td><td>every room</td><td>+0</td></tr>
+          <tr><th scope="row">Boss</th><td>10%</td><td>1</td><td>yes</td><td>+0</td></tr>
+        </tbody>
+      </table>
+      <p class="muted" style="font-size:13px;margin-top:10px"><b>Greedy trap:</b> the tap that kills the most right now is not optimal. <b>Best solutions:</b> how many winning sequences exist at the minimum swaps. Method after <a href="https://arxiv.org/abs/2201.10334?context=cs">Beukman et al.</a> (search effort) and <a href="https://webdocs.cs.ualberta.ca/~nathanst/papers/shen24information.pdf">Shen and Sturtevant</a> (minimum solution length).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 VARIETY -->
+<section aria-labelledby="variety">
+  <p class="eyebrow">05 / Variety kit</p>
+  <h2 id="variety" style="font-size:28px;margin:4px 0 8px">Every room asks a different question</h2>
+  <p class="muted" style="max-width:760px">Rule: each new piece forces a different approach, and everything is shown at the start of the turn. A room is a puzzle, not a dice roll, which is the model that <a href="https://gamedeveloper.com/game-platforms/road-to-the-igf-subset-games-i-into-the-breach-i-">Into the Breach</a> uses. Ten gunman types make 45 pairs and 420 groups of four, so mixing multiplies variety without new art.</p>
+
+  <h3 style="font-size:18px;margin:20px 0 10px" class="cy">Gunman types</h3>
+  <div class="three">
+    <article class="card"><span class="tag">F2</span><b>Shield</b><p class="muted" style="margin:6px 0 0">Blocks shots from the front. Forces you to flank or use friendly fire from the side.</p></article>
+    <article class="card"><span class="tag">F3</span><b>Knife</b><p class="muted" style="margin:6px 0 0">No gun. Walks one cell toward you each turn, so waiting costs you. Forces speed.</p></article>
+    <article class="card"><span class="tag">F3</span><b>Barrel</b><p class="muted" style="margin:6px 0 0">A prop that explodes when shot or hit. Chains kills. Forces you to line up blasts.</p></article>
+    <article class="card"><span class="tag">F4</span><b>Shotgun</b><p class="muted" style="margin:6px 0 0">Fires a wide cone. Hits whole groups, so swapping puts a friend in a big area.</p></article>
+  </div>
+
+  <h3 style="font-size:18px;margin:24px 0 10px" class="amber">Turn events, when a room is not cleared in one turn</h3>
+  <div class="three">
+    <article class="card"><span class="tag">F4</span><b>Reinforcement</b><p class="muted" style="margin:6px 0 0">A door marks a spot. One turn later a new gunman appears there. Plan for it now.</p></article>
+    <article class="card"><span class="tag">F3</span><b>Advance</b><p class="muted" style="margin:6px 0 0">Survivors step one cell toward you with arrows shown. The room reshapes every turn.</p></article>
+    <article class="card"><span class="tag">F2</span><b>Jam</b><p class="muted" style="margin:6px 0 0">One marked gunman cannot fire next turn. A free kill for the right swap.</p></article>
+    <article class="card"><span class="tag">F4</span><b>Ricochet</b><p class="muted" style="margin:6px 0 0">Bullets bounce once off the walls. Lines now cross in new places.</p></article>
+  </div>
+  <p class="muted" style="font-size:13px;margin-top:8px">All events are deterministic from the seed, so the solver includes them when it checks a room and sets par.</p>
+
+  <h3 style="font-size:18px;margin:24px 0 10px" class="mag">Boons, picked from doors, last for the run</h3>
+  <div class="card tablewrap" style="padding:8px">
+    <table>
+      <thead><tr><th scope="col">Boon</th><th scope="col">Effect</th><th scope="col">Reel moment</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Quick Draw</th><td>The hero's shot kills the two nearest gunmen.</td><td>Double kill on landing.</td></tr>
+        <tr><th scope="row">Spare Clip</th><td>+1 swap in every room's budget.</td><td>Safety net for hard floors.</td></tr>
+        <tr><th scope="row">Bulletproof Coat</th><td>The first hit in each room does not cost a heart.</td><td>Survive a shot on camera.</td></tr>
+        <tr><th scope="row">Dead Man's Hand</th><td>A dying gunman's last shot fires twice.</td><td>Bigger chain kills.</td></tr>
+        <tr><th scope="row">Long Con</th><td>Once per room, swap two gunmen with each other.</td><td>The one extra verb. Changes the puzzle.</td></tr>
+        <tr><th scope="row">Preview Ghost</th><td>Shows the outcome of a tap before you commit it.</td><td>Also an accessibility aid.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="font-size:18px;margin:24px 0 10px" class="cy">Room templates and a novelty filter</h3>
+  <div class="card">
+    <p style="margin-top:0">Rooms come from motifs, like <a href="https://www.tinysubversions.com/spelunkyGen2/index.html">Spelunky's templates</a>: <b>Crossfire</b>, <b>Bodyguard</b>, <b>Pincer</b>, <b>Shield Wall</b>, <b>Corridor</b>, <b>Barrel Row</b>. Each motif is mirrored, shifted, and given random cover, then passed through the solver gates. A new gunman type appears first in an easy room, then in combination later in the floor.</p>
+    <p class="muted" style="margin-bottom:0">Novelty filter: never offer the same motif twice in a row, and reject a room whose gunman mix and solution shape match either of the last two rooms.</p>
+  </div>
+</section>
+
+<!-- 06 META -->
+<section aria-labelledby="meta">
+  <p class="eyebrow">06 / Between runs</p>
+  <h2 id="meta" style="font-size:28px;margin:4px 0 16px">The locker and heat</h2>
+  <div class="two">
+    <article class="card">
+      <h3 style="font-size:16px" class="amber">Locker upgrades (spend tips)</h3>
+      <ul style="padding-left:18px;margin:0">
+        <li><b>Max hearts:</b> 3 to 5 in two steps.</li>
+        <li><b>Spare slack:</b> +1 swap in the first two floors.</li>
+        <li><b>Opening choice:</b> pick one boon from three at the start of a run.</li>
+        <li><b>Intel:</b> unlock new boons in the pool, one at a time.</li>
+        <li><b>Style:</b> palettes and silhouette outfits for reels.</li>
+      </ul>
+      <p class="muted" style="font-size:13px">Upgrades widen options and give a safety net. They never replace skill, because the gates still apply.</p>
+    </article>
+    <article class="card">
+      <h3 style="font-size:16px" class="mag">Heat (opt in, more reward)</h3>
+      <ul style="padding-left:18px;margin:0">
+        <li><b>Tight Budget:</b> -1 swap slack in every room.</li>
+        <li><b>Early Shields:</b> shields appear on floor 1.</li>
+        <li><b>Fast Reinforcements:</b> arrive on the next turn.</li>
+        <li><b>Glass Heart:</b> start with 2 hearts.</li>
+      </ul>
+      <p class="muted" style="font-size:13px">Unlocks after the first boss kill. Each heat level raises tips and unlocks a new boss form. This gives the challenge ceiling you asked for.</p>
+    </article>
+  </div>
+</section>
+
+<!-- 07 REELS -->
+<section aria-labelledby="reel">
+  <p class="eyebrow">07 / SHIFT and the reel</p>
+  <h2 id="reel" style="font-size:28px;margin:4px 0 16px">The theme and the showcase stay in the loop</h2>
+  <div class="two">
+    <article class="card">
+      <ul style="padding-left:18px;margin:0">
+        <li><b>Shift positions:</b> the swap is the verb.</li>
+        <li><b>Night shift:</b> the run is one shift. You clock in at the lobby and clock out at the top or when you die.</li>
+        <li><b>Shift perspective:</b> the 3D replay sees the room from the swapped spot.</li>
+      </ul>
+    </article>
+    <article class="card">
+      <ul style="padding-left:18px;margin:0">
+        <li><b>Room replay:</b> the 3D POV replay after every cleared room, as it works now.</li>
+        <li><b>Death reel:</b> the last three swaps before the final heart.</li>
+        <li><b>Run recap:</b> the best chain kill of the run, with a share code so a friend replays the same tower.</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<!-- 08 PLAN -->
+<section aria-labelledby="plan">
+  <p class="eyebrow">08 / Build plan</p>
+  <h2 id="plan" style="font-size:28px;margin:4px 0 8px">Phases, cut order, and risks</h2>
+  <p class="muted">The jam ends 30 November. About three and a half weeks remain from today. Each phase ends in a playable build on your phone.</p>
+  <div class="card tablewrap" style="padding:8px">
+    <table>
+      <thead><tr><th scope="col">Phase</th><th scope="col">Build</th><th scope="col">You can test</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">1</th><td>Swap budget, hearts, fail and retry. Generator gates and the random-tap check. Floor 1 motifs.</td><td>Rooms that bite. A room you can lose.</td></tr>
+        <tr><th scope="row">2</th><td>Run loop: seed, floors, door choice with rewards, death back to the lobby. Heart and floor HUD.</td><td>A full climb and a full death.</td></tr>
+        <tr><th scope="row">3</th><td>Shield and knife. Turn events: jam, advance, reinforcement. Three boons.</td><td>Floors 2 to 4 feel different.</td></tr>
+        <tr><th scope="row">4</th><td>Locker with tips and upgrades. Heat. Boss room.</td><td>Reasons to play a second run.</td></tr>
+        <tr><th scope="row">5</th><td>Barrel, shotgun, ricochet. Death and recap reels. 3D replay fixes. Assist mode. itch.io page.</td><td>The shareable build.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="two" style="margin-top:16px">
+    <article class="card">
+      <h3 style="font-size:16px" class="amber">Cut order if time runs short</h3>
+      <ol style="padding-left:20px;margin:0">
+        <li>Ricochet and shotgun.</li>
+        <li>Barrel.</li>
+        <li>Heat.</li>
+        <li>Long Con and Preview Ghost.</li>
+        <li>Run recap (keep the death reel).</li>
+      </ol>
+      <p class="muted" style="font-size:13px;margin-bottom:0">Never cut: budget, hearts, door choice, the death restart.</p>
+    </article>
+    <article class="card">
+      <h3 style="font-size:16px" class="mag">Risks</h3>
+      <ul style="padding-left:18px;margin:0">
+        <li><b>Solver time:</b> each rule adds search cost. Cap depth at 5 and measure per phase. Fall back to pre-generated room pools.</li>
+        <li><b>Retry learning:</b> retrying the same room lets you memorize the answer. See the decision below.</li>
+        <li><b>Frustration:</b> losing at room 11 hurts. Assist mode adds hearts and slack.</li>
+        <li><b>Scope:</b> this is more than the earlier prototype. The phases keep it testable at each step.</li>
+      </ul>
+    </article>
+  </div>
+  <p class="muted" style="font-size:13px;margin-top:10px">Assist mode (more hearts, more slack, optional no-fail practice) keeps the game finishable for everyone and fits the one-hand, no-timer base.</p>
+</section>
+
+<!-- 09 INPUT -->
+<section aria-labelledby="vote">
+  <p class="eyebrow">09 / Your call</p>
+  <h2 id="vote" style="font-size:28px;margin:4px 0 12px">Lock the direction</h2>
+  <form class="card" data-lavish-question="direction" id="direction-form">
+
+    <fieldset class="q"><legend>What does failing a room do?</legend>
+      <label class="opt"><input type="radio" name="fail" value="heart-same-room" checked> <span><b>Lose a heart, retry the same room.</b> Fair and learnable. Costs a heart for each mistake. Recommended.</span></label>
+      <label class="opt"><input type="radio" name="fail" value="heart-new-room"> <span><b>Lose a heart, retry a new room.</b> No memorizing. Feels harsher.</span></label>
+      <label class="opt"><input type="radio" name="fail" value="one-hit"> <span><b>One failure ends the run.</b> Hades-hard from the start.</span></label>
+    </fieldset>
+
+    <fieldset class="q"><legend>Run length</legend>
+      <label class="opt"><input type="radio" name="length" value="8"> <span>8 rooms (about 7 minutes)</span></label>
+      <label class="opt"><input type="radio" name="length" value="12" checked> <span>12 rooms (about 10 minutes). Recommended.</span></label>
+      <label class="opt"><input type="radio" name="length" value="16"> <span>16 rooms (about 14 minutes)</span></label>
+    </fieldset>
+
+    <fieldset class="q"><legend>Starting hearts</legend>
+      <label class="opt"><input type="radio" name="hearts" value="2"> <span>2 (hard)</span></label>
+      <label class="opt"><input type="radio" name="hearts" value="3" checked> <span>3. Recommended.</span></label>
+      <label class="opt"><input type="radio" name="hearts" value="4"> <span>4 (forgiving)</span></label>
+    </fieldset>
+
+    <fieldset class="q"><legend>What goes into the jam build? (tick all)</legend>
+      <label class="opt"><input type="checkbox" name="scope" value="budget-hearts" checked> <span>Swap budget, hearts, fail and retry (phase 1)</span></label>
+      <label class="opt"><input type="checkbox" name="scope" value="generator-gates" checked> <span>Generator gates and random-tap check (phase 1)</span></label>
+      <label class="opt"><input type="checkbox" name="scope" value="run-loop" checked> <span>Run loop with door choice and death restart (phase 2)</span></label>
+      <label class="opt"><input type="checkbox" name="scope" value="shield-knife" checked> <span>Shield and knife (phase 3)</span></label>
+      <label class="opt"><input type="checkbox" name="scope" value="turn-events" checked> <span>Turn events: jam, advance, reinforcement (phase 3)</span></label>
+      <label class="opt"><input type="checkbox" name="scope" value="boons" checked> <span>Boons (phase 3)</span></label>
+      <label class="opt"><input type="checkbox" name="scope" value="locker" checked> <span>Locker upgrades (phase 4)</span></label>
+      <label class="opt"><input type="checkbox" name="scope" value="heat"> <span>Heat (phase 4)</span></label>
+      <label class="opt"><input type="checkbox" name="scope" value="boss" checked> <span>Boss room (phase 4)</span></label>
+      <label class="opt"><input type="checkbox" name="scope" value="late-types"> <span>Barrel, shotgun, ricochet (phase 5)</span></label>
+      <label class="opt"><input type="checkbox" name="scope" value="reels" checked> <span>Death and recap reels (phase 5)</span></label>
+    </fieldset>
+
+    <p style="margin:14px 0 6px"><label for="notes"><b>Notes, twists, anything to change</b></label></p>
+    <textarea id="notes" name="notes" rows="4" placeholder="Anything to add, merge, or drop"></textarea>
+    <p style="margin-top:16px">
+      <button type="submit" class="go">Queue my answer</button>
+      <span class="status" id="direction-status" role="status" aria-live="polite"></span>
+    </p>
+  </form>
+</section>
+
+</main>
+
+<script>
+  document.getElementById('direction-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    const answer = {
+      fail: data.get('fail'),
+      length: data.get('length'),
+      hearts: data.get('hearts'),
+      scope: data.getAll('scope'),
+      notes: (data.get('notes') || '').trim()
+    };
+    const summary = 'fail=' + answer.fail + ', rooms=' + answer.length + ', hearts=' + answer.hearts + ', scope=[' + answer.scope.join(', ') + ']';
+    const status = document.getElementById('direction-status');
+    if (window.lavish && window.lavish.queuePrompt) {
+      window.lavish.queuePrompt(
+        'Hot Swap run direction. ' + summary + '.' + (answer.notes ? ' Notes: ' + answer.notes : ''),
+        { tag: 'choice', text: summary, element: form, data: answer }
+      );
+      status.textContent = 'Queued. Press Send to Agent.';
+    } else {
+      status.textContent = 'Lavish is not connected.';
+    }
+  });
+</script>
+</body>
+</html>

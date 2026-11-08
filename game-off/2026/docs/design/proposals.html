@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en" data-theme="black">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Game Off 2026 - SHIFT - thumb game proposals</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/daisyui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/themes.css">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.2.4/dist/index.global.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :where(.grid, .flex) > * { min-width: 0; }
+  :where(p, h1, h2, h3, h4, li, dd, td, th, .badge) { overflow-wrap: anywhere; }
+  :where(svg) { max-width: 100%; height: auto; }
+  :root {
+    --bg: #0b0b0f; --panel: #14141b; --line: #2b2b38; --ink: #f4f4f6; --mute: #b4b4c2;
+    --acid: #d4ff3a; --pink: #ff6ad5; --cyan: #4fe0ff;
+  }
+  html, body { background: var(--bg); color: var(--ink); }
+  body { font-family: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; line-height: 1.55; }
+  h1, h2, h3 { font-family: "Arial Black", "Helvetica Neue", Impact, sans-serif; letter-spacing: -0.02em; text-transform: uppercase; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+  .eyebrow { color: var(--acid); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+  .chip { display: inline-block; border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; font-size: 12px; color: var(--ink); background: var(--panel); }
+  .chip.hot { border-color: var(--acid); color: var(--acid); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 22px; }
+  .muted { color: var(--mute); }
+  .acid { color: var(--acid); } .pink { color: var(--pink); } .cyan { color: var(--cyan); }
+  a { color: var(--cyan); text-decoration: underline; text-underline-offset: 3px; }
+  .proposal { display: grid; grid-template-columns: minmax(0, 230px) minmax(0, 1fr); gap: 28px; }
+  @media (max-width: 760px) { .proposal { grid-template-columns: minmax(0, 1fr); } .phone { max-width: 220px; margin: 0 auto; } }
+  .phone { color: var(--mute); }
+  .loop { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 10px 0 14px; }
+  .loop span.step { background: #1d1d28; border: 1px solid var(--line); border-radius: 10px; padding: 4px 10px; font-size: 13px; }
+  .loop span.arrow { color: var(--acid); }
+  dl.spec { display: grid; grid-template-columns: minmax(0, 110px) minmax(0, 1fr); gap: 8px 14px; font-size: 14px; }
+  dl.spec dt { color: var(--acid); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; padding-top: 2px; }
+  dl.spec dd { margin: 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  th { color: var(--mute); font-weight: 600; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
+  .score { display: inline-flex; gap: 3px; }
+  .score i { width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--mute); display: block; }
+  .score i.on { background: var(--acid); border-color: var(--acid); }
+  .tablewrap { overflow-x: auto; }
+  fieldset.verdict { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin: 0 0 12px; }
+  fieldset.verdict legend { padding: 0 8px; font-weight: 700; }
+  .opt { display: inline-flex; align-items: center; gap: 8px; margin: 6px 18px 6px 0; min-height: 44px; cursor: pointer; }
+  .opt input { width: 22px; height: 22px; accent-color: var(--acid); }
+  textarea, select { width: 100%; background: #0e0e14; color: var(--ink); border: 1px solid var(--mute); border-radius: 10px; padding: 10px 12px; font: inherit; }
+  .go { background: var(--acid); color: #0b0b0f; font-weight: 800; border: 0; border-radius: 12px; padding: 14px 22px; min-height: 48px; cursor: pointer; font-family: inherit; }
+  .go:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+  .status { margin-left: 12px; color: var(--acid); }
+</style>
+</head>
+<body>
+
+<header class="wrap" style="padding-top:48px;padding-bottom:12px">
+  <p class="eyebrow">Game Off 2026 / theme SHIFT / brainstorm board</p>
+  <h1 style="font-size:clamp(34px,6vw,64px);line-height:1;margin:8px 0 14px">One thumb.<br><span class="acid">Five ways to shift.</span></h1>
+  <p class="muted" style="max-width:720px;font-size:16px">Decision: pick the game we build in November. Every proposal runs in Godot 4 on itch.io, plays in portrait on a phone with one thumb, and ships with an accessibility baseline. Style is a first-class goal, not a polish pass.</p>
+  <p style="margin-top:14px">
+    <span class="chip hot">Godot 4 Compatibility (WebGL2)</span>
+    <span class="chip hot">GDScript only</span>
+    <span class="chip hot">itch.io HTML5</span>
+    <span class="chip">Portrait 9:16</span>
+    <span class="chip">One hand, one thumb</span>
+    <span class="chip">WCAG-minded</span>
+  </p>
+</header>
+
+<main class="wrap" style="display:grid;gap:36px;padding-top:24px;padding-bottom:80px">
+
+<!-- RESEARCH -->
+<section aria-labelledby="research">
+  <p class="eyebrow">01 / Research</p>
+  <h2 id="research" style="font-size:28px;margin:4px 0 16px">What the loop research says</h2>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px">
+    <article class="card">
+      <h3 style="font-size:16px" class="acid">Core loop first</h3>
+      <p>A core loop is the cycle the player repeats most. Test it: can you state it in one sentence? If not, cut scope.</p>
+      <p class="muted">Hyper-casual games use one tap or swipe. They struggle with long retention, so the fix is a thin layer on top: collection, daily goals, or a second mode. The industry calls this hybrid-casual.</p>
+      <p style="font-size:13px">Sources: <a href="https://unity.com/glossary/core-game-loop">Unity glossary</a>, <a href="https://www.homagames.com/blog/what-is-a-core-loop-in-a-mobile-game">Homa Academy</a>, <a href="https://blog.udonis.co/mobile-marketing/mobile-games/hybrid-casual-games">Udonis on hybrid-casual</a>.</p>
+    </article>
+    <article class="card">
+      <h3 style="font-size:16px" class="pink">Three loops, stacked</h3>
+      <ul style="padding-left:18px;margin:0">
+        <li><b>Seconds:</b> act, feel, reward. Needs juice: sound, particles, haptics.</li>
+        <li><b>Minutes:</b> run ends, instant retry in under one second, best score.</li>
+        <li><b>Days:</b> daily seed, unlock a palette, share a result.</li>
+      </ul>
+      <p class="muted" style="margin-top:10px">A jam game needs the first two loops done well. The third loop costs one day if the design allows it. Proposals below say which they support.</p>
+    </article>
+    <article class="card">
+      <h3 style="font-size:16px" class="cyan">Accessibility baseline</h3>
+      <ul style="padding-left:18px;margin:0">
+        <li>Every essential action works with one input. Xbox Accessibility Guidelines (XAG 108) ask for this.</li>
+        <li>Color never carries meaning alone. Add shape, pattern, or text.</li>
+        <li>Offer reduced motion and no flashes. Offer hold-or-toggle.</li>
+        <li>Offer a no-timer or slow mode.</li>
+        <li>Mirror the layout for left or right thumb.</li>
+      </ul>
+      <p style="font-size:13px;margin-top:10px">Sources: <a href="https://gamesforchange.org/studentchallenge/wp-content/uploads/2022/01/Tips_Resources_for-Considering-the-Needs-of-Disabled-Gamers-in-Design.pdf">Games for Change tips (PDF)</a>, <a href="https://en.wikipedia.org/wiki/Game_accessibility">Game accessibility</a>.</p>
+    </article>
+  </div>
+</section>
+
+<!-- CHASSIS -->
+<section aria-labelledby="chassis">
+  <p class="eyebrow">02 / Shared chassis</p>
+  <h2 id="chassis" style="font-size:28px;margin:4px 0 16px">Rules every proposal obeys</h2>
+  <div class="card proposal" style="grid-template-columns:minmax(0,260px) minmax(0,1fr)">
+    <figure class="phone" style="margin:0">
+      <svg viewBox="0 0 180 360" role="img" aria-labelledby="tz-t" width="100%">
+        <title id="tz-t">Thumb reach zones on a portrait phone. The bottom third is easy, the middle is a stretch, the top is out of reach.</title>
+        <rect id="tz-frame" x="4" y="4" width="172" height="352" rx="26" fill="#0b0b0f" stroke="currentColor" stroke-width="2"/>
+        <path id="tz-hard" d="M8 40 H172 V120 H8 Z" fill="#ff6ad5" opacity=".22"/>
+        <path id="tz-ok" d="M8 120 H172 V220 H8 Z" fill="#4fe0ff" opacity=".22"/>
+        <path id="tz-easy" d="M8 220 H172 V350 H8 Z" fill="#d4ff3a" opacity=".28"/>
+        <g font-size="10" fill="#f4f4f6" font-family="ui-monospace,monospace">
+          <text x="18" y="84">HUD ONLY</text><text x="18" y="176">READ + GLANCE</text><text x="18" y="292">ALL INPUT HERE</text>
+        </g>
+        <path d="M150 340 C150 300 110 280 90 250" fill="none" stroke="#f4f4f6" stroke-width="2" stroke-dasharray="4 4"/>
+        <circle cx="150" cy="340" r="6" fill="#f4f4f6"/>
+      </svg>
+      <figcaption style="font-size:12px;margin-top:6px">Input lives in the bottom third. Targets are at least 48 px. The top third shows state only.</figcaption>
+    </figure>
+    <div>
+      <dl class="spec">
+        <dt>Input</dt><dd>Tap, hold, or swipe anywhere in the bottom zone. A second layout mirrors it for the other thumb. Keyboard maps for desktop on itch.io, including the Shift keys, as an easter egg.</dd>
+        <dt>Screen</dt><dd>Base 540x960, stretch mode <code>canvas_items</code>, aspect <code>expand</code>. HUD respects safe area. Test on real iOS Safari and Android Chrome early.</dd>
+        <dt>First tap</dt><dd>A "Tap to start" screen unlocks browser audio and enters fullscreen.</dd>
+        <dt>Assist</dt><dd>Slow mode, no-timer mode, reduced motion, no-flash, high contrast, and larger text. All toggles live on the title screen and in pause.</dd>
+        <dt>Feedback</dt><dd>Every event gets sound, a shape change, and optional haptics. <code>Input.vibrate_handheld</code> works on Android. iOS Safari has no vibration API, so haptics stay optional.</dd>
+        <dt>Export</dt><dd>Single-thread web export runs on itch.io with no extra headers. Tick "Mobile friendly" on the itch page. Glow support in Compatibility depends on the Godot version, so fake bloom with additive sprites until confirmed.</dd>
+      </dl>
+      <p style="font-size:13px" class="muted">Godot web options (canvas resize policy, PWA orientation, threads): <a href="https://docs.godotengine.org/en/4.3/classes/class_editorexportplatformweb.html">EditorExportPlatformWeb docs</a>. The PWA orientation option only applies when the game installs as an app, not inside the itch.io frame.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROPOSALS -->
+<section aria-labelledby="props" style="display:grid;gap:22px">
+  <div>
+    <p class="eyebrow">03 / Proposals</p>
+    <h2 id="props" style="font-size:28px;margin:4px 0 0">Five games</h2>
+  </div>
+
+  <!-- P1 -->
+  <article class="card proposal" id="p1" aria-labelledby="p1h">
+    <figure class="phone" style="margin:0">
+      <svg viewBox="0 0 180 360" role="img" aria-labelledby="p1t" width="100%">
+        <title id="p1t">Bitshift. A row of eight bits falls toward a gate with holes. Two big thumb buttons shift the row left or right.</title>
+        <rect x="4" y="4" width="172" height="352" rx="26" fill="#0b0b0f" stroke="currentColor" stroke-width="2"/>
+        <text x="22" y="34" font-size="12" fill="#d4ff3a" font-family="ui-monospace,monospace">x12 COMBO</text>
+        <text x="158" y="34" font-size="12" fill="#f4f4f6" text-anchor="end" font-family="ui-monospace,monospace">0B10110100</text>
+        <g stroke="#d4ff3a" stroke-opacity=".3" stroke-dasharray="2 4"><path d="M30 120 V215"/><path d="M47 120 V215"/><path d="M81 120 V215"/><path d="M115 120 V215"/></g>
+        <g id="p1-byte">
+          <rect x="22" y="92" width="17" height="17" rx="3" fill="#d4ff3a"/>
+          <rect x="39" y="92" width="17" height="17" rx="3" fill="none" stroke="#b4b4c2"/>
+          <rect x="56" y="92" width="17" height="17" rx="3" fill="#d4ff3a"/>
+          <rect x="73" y="92" width="17" height="17" rx="3" fill="#d4ff3a"/>
+          <rect x="90" y="92" width="17" height="17" rx="3" fill="none" stroke="#b4b4c2"/>
+          <rect x="107" y="92" width="17" height="17" rx="3" fill="#d4ff3a"/>
+          <rect x="124" y="92" width="17" height="17" rx="3" fill="none" stroke="#b4b4c2"/>
+          <rect x="141" y="92" width="17" height="17" rx="3" fill="none" stroke="#b4b4c2"/>
+        </g>
+        <g id="p1-gate">
+          <rect x="22" y="224" width="17" height="17" fill="#2b2b38"/>
+          <rect x="39" y="224" width="17" height="17" fill="none" stroke="#ff6ad5" stroke-dasharray="3 2"/>
+          <rect x="56" y="224" width="17" height="17" fill="#2b2b38"/>
+          <rect x="73" y="224" width="17" height="17" fill="none" stroke="#ff6ad5" stroke-dasharray="3 2"/>
+          <rect x="90" y="224" width="17" height="17" fill="none" stroke="#ff6ad5" stroke-dasharray="3 2"/>
+          <rect x="107" y="224" width="17" height="17" fill="#2b2b38"/>
+          <rect x="124" y="224" width="17" height="17" fill="none" stroke="#ff6ad5" stroke-dasharray="3 2"/>
+          <rect x="141" y="224" width="17" height="17" fill="#2b2b38"/>
+        </g>
+        <text x="90" y="262" font-size="10" fill="#b4b4c2" text-anchor="middle" font-family="ui-monospace,monospace">MATCH THE HOLES</text>
+        <rect x="14" y="282" width="74" height="62" rx="16" fill="#1d1d28" stroke="#d4ff3a" stroke-width="2"/>
+        <rect x="92" y="282" width="74" height="62" rx="16" fill="#1d1d28" stroke="#d4ff3a" stroke-width="2"/>
+        <text x="51" y="322" font-size="26" fill="#d4ff3a" text-anchor="middle" font-family="ui-monospace,monospace" font-weight="700">&lt;&lt;</text>
+        <text x="129" y="322" font-size="26" fill="#d4ff3a" text-anchor="middle" font-family="ui-monospace,monospace" font-weight="700">&gt;&gt;</text>
+      </svg>
+    </figure>
+    <div>
+      <p class="eyebrow">P1 / reflex puzzle</p>
+      <h3 id="p1h" style="font-size:30px;margin:2px 0 6px">Bitshift</h3>
+      <p>A byte of lit bits falls toward a gate. Shift the whole byte left or right so lit bits meet the holes. A bit pushed off the edge is gone for good. That overflow is the cost and the trick.</p>
+      <div class="loop" aria-label="Core loop"><span class="step">Byte falls</span><span class="arrow">&rarr;</span><span class="step">Shift &lt;&lt; or &gt;&gt;</span><span class="arrow">&rarr;</span><span class="step">Bits hit holes</span><span class="arrow">&rarr;</span><span class="step">Pulse + combo</span><span class="arrow">&rarr;</span><span class="step">Faster</span><span class="arrow">&rarr;</span><span class="step">Retry &lt; 1 s</span></div>
+      <dl class="spec">
+        <dt>Thumb</dt><dd>Left half of screen is <code>&lt;&lt;</code>. Right half is <code>&gt;&gt;</code>. Swipe works as an alias. One thumb covers both halves.</dd>
+        <dt>Style</dt><dd>Black screen, one acid accent, chunky mono type. Fake CRT bloom, scanline wipe on every pass, kick-drum tied to the combo.</dd>
+        <dt>Loops</dt><dd>Seconds: shift and pulse. Minutes: 60 s runs with instant retry. Days: daily seed plus palette unlocks.</dd>
+        <dt>Access</dt><dd>Bits show position numbers and holes use pattern, not only color. Slow mode cuts fall speed. Calm mode becomes turn-based (see proposal P4).</dd>
+        <dt>Godot</dt><dd>Simple 2D. Rows are <code>ColorRect</code> nodes on a fixed tick. A canvas shader adds scanlines. Low risk.</dd>
+        <dt>Risk</dt><dd>The game must teach binary without text. Level one uses a single bit and a single hole.</dd>
+      </dl>
+    </div>
+  </article>
+
+  <!-- P2 -->
+  <article class="card proposal" id="p2" aria-labelledby="p2h">
+    <figure class="phone" style="margin:0">
+      <svg viewBox="0 0 180 360" role="img" aria-labelledby="p2t" width="100%">
+        <title id="p2t">World Flip. A vertical runner. Circles block one world and squares block the other. One tap swaps worlds.</title>
+        <rect x="4" y="4" width="172" height="352" rx="26" fill="#0b0b0f" stroke="currentColor" stroke-width="2"/>
+        <clipPath id="p2-clip"><rect x="5" y="5" width="170" height="350" rx="25"/></clipPath>
+        <g clip-path="url(#p2-clip)">
+          <polygon id="p2-worldb" points="180,0 180,360 0,360 0,250" fill="#d4ff3a"/>
+          <g fill="#0b0b0f"><rect x="110" y="190" width="30" height="30"/><rect x="50" y="270" width="30" height="30"/></g>
+          <g fill="none" stroke="#d4ff3a" stroke-width="3"><circle cx="60" cy="90" r="16"/><circle cx="120" cy="150" r="16"/><circle cx="40" cy="190" r="16"/></g>
+        </g>
+        <path d="M0 250 L180 360" stroke="#ff6ad5" stroke-width="2" stroke-dasharray="5 4" clip-path="url(#p2-clip)"/>
+        <polygon id="p2-player" points="90,296 102,324 78,324" fill="#ff6ad5" stroke="#0b0b0f" stroke-width="2"/>
+        <circle cx="90" cy="320" r="30" fill="none" stroke="#f4f4f6" stroke-opacity=".6" stroke-width="2" stroke-dasharray="3 5"/>
+        <text x="90" y="30" font-size="11" fill="#f4f4f6" text-anchor="middle" font-family="ui-monospace,monospace">DAY o  /  NIGHT []</text>
+      </svg>
+    </figure>
+    <div>
+      <p class="eyebrow">P2 / rhythm runner</p>
+      <h3 id="p2h" style="font-size:30px;margin:2px 0 6px">World Flip</h3>
+      <p>An endless vertical run through two overlapping realities. Circles block world A. Squares block world B. One tap swaps worlds. Tap on the beat to stay in sync.</p>
+      <div class="loop"><span class="step">Obstacle ahead</span><span class="arrow">&rarr;</span><span class="step">Tap to flip</span><span class="arrow">&rarr;</span><span class="step">Pass on beat</span><span class="arrow">&rarr;</span><span class="step">Streak</span><span class="arrow">&rarr;</span><span class="step">Crash</span><span class="arrow">&rarr;</span><span class="step">Retry &lt; 1 s</span></div>
+      <dl class="spec">
+        <dt>Thumb</dt><dd>Tap anywhere. Hold is a second input only in later stages, with a tap-toggle alternative.</dd>
+        <dt>Style</dt><dd>Hard-cut duotone. Black and acid swap on every flip. Track music is the level. Obstacles snap to the beat.</dd>
+        <dt>Loops</dt><dd>Seconds: flip. Minutes: three tracks, best streak each. Days: daily track, ghost of a friend is not needed.</dd>
+        <dt>Access</dt><dd>Shape tells the world, not color. The full-screen swap is a wipe, not a flash, and a reduced-motion toggle removes it. Audio pitch also tells the world. Slow mode halves tempo.</dd>
+        <dt>Godot</dt><dd>Two node groups toggle collision and visibility. A screen-texture shader inverts colors. Safest build. Music sync needs a tuned latency offset for web audio.</dd>
+        <dt>Risk</dt><dd>Familiar genre. Needs a standout twist. Photosensitivity is the main accessibility risk.</dd>
+      </dl>
+    </div>
+  </article>
+
+  <!-- P3 -->
+  <article class="card proposal" id="p3" aria-labelledby="p3h">
+    <figure class="phone" style="margin:0">
+      <svg viewBox="0 0 180 360" role="img" aria-labelledby="p3t" width="100%">
+        <title id="p3t">Shift Change. A microgame rush. A shift clock counts down while a big prompt asks for a tap, hold, or swipe.</title>
+        <rect x="4" y="4" width="172" height="352" rx="26" fill="#0b0b0f" stroke="currentColor" stroke-width="2"/>
+        <text x="22" y="34" font-size="11" fill="#f4f4f6" font-family="ui-monospace,monospace">NIGHT SHIFT 02:14</text>
+        <g fill="#d4ff3a"><rect x="22" y="46" width="26" height="8" rx="3"/><rect x="52" y="46" width="26" height="8" rx="3"/><rect x="82" y="46" width="26" height="8" rx="3"/></g>
+        <g fill="none" stroke="#b4b4c2"><rect x="112" y="46" width="26" height="8" rx="3"/><rect x="142" y="46" width="16" height="8" rx="3"/></g>
+        <rect id="p3-card" x="22" y="84" width="136" height="150" rx="18" fill="#1d1d28" stroke="#ff6ad5" stroke-width="2"/>
+        <circle cx="90" cy="150" r="30" fill="#ff6ad5"/>
+        <circle cx="82" cy="142" r="4" fill="#0b0b0f"/><circle cx="98" cy="142" r="4" fill="#0b0b0f"/>
+        <path d="M78 160 Q90 172 102 160" stroke="#0b0b0f" stroke-width="3" fill="none"/>
+        <text x="90" y="216" font-size="14" fill="#f4f4f6" text-anchor="middle" font-family="ui-monospace,monospace" font-weight="700">BAG IT!</text>
+        <g stroke="#d4ff3a" stroke-width="2" fill="none">
+          <circle cx="50" cy="300" r="22"/><circle cx="50" cy="300" r="6" fill="#d4ff3a"/>
+          <circle cx="90" cy="300" r="22"/><circle cx="90" cy="300" r="12"/>
+          <circle cx="130" cy="300" r="22"/><path d="M118 300 H142 M134 292 L142 300 L134 308"/>
+        </g>
+        <g font-size="9" fill="#b4b4c2" text-anchor="middle" font-family="ui-monospace,monospace"><text x="50" y="338">TAP</text><text x="90" y="338">HOLD</text><text x="130" y="338">SWIPE</text></g>
+      </svg>
+    </figure>
+    <div>
+      <p class="eyebrow">P3 / microgame rush</p>
+      <h3 id="p3h" style="font-size:30px;margin:2px 0 6px">Shift Change</h3>
+      <p>You work the night shift at a convenience store. Every three seconds the task shifts: bag the item, scare the raccoon, swipe the card. Customers get stranger as the shift goes on.</p>
+      <div class="loop"><span class="step">Prompt</span><span class="arrow">&rarr;</span><span class="step">One gesture</span><span class="arrow">&rarr;</span><span class="step">Win or lose a life</span><span class="arrow">&rarr;</span><span class="step">Speed up</span><span class="arrow">&rarr;</span><span class="step">Boss customer</span><span class="arrow">&rarr;</span><span class="step">Clock out</span></div>
+      <dl class="spec">
+        <dt>Thumb</dt><dd>Tap, hold, or swipe in the bottom zone. Each microgame uses exactly one gesture.</dd>
+        <dt>Style</dt><dd>Flat poster vector, thick outlines, three colors per scene, comic sound effects. The store gets darker as the night passes.</dd>
+        <dt>Loops</dt><dd>Seconds: one gesture. Minutes: one shift of about two minutes. Days: new customer unlocks in a shift diary.</dd>
+        <dt>Access</dt><dd>The prompt word and an icon both show the gesture. A timer-off mode gives unlimited time per task. Speed ramp has a cap.</dd>
+        <dt>Godot</dt><dd>One scene per microgame, driven by a shared <code>Resource</code>. Simple code, many assets.</dd>
+        <dt>Risk</dt><dd>Content-heavy. A solo jam needs about 12 microgames to feel alive. Highest content cost here.</dd>
+      </dl>
+    </div>
+  </article>
+
+  <!-- P4 -->
+  <article class="card proposal" id="p4" aria-labelledby="p4h">
+    <figure class="phone" style="margin:0">
+      <svg viewBox="0 0 180 360" role="img" aria-labelledby="p4t" width="100%">
+        <title id="p4t">Wraparound. A five by five tile grid. One swipe shifts a row sideways and tiles wrap around the edge to rebuild a picture.</title>
+        <rect x="4" y="4" width="172" height="352" rx="26" fill="#0b0b0f" stroke="currentColor" stroke-width="2"/>
+        <text x="22" y="34" font-size="11" fill="#f4f4f6" font-family="ui-monospace,monospace">DAY 27</text>
+        <text x="158" y="34" font-size="11" fill="#d4ff3a" text-anchor="end" font-family="ui-monospace,monospace">MOVES 7/9</text>
+        <g id="p4-grid" font-family="ui-monospace,monospace">
+          <g fill="#d4ff3a"><rect x="25" y="70" width="26" height="26" rx="4"/><rect x="51" y="70" width="26" height="26" rx="4"/><rect x="77" y="70" width="26" height="26" rx="4"/><rect x="103" y="70" width="26" height="26" rx="4"/><rect x="129" y="70" width="26" height="26" rx="4"/></g>
+          <g fill="#ff6ad5"><circle cx="38" cy="109" r="10"/><circle cx="116" cy="109" r="10"/><circle cx="142" cy="109" r="10"/></g>
+          <g fill="#4fe0ff"><polygon points="64,99 76,121 52,121"/><polygon points="90,99 102,121 78,121"/></g>
+          <g fill="#d4ff3a"><rect x="25" y="148" width="26" height="26" rx="4"/><rect x="129" y="148" width="26" height="26" rx="4"/></g>
+          <g fill="#ff6ad5"><circle cx="64" cy="161" r="10"/><circle cx="90" cy="161" r="10"/><circle cx="116" cy="161" r="10"/></g>
+          <g fill="#4fe0ff"><polygon points="38,177 50,199 26,199"/><polygon points="142,177 154,199 130,199"/></g>
+          <g fill="#d4ff3a"><rect x="51" y="226" width="26" height="26" rx="4"/><rect x="77" y="226" width="26" height="26" rx="4"/><rect x="103" y="226" width="26" height="26" rx="4"/></g>
+        </g>
+        <path d="M30 262 H150" stroke="#d4ff3a" stroke-width="3"/>
+        <path d="M140 254 L150 262 L140 270" stroke="#d4ff3a" stroke-width="3" fill="none"/>
+        <path d="M40 140 Q10 140 14 118" stroke="#f4f4f6" stroke-dasharray="3 3" fill="none"/>
+        <rect x="14" y="290" width="152" height="54" rx="16" fill="#1d1d28" stroke="#d4ff3a" stroke-width="2"/>
+        <text x="90" y="323" font-size="13" fill="#f4f4f6" text-anchor="middle" font-family="ui-monospace,monospace">SWIPE A ROW  &lt;&lt;  &gt;&gt;</text>
+      </svg>
+    </figure>
+    <div>
+      <p class="eyebrow">P4 / daily swipe puzzle</p>
+      <h3 id="p4h" style="font-size:30px;margin:2px 0 6px">Wraparound</h3>
+      <p>A grid of tiles forms a hidden picture once sorted. Swipe a row or column. Tiles that leave one edge wrap to the other. Rebuild the picture inside a move budget.</p>
+      <div class="loop"><span class="step">See target</span><span class="arrow">&rarr;</span><span class="step">Swipe a line</span><span class="arrow">&rarr;</span><span class="step">Tiles wrap</span><span class="arrow">&rarr;</span><span class="step">Picture forms</span><span class="arrow">&rarr;</span><span class="step">Share result</span><span class="arrow">&rarr;</span><span class="step">Tomorrow's grid</span></div>
+      <dl class="spec">
+        <dt>Thumb</dt><dd>Drag on a row or column. Tap-select plus two shift buttons is the no-drag alternative.</dd>
+        <dt>Style</dt><dd>Generative art. Each solved day adds a tile to a growing gallery wall. Soft motion, paper grain, calm audio.</dd>
+        <dt>Loops</dt><dd>Seconds: swipe and click-snap. Minutes: one puzzle. Days: daily seed and an emoji grid to copy and share.</dd>
+        <dt>Access</dt><dd>Best of the five. Turn-based, no timer, undo is free. Tiles use shape plus color. Fully playable with a switch that moves a cursor.</dd>
+        <dt>Godot</dt><dd>Grid in <code>Control</code> nodes. Daily seed from the date hash. Clipboard copy needs a tap and works on web.</dd>
+        <dt>Risk</dt><dd>Lowest hype factor. Generating fair puzzles needs a solver or a scramble-from-solved method. Scramble-from-solved is easy.</dd>
+      </dl>
+    </div>
+  </article>
+
+  <!-- P5 -->
+  <article class="card proposal" id="p5" aria-labelledby="p5h">
+    <figure class="phone" style="margin:0">
+      <svg viewBox="0 0 180 360" role="img" aria-labelledby="p5t" width="100%">
+        <title id="p5t">Tilt Room. An isometric stair of cubes. A thumb dial rotates the room ninety degrees so walls become floors.</title>
+        <defs>
+          <g id="p5-cube">
+            <polygon points="0,0 26,15 0,30 -26,15" fill="#d4ff3a"/>
+            <polygon points="-26,15 0,30 0,60 -26,45" fill="#7d9b17"/>
+            <polygon points="26,15 0,30 0,60 26,45" fill="#4a5c0d"/>
+          </g>
+        </defs>
+        <rect x="4" y="4" width="172" height="352" rx="26" fill="#0b0b0f" stroke="currentColor" stroke-width="2"/>
+        <text x="22" y="34" font-size="11" fill="#f4f4f6" font-family="ui-monospace,monospace">ROOM 07</text>
+        <use href="#p5-cube" x="64" y="120"/><use href="#p5-cube" x="90" y="135"/><use href="#p5-cube" x="116" y="150"/>
+        <use href="#p5-cube" x="90" y="165" opacity=".5"/>
+        <circle cx="64" cy="112" r="7" fill="#ff6ad5"/>
+        <path d="M30 250 Q90 200 150 250" fill="none" stroke="#4fe0ff" stroke-width="2" stroke-dasharray="4 4"/>
+        <path d="M142 240 L150 250 L138 252" fill="none" stroke="#4fe0ff" stroke-width="2"/>
+        <path d="M24 344 A66 66 0 0 1 156 344" fill="#1d1d28" stroke="#d4ff3a" stroke-width="2"/>
+        <circle cx="118" cy="306" r="14" fill="#d4ff3a"/>
+        <text x="90" y="338" font-size="10" fill="#b4b4c2" text-anchor="middle" font-family="ui-monospace,monospace">TURN THE ROOM</text>
+      </svg>
+    </figure>
+    <div>
+      <p class="eyebrow">P5 / perspective puzzler</p>
+      <h3 id="p5h" style="font-size:30px;margin:2px 0 6px">Tilt Room</h3>
+      <p>A tiny isometric room. Turn it with a thumb dial. When two edges line up from your view, a gap closes and the walker crosses. Walls become floors. Think Monument Valley, scoped to a jam.</p>
+      <div class="loop"><span class="step">Read the room</span><span class="arrow">&rarr;</span><span class="step">Turn the dial</span><span class="arrow">&rarr;</span><span class="step">Edges align</span><span class="arrow">&rarr;</span><span class="step">Walker crosses</span><span class="arrow">&rarr;</span><span class="step">Next room</span></div>
+      <dl class="spec">
+        <dt>Thumb</dt><dd>One dial at the bottom. Snap to 90 degree steps with a haptic click. Walker moves on its own.</dd>
+        <dt>Style</dt><dd>The most stylish pitch. Pastel isometric solids, long soft shadows, slow ambient music. Screenshots sell it.</dd>
+        <dt>Loops</dt><dd>Seconds: turn and align. Minutes: one room. Days: none. Rooms do not replay, so content equals playtime.</dd>
+        <dt>Access</dt><dd>No timer, no reflex, easy for one hand. Color-only hints are banned. Rotation speed has a reduce-motion setting.</dd>
+        <dt>Godot</dt><dd>Orthographic <code>Camera3D</code> with snap steps, or a fake 2D rotation with pre-rendered sprites. 3D on web Compatibility works but costs more.</dd>
+        <dt>Risk</dt><dd>Highest. Each room needs careful level design, and 8 to 10 rooms is the minimum. Weak replay loop.</dd>
+      </dl>
+    </div>
+  </article>
+</section>
+
+<!-- SCORECARD -->
+<section aria-labelledby="score">
+  <p class="eyebrow">04 / Scorecard</p>
+  <h2 id="score" style="font-size:28px;margin:4px 0 8px">How they compare</h2>
+  <p class="muted">Scores run from 1 to 5. Higher is better, including for risk, where 5 means safest. Scores are my judgment, not measured.</p>
+  <div class="card tablewrap" style="padding:8px">
+    <table>
+      <thead><tr><th scope="col">Game</th><th scope="col">Thumb fit</th><th scope="col">Style ceiling</th><th scope="col">Theme fit</th><th scope="col">Build safety</th><th scope="col">Replay</th><th scope="col">Accessibility</th></tr></thead>
+      <tbody>
+        <tr><th scope="row" class="acid">P1 Bitshift</th>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td></tr>
+        <tr><th scope="row" class="pink">P2 World Flip</th>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td></tr>
+        <tr><th scope="row" class="cyan">P3 Shift Change</th>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="2 of 5"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td></tr>
+        <tr><th scope="row">P4 Wraparound</th>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td></tr>
+        <tr><th scope="row">P5 Tilt Room</th>
+          <td><span class="score" aria-label="4 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="score" aria-label="1 of 5"><i class="on"></i><i></i><i></i><i></i><i></i></span></td>
+          <td><span class="score" aria-label="2 of 5"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></td>
+          <td><span class="score" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- RECOMMENDATION -->
+<section aria-labelledby="rec">
+  <p class="eyebrow">05 / Recommendation</p>
+  <h2 id="rec" style="font-size:28px;margin:4px 0 12px">Build Bitshift with a Wraparound calm mode</h2>
+  <div class="card">
+    <p>Both games share one mechanic: shift a row of bits and lose what falls off the edge. Bitshift is the stylish, fast mode. Wraparound is the turn-based mode with no timer and the daily puzzle. One mechanic gives two audiences and covers the accessibility story.</p>
+    <ul style="padding-left:18px">
+      <li><b>Week 1:</b> Bitshift core, one level, tap halves, instant retry, bloom and sound.</li>
+      <li><b>Week 2:</b> Level set, daily seed, assist toggles, mirrored layout.</li>
+      <li><b>Week 3:</b> Calm mode from the same shift code. Palette unlocks.</li>
+      <li><b>Week 4:</b> Real-phone testing on iOS Safari and Android Chrome, itch.io page, trailer GIF, polish.</li>
+    </ul>
+    <p class="muted">World Flip is the fallback if Bitshift does not feel good by the end of week one. Its build risk is lowest.</p>
+  </div>
+</section>
+
+<!-- INPUT -->
+<section aria-labelledby="vote">
+  <p class="eyebrow">06 / Your call</p>
+  <h2 id="vote" style="font-size:28px;margin:4px 0 12px">Pick, mix, or cut</h2>
+  <form class="card" data-lavish-question="verdicts" id="verdict-form">
+    <fieldset class="verdict"><legend>P1 Bitshift</legend>
+      <label class="opt"><input type="radio" name="p1" value="pick"> Pick</label>
+      <label class="opt"><input type="radio" name="p1" value="mix"> Mix in</label>
+      <label class="opt"><input type="radio" name="p1" value="cut"> Cut</label></fieldset>
+    <fieldset class="verdict"><legend>P2 World Flip</legend>
+      <label class="opt"><input type="radio" name="p2" value="pick"> Pick</label>
+      <label class="opt"><input type="radio" name="p2" value="mix"> Mix in</label>
+      <label class="opt"><input type="radio" name="p2" value="cut"> Cut</label></fieldset>
+    <fieldset class="verdict"><legend>P3 Shift Change</legend>
+      <label class="opt"><input type="radio" name="p3" value="pick"> Pick</label>
+      <label class="opt"><input type="radio" name="p3" value="mix"> Mix in</label>
+      <label class="opt"><input type="radio" name="p3" value="cut"> Cut</label></fieldset>
+    <fieldset class="verdict"><legend>P4 Wraparound</legend>
+      <label class="opt"><input type="radio" name="p4" value="pick"> Pick</label>
+      <label class="opt"><input type="radio" name="p4" value="mix"> Mix in</label>
+      <label class="opt"><input type="radio" name="p4" value="cut"> Cut</label></fieldset>
+    <fieldset class="verdict"><legend>P5 Tilt Room</legend>
+      <label class="opt"><input type="radio" name="p5" value="pick"> Pick</label>
+      <label class="opt"><input type="radio" name="p5" value="mix"> Mix in</label>
+      <label class="opt"><input type="radio" name="p5" value="cut"> Cut</label></fieldset>
+    <p style="margin:14px 0 6px"><label for="vibe"><b>Visual direction</b></label></p>
+    <select id="vibe" name="vibe">
+      <option value="">No preference yet</option>
+      <option>Neon terminal (black plus acid, CRT bloom)</option>
+      <option>Duotone poster (hard cuts, flat shapes)</option>
+      <option>Pastel isometric (soft shadows, calm)</option>
+      <option>Paper and generative art (grain, gallery wall)</option>
+    </select>
+    <p style="margin:14px 0 6px"><label for="notes"><b>Notes, constraints, twists</b></label></p>
+    <textarea id="notes" name="notes" rows="4" placeholder="Anything to add, merge, or drop"></textarea>
+    <p style="margin-top:16px">
+      <button type="submit" class="go">Queue my answer</button>
+      <span class="status" id="vote-status" role="status" aria-live="polite"></span>
+    </p>
+  </form>
+</section>
+
+</main>
+
+<script>
+  document.getElementById('verdict-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    const names = { p1: 'Bitshift', p2: 'World Flip', p3: 'Shift Change', p4: 'Wraparound', p5: 'Tilt Room' };
+    const verdicts = {};
+    Object.keys(names).forEach(function (key) { verdicts[names[key]] = data.get(key) || 'no answer'; });
+    const vibe = data.get('vibe') || 'no preference';
+    const notes = (data.get('notes') || '').trim();
+    const summary = Object.keys(verdicts).map(function (name) { return name + ': ' + verdicts[name]; }).join(', ');
+    const status = document.getElementById('vote-status');
+    if (window.lavish && window.lavish.queuePrompt) {
+      window.lavish.queuePrompt(
+        'Game proposal verdicts. ' + summary + '. Visual direction: ' + vibe + '.' + (notes ? ' Notes: ' + notes : ''),
+        { tag: 'choice', text: summary, element: form, data: { verdicts: verdicts, vibe: vibe, notes: notes } }
+      );
+      status.textContent = 'Queued. Press Send to Agent.';
+    } else {
+      status.textContent = 'Lavish is not connected.';
+    }
+  });
+</script>
+</body>
+</html>
